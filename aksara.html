@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jejak Aksara Bali — Nusa Bali Heritage</title>
+  <meta name="description"
+    content="Kaligrafi sakral Aksara Bali interaktif: latih jemari menelusuri kelokan adiluhung aksara wianjana di atas lontar digital dengan panduan kuratorial dan penilaian presisi.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Noto+Sans+Balinese&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/aksara.css">
+</head>
+
+<body>
+
+  <!-- =================== HEADER / NAV =================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <a href="index.html#beranda" class="brand">
+        <img class="brand__logo-img" src="assets/images/logo/logo-tulisan.png"
+          alt="Nusa Bali Heritage — Arsip Kebudayaan Pusaka">
+      </a>
+
+      <nav class="nav-links" aria-label="Navigasi utama">
+        <a href="index.html#beranda">BERANDA</a>
+        <a href="index.html#gamelan">GAMELAN</a>
+        <a href="peta.html">PETA</a>
+        <a href="aksara.html" aria-current="page">AKSARA</a>
+        <a href="#kontak">KONTAK</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="nav-square-btn" type="button" id="userAccountBtn" aria-label="Akun pengguna">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.6" />
+            <path d="M5.5 19.5c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke-linecap="round" />
+          </svg>
+        </button>
+        <button class="nav-toggle" type="button" aria-label="Buka menu" id="navToggle" aria-expanded="false"
+          aria-controls="mobileNav">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- mobile nav panel -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
+      <a href="index.html#beranda">BERANDA</a>
+      <a href="index.html#gamelan">GAMELAN</a>
+      <a href="peta.html">PETA</a>
+      <a href="aksara.html" aria-current="page">AKSARA</a>
+      <a href="#kontak">KONTAK</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- =================== JEJAK AKSARA: KALIGRAFI SAKRAL BALI =================== -->
+    <section class="section aksara-section" id="bahasa">
+      <div class="container">
+        <!-- Section Header with Badges -->
+        <div class="section-head aksara-section-head">
+          <div class="aksara-head-text">
+            <p class="eyebrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <polygon points="12 2 22 12 12 22 2 12 12 2" />
+              </svg>
+              Bahasa &amp; Aksara Bali • Inner Sanctum Preservation
+            </p>
+            <h1 class="section-heading">
+              <span>Jejak <i class="accent-italic">Aksara</i></span>
+            </h1>
+            <p class="section-desc">
+              Latihlah jemari Anda menelusuri keagungan Aksara Bali — menggoreskan kelokan sakral di atas lontar digital
+              untuk meresapi ritme, harmoni, dan filosofi adiluhung aksara wianjana.
+            </p>
+          </div>
+          <div class="aksara-tags-wrap" aria-label="Kategori Pelestarian">
+            <span class="aksara-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="aksara-tag-icon">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+              Aksara Wianjana : 10 Dasar
+            </span>
+            <span class="aksara-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="aksara-tag-icon">
+                <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+              </svg>
+              Pengrupak &amp; Lontar
+            </span>
+          </div>
+        </div>
+
+        <!-- Interactive Tracing Workspace (Two-column layout) -->
+        <div class="aksara-layout">
+          <!-- LEFT COLUMN: Character Selector & Progress -->
+          <aside class="aksara-sidebar">
+            <!-- Progress Card -->
+            <div class="aksara-progress-card">
+              <div class="aksara-progress-header">
+                <div class="aksara-progress-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    class="aksara-icon-target">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="6" />
+                    <circle cx="12" cy="12" r="2" />
+                  </svg>
+                  <span>Progres Kemahiran</span>
+                </div>
+                <span class="aksara-rank-badge">Tingkat: Madya Pratama</span>
+              </div>
+
+              <div class="aksara-stat-row">
+                <div class="aksara-stat-main">
+                  <span class="aksara-stat-num" id="aksaraMasteredCount">0</span>
+                  <span class="aksara-stat-denom">/ 10</span>
+                  <span class="aksara-stat-label">Aksara Dikuasai</span>
+                </div>
+                <div class="aksara-stat-percent" id="aksaraProgressPercent">0%</div>
+              </div>
+
+              <div class="aksara-progress-bar-wrap">
+                <div class="aksara-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                  aria-valuemax="100">
+                  <div class="aksara-progress-fill" id="aksaraProgressFill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="aksara-progress-sub">
+                <span class="aksara-threshold">Penilaian Kemahiran: 75%</span>
+              </div>
+            </div>
+
+            <!-- List Card -->
+            <div class="aksara-list-card">
+              <div class="aksara-list-head">
+                <div class="aksara-list-title">
+                  <span class="aksara-square-bullet">■</span>
+                  Daftar Aksara Wianjana
+                </div>
+                <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 Pratama</span>
+              </div>
+
+              <!-- Character Rows (Rendered and updated by aksara.js) -->
+              <div class="aksara-list" id="aksaraList" role="tablist" aria-label="Daftar Aksara Wianjana">
+                <!-- Dynamically populated from aksaraData with exact pathD preview icons -->
+              </div>
+            </div>
+
+            <!-- Calligraphy Instruction Note -->
+            <div class="aksara-hint-card">
+              <div class="aksara-hint-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                  <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                  <circle cx="11" cy="11" r="2" />
+                </svg>
+              </div>
+              <p class="aksara-hint-text">
+                <strong>Petunjuk Kaligrafi:</strong> Tarik goresan aksara dari simpul awal melengkung searah jarum jam
+                tanpa mengangkat pengrupak untuk menjaga aliran energi sakral (<em>"prana"</em>).
+              </p>
+            </div>
+          </aside>
+
+          <!-- RIGHT COLUMN: Tracing Workspace & Controls -->
+          <div class="aksara-workspace">
+            <!-- Workspace Top Bar -->
+            <div class="aksara-workspace__header">
+              <div class="aksara-workspace__meta">
+                <div class="aksara-workspace__bar" aria-hidden="true"></div>
+                <div class="aksara-workspace__titles">
+                  <div class="aksara-workspace__title-row">
+                    <h2 class="aksara-workspace__name" id="aksaraActiveName">Aksara Ha</h2>
+                    <span class="aksara-workspace__glyph" id="aksaraActiveGlyph" aria-label="Aksara Bali">ᬳ</span>
+                    <span class="aksara-workspace__unicode" id="aksaraActiveUnicode">U+1B33</span>
+                  </div>
+                  <p class="aksara-workspace__meaning" id="aksaraActiveMeaning">
+                    Simbol Prana • Nafas Mula Kehidupan &amp; Hyang Widhi
+                  </p>
+                </div>
+              </div>
+
+              <div class="aksara-workspace__actions">
+                <span class="aksara-badge-curatorial">
+                  <span class="aksara-badge-dot"></span>
+                  Presisi Kuratorial
+                </span>
+                <button type="button" class="aksara-demo-btn" id="aksaraDemoBtn"
+                  aria-label="Peragakan goresan pola aksara">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="6 4 18 12 6 20 6 4" />
+                  </svg>
+                  PERAGAKAN GORESAN
+                </button>
+              </div>
+            </div>
+
+            <!-- Square Canvas Tracing Area -->
+            <div class="aksara-canvas-wrap" id="aksaraCanvasWrap">
+              <!-- Decorative subtle crosshair & circular lontar guide lines -->
+              <div class="aksara-canvas-guides" aria-hidden="true">
+                <div class="aksara-guide-line aksara-guide-line--h"></div>
+                <div class="aksara-guide-line aksara-guide-line--v"></div>
+                <div class="aksara-guide-circle"></div>
+              </div>
+
+              <!-- Main Tracing Canvas (Internal 300x300 coordinates scaled for HiDPI) -->
+              <canvas id="aksaraCanvas" class="aksara-canvas" touch-action="none"
+                aria-label="Kanvas penelusuran aksara"></canvas>
+
+              <!-- Starting point overlay dot (matching aksaraData[key].contours[0][0]) -->
+              <div class="aksara-start-dot" id="aksaraStartDot" aria-hidden="true">
+                <span class="aksara-start-dot__pulse"></span>
+                <span class="aksara-start-dot__pip"></span>
+                <span class="aksara-start-dot__tag">Mulai</span>
+              </div>
+
+              <!-- Bottom-left instruction pill -->
+              <div class="aksara-canvas-pill" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                <span>TARIK GORESAN MENGIKUTI POLA EMAS DI ATAS</span>
+              </div>
+            </div>
+
+            <!-- Controls Row: Exactly 4 buttons in specific order & labeling -->
+            <div class="aksara-controls">
+              <!-- 1. Hapus & Ulangi -->
+              <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnReset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+                Hapus &amp; Ulangi
+              </button>
+
+              <!-- 2. Pola Panduan -->
+              <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnGuide">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Pola Panduan
+              </button>
+
+              <!-- 3. Lihat Penilaian Presisi (Primary Action) -->
+              <button type="button" class="btn btn--fill aksara-btn aksara-btn--primary" id="aksaraBtnScore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 11 12 14 22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                Lihat Penilaian Presisi
+              </button>
+
+              <!-- 4. Aksara Berikutnya -->
+              <button type="button" class="btn btn--gold aksara-btn" id="aksaraBtnNext">
+                Aksara Berikutnya
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Result Panel (Revealed upon pressing "Lihat Penilaian Presisi") -->
+            <div class="aksara-result-panel" id="aksaraResultPanel" hidden>
+              <div class="aksara-result-head">
+                <div class="aksara-result-score-block">
+                  <span class="aksara-result-score" id="aksaraResultScore">--%</span>
+                  <span class="aksara-result-kicker">Skor Presisi Goresan</span>
+                </div>
+                <div class="aksara-result-feedback">
+                  <div class="aksara-result-label" id="aksaraResultLabel">Menghitung...</div>
+                  <p class="aksara-result-desc" id="aksaraResultDesc">Analisis presisi tarikan garis aksara Bali.</p>
+                </div>
+                <button type="button" class="aksara-result-close" id="aksaraResultClose"
+                  aria-label="Tutup hasil penilaian">✕</button>
+              </div>
+
+              <!-- Breakdown metrics: Precision vs Coverage -->
+              <div class="aksara-result-metrics">
+                <div class="aksara-metric-card">
+                  <div class="aksara-metric-header">
+                    <span class="aksara-metric-name">Presisi Kelurusan Garis</span>
+                    <strong class="aksara-metric-val" id="aksaraPrecisionVal">0%</strong>
+                  </div>
+                  <div class="aksara-metric-bar">
+                    <div class="aksara-metric-fill" id="aksaraPrecisionBar" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <div class="aksara-metric-card">
+                  <div class="aksara-metric-header">
+                    <span class="aksara-metric-name">Kelengkapan Kontur (Coverage)</span>
+                    <strong class="aksara-metric-val" id="aksaraCoverageVal">0%</strong>
+                  </div>
+                  <div class="aksara-metric-bar">
+                    <div class="aksara-metric-fill" id="aksaraCoverageBar" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="aksara-result-status" id="aksaraResultStatus"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================== FOOTER =================== -->
+  <footer class="site-footer" id="kontak">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html#beranda" class="brand">
+            <img class="brand__mark" src="assets/images/logo/logo-tulisan.png" alt="Lambang Nusa Bali Heritage">
+          </a>
+          <p class="footer-tagline">"Rwa Bhineda Keseimbangan Kosmis Antara Gelap dan Terang, Suci dan Profan."</p>
+          <p class="footer-desc">Arsip digital yang hidup bagi kebudayaan Bali — mendokumentasikan tarian sakral, naskah
+            lontar, ukiran patra, dan warisan yang terus diwariskan lintas generasi.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Tradisi &amp; Ritual</h4>
+          <ul>
+            <li><a href="index.html#filosofi">Upacara Odalan</a></li>
+            <li><a href="index.html#filosofi">Ngaben &amp; Roh Leluhur</a></li>
+            <li><a href="index.html#filosofi">Hari Suci Nyepi</a></li>
+            <li><a href="index.html#situs-budaya">Pawukon &amp; Subak</a></li>
+            <li><a href="index.html#situs-budaya">Tirtha Amerta</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Seni &amp; Kriya</h4>
+          <ul>
+            <li><a href="index.html#tarian">Tari Sanghyang Dedari</a></li>
+            <li><a href="index.html#galeri">Gamelan Gong Kebyar</a></li>
+            <li><a href="index.html#kerajinan">Tenun Ikat Gringsing</a></li>
+            <li><a href="index.html#kerajinan">Ukiran Batu Andesit</a></li>
+            <li><a href="index.html#tarian">Topeng Sidakarya</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Buletin Pusaka</h4>
+          <p class="newsletter-text">Daftarkan diri untuk korespondensi kuratorial berkala seputar naskah lontar dan
+            dokumentasi candi.</p>
+          <form class="newsletter-form" id="newsletterForm">
+            <label for="newsletterEmail" class="visually-hidden">Alamat email</label>
+            <input type="email" id="newsletterEmail" name="email" placeholder="alamat@email.anda" required>
+            <button type="submit">Kirim</button>
+          </form>
+          <p class="newsletter-note" id="newsletterNote"></p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span id="footerYear">2026</span> Bali Heritage Archive. Sakral &amp; Dilestarikan.</p>
+        <nav aria-label="Tautan legal">
+          <a href="#">Etika Sakral</a>
+          <a href="#">Lisensi Repositori</a>
+          <a href="#">Kurator Konsorsium</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/aksara-data.js"></script>
+  <script src="assets/js/aksara.js"></script>
+</body>
+
+</html>
