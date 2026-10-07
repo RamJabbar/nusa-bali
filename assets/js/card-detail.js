@@ -1,13 +1,10 @@
-/**
- * NUSA BALI HERITAGE — card-detail.js
- * Interactive modal showing deep philosophical, historical, and cultural details with images for Tarian & Kerajinan.
- */
+/* Nusa Bali Heritage — detail modal for Tarian & Kerajinan cards */
 
 (function () {
   'use strict';
 
   const CARD_DETAILS = {
-    // =================== TARIAN ===================
+    // Tarian
     "tari-kecak": {
       category: "tarian",
       image: "assets/images/tarian/tari-kecak.jpg",
@@ -51,7 +48,7 @@
       body: "Berdasarkan legenda seorang pendeta pengembara yang ditolak masuk upacara kerajaan, lalu mengutuk upacara tersebut agar tidak pernah sempurna sampai ia diundang kembali. Kini, topeng ini wajib dipentaskan di penutup upacara besar (piodalan, ngaben) sebagai permohonan restu kesempurnaan yadnya."
     },
 
-    // =================== KERAJINAN ===================
+    // Kerajinan
     "ukir-kayu": {
       category: "kerajinan",
       image: "assets/images/kerajinan/ukir-kayu.jpg",
@@ -130,24 +127,22 @@
     modalMetaEl = document.getElementById('detailModalMeta');
     modalBodyEl = document.getElementById('detailModalBody');
 
-    // Delegated click on cards or their internal links
+    // One delegated click handler for cards and the modal's close controls
     document.addEventListener('click', (e) => {
-      // If user was just dragging / swiping the marquee, ignore click
+      // Ignore the click that ends a marquee drag
       if (window.__justDragged || e.target.closest('[data-just-dragged="true"]')) {
         return;
       }
 
-      // If modal close button or backdrop was clicked
       if (e.target.closest('[data-close]')) {
         closeModal();
         return;
       }
 
-      // Check if click was inside a culture-card with data-id
       const card = e.target.closest('.culture-card[data-id]');
       if (!card) return;
 
-      // If user clicked the "Pelajari Makna Filosofis →" link or anywhere on card
+      // Keep the "Pelajari Makna Filosofis" link from navigating
       const link = e.target.closest('.culture-card__link');
       if (link) {
         e.preventDefault();
@@ -156,7 +151,7 @@
       openModalForCard(card);
     });
 
-    // Keyboard support: Enter or Space on focused card
+    // Enter / Space on a focused card opens it; Escape closes the modal
     document.addEventListener('keydown', (e) => {
       if (!modalEl.hasAttribute('hidden')) {
         if (e.key === 'Escape') {
@@ -166,7 +161,7 @@
       }
 
       const activeEl = document.activeElement;
-      if (activeEl && activeEl.matches && activeEl.matches('.culture-card[data-id]')) {
+      if (activeEl && activeEl.matches('.culture-card[data-id]')) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModalForCard(activeEl);
@@ -185,7 +180,6 @@
     const titleEl = card.querySelector('h3');
     const titleText = titleEl ? titleEl.textContent.trim() : id;
 
-    // Resolve matching image
     const cardImg = card.querySelector('.media-frame img') || card.querySelector('img');
     const imgSrc = data.image || (cardImg ? cardImg.getAttribute('src') : '');
     const imgAlt = cardImg ? (cardImg.getAttribute('alt') || titleText) : titleText;
@@ -207,12 +201,11 @@
 
     modalEl.removeAttribute('hidden');
 
-    // Pause all marquee tracks behind the modal using their built-in mouseenter handler
+    // Pause the marquees behind the modal (reuses their mouseenter handler)
     document.querySelectorAll('.marquee-track').forEach((track) => {
       track.dispatchEvent(new Event('mouseenter'));
     });
 
-    // Focus close button inside modal
     const closeBtn = modalEl.querySelector('.detail-modal__close');
     if (closeBtn) {
       closeBtn.focus();
@@ -224,14 +217,14 @@
 
     modalEl.setAttribute('hidden', '');
 
-    // Resume marquee tracks if mouse is not currently hovering over them
+    // Resume marquees the mouse isn't hovering
     document.querySelectorAll('.marquee-track').forEach((track) => {
       if (!track.matches(':hover')) {
         track.dispatchEvent(new Event('mouseleave'));
       }
     });
 
-    // Return focus to the card that triggered the modal
+    // Give focus back to the card that opened the modal
     if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') {
       lastFocusedEl.focus();
     }

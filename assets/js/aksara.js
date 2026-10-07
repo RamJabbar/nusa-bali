@@ -1,9 +1,7 @@
-
-
 (function () {
   'use strict';
 
-  // ─── TUNABLE SCORING CONSTANTS ─────────────────────────────
+  // Scoring settings
   const TOLERANCE_RADIUS = 18;    // Distance in 300x300 space considered a hit
   const PRECISION_MAX_DIST = 32;  // Maximum distance after which point precision is 0
   const WEIGHT_PRECISION = 0.50;  // 50% weight for line precision
@@ -11,7 +9,7 @@
   const MASTERED_THRESHOLD = 75;  // Score >= 75 marks character as mastered
   const STORAGE_KEY = 'nusabali_aksara_mastered';
 
-  // ─── PHILOSOPHICAL METADATA ────────────────────────────────
+  // Meaning text, order number and glyph for each aksara
   const AKSARA_METADATA = {
     ha: {
       meaningShort: 'Simbol Prana • Nafas Mula Kehidupan',
@@ -77,7 +75,7 @@
 
   const AKSARA_KEYS = ['ha', 'na', 'ca', 'ra', 'ka', 'da', 'ta', 'sa', 'wa', 'la'];
 
-  // ─── STATE MANAGEMENT ──────────────────────────────────────
+  // State
   let currentKey = 'ha';
   let userStrokes = [];        // Array of strokes; stroke is Array of {x, y, distToRef}
   let currentStroke = null;
@@ -86,7 +84,6 @@
   let isScored = false;
   let demoAnimId = null;
   let isDemoPlaying = false;
-  let demoProgress = 0;
 
   // Cached DOM elements
   let canvas = null;
@@ -96,7 +93,7 @@
   let resultPanel = null;
   let demoBtn = null;
 
-  // ─── LOCAL STORAGE HELPERS ─────────────────────────────────
+  // Mastery progress (localStorage)
   function getMasteredList() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -167,13 +164,11 @@
   }
 
   function initAksara() {
-    // Check if #bahasa section exists on the page
+    // Only runs on the page that has the #bahasa section
     const section = document.getElementById('bahasa');
     if (!section) return;
 
-    // Check if aksaraData is loaded
-    const dataRef = (typeof aksaraData !== 'undefined') ? aksaraData : (window.aksaraData || null);
-    if (!dataRef) {
+    if (!getAksaraData()) {
       console.warn('aksaraData is not available. Ensure assets/js/aksara-data.js is loaded first.');
       return;
     }
@@ -201,12 +196,12 @@
     demoBtn = document.getElementById('aksaraDemoBtn');
   }
 
-  // ─── PART 1: RENDER CHARACTER SELECTOR ─────────────────────
+  // Character list
   function renderCharacterSelector() {
     const listContainer = document.getElementById('aksaraList');
     if (!listContainer) return;
 
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
+    const data = getAksaraData();
     const mastered = getMasteredList();
 
     let html = '';
@@ -239,35 +234,30 @@
 
     listContainer.innerHTML = html;
 
-    // Attach click listeners to rows
     listContainer.querySelectorAll('.aksara-item').forEach((row) => {
-      row.addEventListener('click', () => {
-        const key = row.getAttribute('data-key');
-        if (key && key !== currentKey) {
-          selectAksara(key);
-        }
-      });
+      const key = row.getAttribute('data-key');
+      const selectRow = () => {
+        if (key !== currentKey) selectAksara(key);
+      };
+
+      row.addEventListener('click', selectRow);
       row.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          const key = row.getAttribute('data-key');
-          if (key && key !== currentKey) {
-            selectAksara(key);
-          }
+          selectRow();
         }
       });
     });
   }
 
-  // ─── PART 2: CANVAS SETUP & DRAWING INPUT ───────────────────
+  // Canvas setup and drawing input
   function initCanvas() {
     if (!canvas || !ctx) return;
 
-    // Setup coordinates & sharpness
     resizeCanvas();
     window.addEventListener('resize', debounce(resizeCanvas, 100));
 
-    // Pointer Events for touch, mouse, and stylus
+    // Pointer events cover mouse, touch and stylus
     canvas.addEventListener('pointerdown', onPointerDown);
     canvas.addEventListener('pointermove', onPointerMove);
     canvas.addEventListener('pointerup', onPointerUp);
@@ -352,46 +342,40 @@
     redrawCanvas();
   }
 
-  // ─── PART 3: GHOST GUIDE & CANVAS REDRAW ────────────────────
+  // Guide, grid and stroke rendering
   function redrawCanvas() {
     if (!canvas || !ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
     const sx = canvas.width / 300;
     const sy = canvas.height / 300;
 
-    // Reset transform & clear
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Apply 300x300 logical coordinate scaling
+    // Draw in the 300x300 logical space
     ctx.setTransform(sx, 0, 0, sy, 0, 0);
 
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
-    const charData = data ? data[currentKey] : null;
+    const charData = getCurrentChar();
 
-    // 1. Draw decorative background crosshair grid (purely decorative, subtle)
     drawDecorativeGrid();
 
-    // 2. Draw Ghost Guide if enabled
+    // Dashed gold guide
     if (showGuide && charData && charData.pathD) {
       ctx.save();
       const guidePath = new Path2D(charData.pathD);
-      ctx.strokeStyle = 'rgba(236, 194, 70, 0.45)'; // Site's gold
+      ctx.strokeStyle = 'rgba(236, 194, 70, 0.45)';
       ctx.lineWidth = 2.4;
       ctx.setLineDash([6, 5]);
       ctx.stroke(guidePath);
       ctx.restore();
     }
 
-    // 3. Draw Starting Point Dot (from first point of contours[0])
+    // Red dot at the start of the first contour
     if (charData && charData.contours && charData.contours.length && charData.contours[0].length) {
       const startPt = charData.contours[0][0];
       drawStartDotCanvas(startPt[0], startPt[1]);
     }
 
-    // 4. Render User's Drawn Strokes
     if (userStrokes.length > 0) {
       renderUserStrokes();
     }
@@ -438,19 +422,19 @@
 
   function drawStartDotCanvas(x, y) {
     ctx.save();
-    // Soft outer glow
+    // Outer glow
     ctx.fillStyle = 'rgba(189, 45, 36, 0.22)';
     ctx.beginPath();
     ctx.arc(x, y, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Red core dot
+    // Red core
     ctx.fillStyle = '#BD2D24';
     ctx.beginPath();
     ctx.arc(x, y, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Crisp white center pip
+    // White center
     ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.arc(x, y, 1.8, 0, Math.PI * 2);
@@ -464,7 +448,7 @@
     ctx.lineJoin = 'round';
 
     if (!isScored) {
-      // Normal drawing mode: natural cream/white brush strokes
+      // Normal mode: cream strokes
       ctx.lineWidth = 7.2;
       ctx.strokeStyle = '#FAF8F5'; // var(--color-cream)
 
@@ -482,7 +466,7 @@
         ctx.beginPath();
         ctx.moveTo(stroke[0].x, stroke[0].y);
 
-        // Smoothed with quadraticCurveTo
+        // Smooth the line with quadratic curves
         for (let i = 1; i < stroke.length - 1; i++) {
           const midX = (stroke[i].x + stroke[i + 1].x) / 2;
           const midY = (stroke[i].y + stroke[i + 1].y) / 2;
@@ -492,8 +476,7 @@
         ctx.stroke();
       });
     } else {
-      // Scored mode: tinted feedback
-      // Soft green for accurate segments near reference, soft red/coral for inaccurate
+      // Scored mode: tint each segment by how close it is to the reference
       ctx.lineWidth = 7.2;
 
       userStrokes.forEach((stroke) => {
@@ -535,8 +518,7 @@
 
   function updateStartDotPosition() {
     if (!startDotEl) return;
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
-    const charData = data ? data[currentKey] : null;
+    const charData = getCurrentChar();
 
     if (charData && charData.contours && charData.contours.length && charData.contours[0].length) {
       const pt = charData.contours[0][0];
@@ -550,7 +532,7 @@
     }
   }
 
-  // ─── STROKE ORDER DEMONSTRATION ────────────────────────────
+  // Stroke order demo
   function toggleStrokeDemo() {
     if (isDemoPlaying) {
       stopStrokeDemo();
@@ -560,12 +542,10 @@
   }
 
   function startStrokeDemo() {
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
-    const charData = data ? data[currentKey] : null;
+    const charData = getCurrentChar();
     if (!charData || !charData.contours || !charData.contours.length) return;
 
     isDemoPlaying = true;
-    demoProgress = 0;
 
     if (demoBtn) {
       demoBtn.classList.add('is-playing');
@@ -578,7 +558,7 @@
       `;
     }
 
-    // Flatten contours into ordered animated segments
+    // Animate one contour at a time, pointIdx points per frame
     const allContours = charData.contours;
     let contourIdx = 0;
     let pointIdx = 0;
@@ -588,7 +568,7 @@
 
       redrawCanvas();
 
-      // Draw demo progress up to current contour and point
+      // Completed contours + the one currently being drawn
       ctx.save();
       const sx = canvas.width / 300;
       const sy = canvas.height / 300;
@@ -597,7 +577,6 @@
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
-      // Draw all previous contours completed
       for (let c = 0; c < contourIdx; c++) {
         const pts = allContours[c];
         if (pts.length < 2) continue;
@@ -611,7 +590,6 @@
         ctx.stroke();
       }
 
-      // Draw active contour up to pointIdx
       const currentPts = allContours[contourIdx];
       if (currentPts && currentPts.length > 1) {
         ctx.strokeStyle = '#ECC246';
@@ -624,7 +602,7 @@
         }
         ctx.stroke();
 
-        // Draw animated golden brush head
+        // Brush head
         const headPt = currentPts[maxP];
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
@@ -645,7 +623,7 @@
         contourIdx++;
         pointIdx = 0;
         if (contourIdx >= allContours.length) {
-          // Finished full demo
+          // Hold the finished drawing briefly, then reset
           setTimeout(() => {
             stopStrokeDemo();
           }, 800);
@@ -677,14 +655,12 @@
     redrawCanvas();
   }
 
-  // ─── PART 4: SCORING ENGINE ────────────────────────────────
+  // Scoring
   function calculateScore() {
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
-    const charData = data ? data[currentKey] : null;
+    const charData = getCurrentChar();
 
     if (!charData || !charData.contours || !charData.contours.length) return;
 
-    // 1. Flatten aksaraData[key].contours into single reference point array
     const refPoints = [];
     charData.contours.forEach((contour) => {
       contour.forEach((pt) => {
@@ -692,7 +668,6 @@
       });
     });
 
-    // 2. Flatten user's completed strokes into one array of drawn points
     const drawnPoints = [];
     userStrokes.forEach((stroke) => {
       stroke.forEach((pt) => {
@@ -705,31 +680,31 @@
       return;
     }
 
-    // 3. Precision: for each drawn point, compute distance to nearest reference point
+    // Precision: how close each drawn point is to its nearest reference point
     let totalPrecisionAccuracy = 0;
     for (let i = 0; i < drawnPoints.length; i++) {
       const p = drawnPoints[i];
-      let minDistance = Infinity;
+      let minDistSq = Infinity;
 
       for (let j = 0; j < refPoints.length; j++) {
         const dx = p.x - refPoints[j].x;
         const dy = p.y - refPoints[j].y;
-        const dSq = dx * dx + dy * dy;
-        if (dSq < minDistance) {
-          minDistance = dSq;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < minDistSq) {
+          minDistSq = distSq;
         }
       }
 
-      const dist = Math.sqrt(minDistance);
-      p.distToRef = dist; // saved for per-segment visual feedback tinting
+      const dist = Math.sqrt(minDistSq);
+      p.distToRef = dist; // used later to tint each segment
 
       const pointAccuracy = Math.max(0, 1 - (dist / PRECISION_MAX_DIST));
       totalPrecisionAccuracy += pointAccuracy;
     }
 
-    const precisionRatio = drawnPoints.length > 0 ? (totalPrecisionAccuracy / drawnPoints.length) : 0;
+    const precisionRatio = totalPrecisionAccuracy / drawnPoints.length;
 
-    // 4. Coverage: for each reference point, check if any drawn point lies within tolerance radius
+    // Coverage: share of reference points that have a drawn point within tolerance
     const tolSq = TOLERANCE_RADIUS * TOLERANCE_RADIUS;
     let coveredCount = 0;
 
@@ -752,53 +727,56 @@
 
     const coverageRatio = refPoints.length > 0 ? (coveredCount / refPoints.length) : 0;
 
-    // 5. Combine precision and coverage into 0–100 score
     const weightedScore = (precisionRatio * WEIGHT_PRECISION) + (coverageRatio * WEIGHT_COVERAGE);
     const finalScore = Math.max(0, Math.min(100, Math.round(weightedScore * 100)));
 
     const precPct = Math.round(precisionRatio * 100);
     const covPct = Math.round(coverageRatio * 100);
 
-    // 6. Display score & qualitative label
     displayResultPanel(finalScore, precPct, covPct);
 
-    // 7. Visual feedback on canvas: re-render with green/red tinting
+    // Redraw so strokes get the green/amber/red tint
     isScored = true;
     redrawCanvas();
 
-    // 8. If >= mastered threshold, save to localStorage & update UI
     if (finalScore >= MASTERED_THRESHOLD) {
       setCharacterMastered(currentKey);
     }
+  }
+
+  function getResultElements() {
+    return {
+      score: document.getElementById('aksaraResultScore'),
+      label: document.getElementById('aksaraResultLabel'),
+      desc: document.getElementById('aksaraResultDesc'),
+      precisionVal: document.getElementById('aksaraPrecisionVal'),
+      coverageVal: document.getElementById('aksaraCoverageVal'),
+      precisionBar: document.getElementById('aksaraPrecisionBar'),
+      coverageBar: document.getElementById('aksaraCoverageBar'),
+      status: document.getElementById('aksaraResultStatus')
+    };
   }
 
   function showEmptyDrawingAlert() {
     if (!resultPanel) return;
 
     resultPanel.hidden = false;
-    const scoreEl = document.getElementById('aksaraResultScore');
-    const labelEl = document.getElementById('aksaraResultLabel');
-    const descEl = document.getElementById('aksaraResultDesc');
-    const precVal = document.getElementById('aksaraPrecisionVal');
-    const covVal = document.getElementById('aksaraCoverageVal');
-    const precBar = document.getElementById('aksaraPrecisionBar');
-    const covBar = document.getElementById('aksaraCoverageBar');
-    const statusMsg = document.getElementById('aksaraResultStatus');
+    const el = getResultElements();
 
-    if (scoreEl) scoreEl.textContent = '0%';
-    if (labelEl) {
-      labelEl.textContent = 'Kanvas Masih Kosong';
-      labelEl.className = 'aksara-result-label label--low';
+    if (el.score) el.score.textContent = '0%';
+    if (el.label) {
+      el.label.textContent = 'Kanvas Masih Kosong';
+      el.label.className = 'aksara-result-label label--low';
     }
-    if (descEl) {
-      descEl.textContent = 'Silakan goreskan aksara di atas kanvas mengikuti pola panduan emas sebelum memeriksa presisi.';
+    if (el.desc) {
+      el.desc.textContent = 'Silakan goreskan aksara di atas kanvas mengikuti pola panduan emas sebelum memeriksa presisi.';
     }
-    if (precVal) precVal.textContent = '0%';
-    if (covVal) covVal.textContent = '0%';
-    if (precBar) precBar.style.width = '0%';
-    if (covBar) covBar.style.width = '0%';
-    if (statusMsg) {
-      statusMsg.innerHTML = `
+    if (el.precisionVal) el.precisionVal.textContent = '0%';
+    if (el.coverageVal) el.coverageVal.textContent = '0%';
+    if (el.precisionBar) el.precisionBar.style.width = '0%';
+    if (el.coverageBar) el.coverageBar.style.width = '0%';
+    if (el.status) {
+      el.status.innerHTML = `
         <div class="aksara-alert aksara-alert--warn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -814,20 +792,13 @@
     if (!resultPanel) return;
 
     resultPanel.hidden = false;
-    const scoreEl = document.getElementById('aksaraResultScore');
-    const labelEl = document.getElementById('aksaraResultLabel');
-    const descEl = document.getElementById('aksaraResultDesc');
-    const precVal = document.getElementById('aksaraPrecisionVal');
-    const covVal = document.getElementById('aksaraCoverageVal');
-    const precBar = document.getElementById('aksaraPrecisionBar');
-    const covBar = document.getElementById('aksaraCoverageBar');
-    const statusMsg = document.getElementById('aksaraResultStatus');
+    const el = getResultElements();
 
-    if (scoreEl) scoreEl.textContent = `${score}%`;
-    if (precVal) precVal.textContent = `${precPct}%`;
-    if (covVal) covVal.textContent = `${covPct}%`;
-    if (precBar) precBar.style.width = `${precPct}%`;
-    if (covBar) covBar.style.width = `${covPct}%`;
+    if (el.score) el.score.textContent = `${score}%`;
+    if (el.precisionVal) el.precisionVal.textContent = `${precPct}%`;
+    if (el.coverageVal) el.coverageVal.textContent = `${covPct}%`;
+    if (el.precisionBar) el.precisionBar.style.width = `${precPct}%`;
+    if (el.coverageBar) el.coverageBar.style.width = `${covPct}%`;
 
     let labelText = '';
     let labelClass = '';
@@ -847,17 +818,17 @@
       descText = 'Goresan masih banyak keluar dari jalur pola emas. Tetap tenang dan ulangi tarikan dari simpul awal.';
     }
 
-    if (labelEl) {
-      labelEl.textContent = labelText;
-      labelEl.className = `aksara-result-label ${labelClass}`;
+    if (el.label) {
+      el.label.textContent = labelText;
+      el.label.className = `aksara-result-label ${labelClass}`;
     }
-    if (descEl) {
-      descEl.textContent = descText;
+    if (el.desc) {
+      el.desc.textContent = descText;
     }
 
-    if (statusMsg) {
+    if (el.status) {
       if (score >= MASTERED_THRESHOLD) {
-        statusMsg.innerHTML = `
+        el.status.innerHTML = `
           <div class="aksara-alert aksara-alert--success">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -866,7 +837,7 @@
             <span><strong>Aksara Berhasil Dikuasai!</strong> Tanda kelulusan telah dicatat pada jurnal pusaka Anda.</span>
           </div>`;
       } else {
-        statusMsg.innerHTML = `
+        el.status.innerHTML = `
           <div class="aksara-alert aksara-alert--info">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
@@ -879,9 +850,9 @@
     }
   }
 
-  // ─── ACTION BUTTONS & NAVIGATION ───────────────────────────
+  // Buttons and navigation
   function initEventListeners() {
-    // 1. "Hapus & Ulangi"
+    // "Hapus & Ulangi"
     const resetBtn = document.getElementById('aksaraBtnReset');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
@@ -893,7 +864,7 @@
       });
     }
 
-    // 2. "Pola Panduan"
+    // "Pola Panduan"
     const guideBtn = document.getElementById('aksaraBtnGuide');
     if (guideBtn) {
       guideBtn.addEventListener('click', () => {
@@ -903,7 +874,7 @@
       });
     }
 
-    // 3. "Lihat Penilaian Presisi"
+    // "Lihat Penilaian Presisi"
     const scoreBtn = document.getElementById('aksaraBtnScore');
     if (scoreBtn) {
       scoreBtn.addEventListener('click', () => {
@@ -912,7 +883,7 @@
       });
     }
 
-    // 4. "Aksara Berikutnya"
+    // "Aksara Berikutnya"
     const nextBtn = document.getElementById('aksaraBtnNext');
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
@@ -936,9 +907,9 @@
     }
   }
 
-  // ─── SELECT CHARACTER ──────────────────────────────────────
+  // Select a character
   function selectAksara(key) {
-    const data = (typeof aksaraData !== 'undefined') ? aksaraData : window.aksaraData;
+    const data = getAksaraData();
     if (!data || !data[key]) return;
 
     if (isDemoPlaying) stopStrokeDemo();
@@ -954,7 +925,7 @@
       if (!row) return;
       const isActive = (k === key);
       row.classList.toggle('is-active', isActive);
-      row.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      row.setAttribute('aria-selected', String(isActive));
 
       // Scroll into view on horizontal mobile selector
       if (isActive && window.innerWidth <= 992) {
@@ -962,7 +933,6 @@
       }
     });
 
-    // Update Workspace Header
     const item = data[key];
     const meta = AKSARA_METADATA[key] || { meaningLong: '', char: '' };
 
@@ -978,14 +948,20 @@
     const meaningEl = document.getElementById('aksaraActiveMeaning');
     if (meaningEl) meaningEl.textContent = meta.meaningLong;
 
-    // Update Starting Point Dot
     updateStartDotPosition();
-
-    // Redraw workspace canvas
     redrawCanvas();
   }
 
-  // ─── UTILITY HELPERS ───────────────────────────────────────
+  // aksaraData is a top-level const in aksara-data.js, so it isn't always on window
+  function getAksaraData() {
+    return (typeof aksaraData !== 'undefined') ? aksaraData : (window.aksaraData || null);
+  }
+
+  function getCurrentChar() {
+    const data = getAksaraData();
+    return data ? data[currentKey] : null;
+  }
+
   function debounce(fn, wait) {
     let timeout;
     return function (...args) {
@@ -993,13 +969,4 @@
       timeout = setTimeout(() => fn.apply(this, args), wait);
     };
   }
-
-  // Expose for debugging if needed
-  window.AksaraTracingEngine = {
-    selectAksara,
-    calculateScore,
-    getMasteredList,
-    TOLERANCE_RADIUS,
-    PRECISION_MAX_DIST
-  };
 })();

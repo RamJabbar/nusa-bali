@@ -1,13 +1,5 @@
-/* =========================================================
-   NUSA BALI HERITAGE — peta.css
-   Dedicated Stylesheet for Peta Budaya Bali & Interactive Map
-   ========================================================= */
-
 @import url('styles.css');
 
-/* =========================================================
-   PETA BUDAYA BALI — INTERACTIVE MAP & HERITAGE PANEL
-   ========================================================= */
 .peta-eyebrow-pill {
   display: inline-flex;
   align-items: center;
@@ -69,7 +61,6 @@
   align-items: stretch;
 }
 
-/* Map Frame */
 .peta-map-frame {
   background: radial-gradient(circle at 50% 35%, #25221d 0%, #171513 100%);
   border: 1px solid rgba(236, 194, 70, 0.18);
@@ -138,7 +129,6 @@
   filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5));
 }
 
-/* SVG Regions */
 .region {
   fill: #22201D;
   stroke: rgba(236, 194, 70, 0.45);
@@ -189,7 +179,6 @@
   filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.8));
 }
 
-/* Sacred Sites Pins */
 .map-point {
   fill: var(--color-red);
   stroke: var(--color-gold);
@@ -215,7 +204,6 @@
   100% { r: 9px; opacity: 0; }
 }
 
-/* Compass Rose */
 .peta-compass {
   position: absolute;
   top: 1.25rem;
@@ -231,7 +219,6 @@
   height: 100%;
 }
 
-/* Map Frame Footer & Legend */
 .peta-map-frame__footer {
   display: flex;
   justify-content: space-between;
@@ -280,7 +267,6 @@
   font-size: 0.72rem;
 }
 
-/* Right Side Panel */
 .peta-panel {
   background: linear-gradient(165deg, rgba(35, 33, 30, 0.95) 0%, rgba(24, 23, 21, 0.98) 100%);
   border: 1px solid rgba(236, 194, 70, 0.22);
@@ -370,7 +356,6 @@
   line-height: 1.55;
 }
 
-/* Heritage List */
 .peta-panel__list {
   display: flex;
   flex-direction: column;
@@ -490,7 +475,6 @@
   opacity: 0.8;
 }
 
-/* Bottom Stats Bar */
 .peta-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr) auto;
@@ -526,19 +510,7 @@
   margin-top: 0.25rem;
 }
 
-.peta-edition-badge {
-  background: #25221d;
-  border: 1px solid rgba(189, 45, 36, 0.5);
-  color: var(--color-cream);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.6rem 1.25rem;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 1024px) {
   .peta-layout {
     grid-template-columns: 1fr;
@@ -552,12 +524,6 @@
   .peta-stat {
     border-right: none;
     padding-right: 0;
-  }
-
-  .peta-edition-badge {
-    grid-column: span 2;
-    text-align: center;
-    margin: 0 auto;
   }
 }
 
@@ -578,9 +544,5 @@
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 1.25rem 1rem;
-  }
-
-  .peta-edition-badge {
-    grid-column: span 1;
   }
 }

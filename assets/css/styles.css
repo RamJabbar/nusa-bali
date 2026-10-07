@@ -1,29 +1,19 @@
 :root {
   --color-black: #1C1B1B;
-  --color-black-soft: #232323;
-  --color-surface: #262421;
   --color-cream: #FAF8F5;
   --color-cream-dim: #E4E0D4;
   --color-red: #BD2D24;
   --color-gold: #ECC246;
   --color-text-muted: #A9A49A;
-  --color-text-muted-light: #6b6b63;
-  --color-white: #FFFFFF;
-  --color-backgorund-white: #F8F9FF;
 
-  /* Typography Design System — Authentic Balinese Editorial */
   --font-display: 'Cinzel', 'Playfair Display', Georgia, serif;
   --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  --container-w: 1240px;
-  --radius: 2px;
-  --gap: 1.5rem;
-
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ---------- reset ---------- */
+/* Reset */
 *,
 *::before,
 *::after {
@@ -98,7 +88,7 @@ p {
 
 .container {
   width: 100%;
-  max-width: var(--container-w);
+  max-width: 1240px;
   margin-inline: auto;
   padding-inline: 1.5rem;
 }
@@ -110,7 +100,7 @@ p {
 
 .media-frame {
   position: relative;
-  background: var(--color-surface);
+  background: #262421;
   overflow: hidden;
 }
 
@@ -128,7 +118,7 @@ p {
   pointer-events: none;
 }
 
-/* ---------- buttons ---------- */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -138,7 +128,7 @@ p {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: var(--radius);
+  border-radius: 2px;
   border: 1px solid transparent;
   transition: transform 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
   white-space: nowrap;
@@ -187,7 +177,7 @@ p {
   color: var(--color-black);
 }
 
-/* ---------- header / nav ---------- */
+/* Header */
 .site-header {
   position: sticky;
   top: 0;
@@ -216,17 +206,10 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  text-decoration: none;
   flex-shrink: 0;
 }
 
-.brand__logo-img {
-  height: 60px;
-  max-width: 300px;
-  display: block;
-  object-fit: contain;
-}
-
+.brand__logo-img,
 .brand__mark {
   height: 60px;
   max-width: 300px;
@@ -268,85 +251,11 @@ p {
   border-radius: 2px;
 }
 
-.nav-link-stacked {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  line-height: 1.05;
-  text-align: center;
-  font-size: 0.66rem;
-}
-
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 0.65rem;
   flex-shrink: 0;
-}
-
-.nav-btn-gamelan {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  height: 38px;
-  padding: 0 0.9rem;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  color: #F2F0EA;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
-  white-space: nowrap;
-}
-
-.nav-btn-gamelan:hover,
-.nav-btn-gamelan.is-playing {
-  border-color: #D4AF37;
-  color: #D4AF37;
-  background: rgba(212, 175, 55, 0.08);
-}
-
-.icon-waveform {
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-}
-
-.nav-btn-gamelan.is-playing .icon-waveform line {
-  animation: wavePulse 1s ease-in-out infinite alternate;
-  transform-origin: center;
-}
-
-.nav-btn-gamelan.is-playing .icon-waveform line:nth-of-type(2) {
-  animation-delay: 0.2s;
-}
-
-.nav-btn-gamelan.is-playing .icon-waveform line:nth-of-type(3) {
-  animation-delay: 0.4s;
-}
-
-.nav-btn-gamelan.is-playing .icon-waveform line:nth-of-type(4) {
-  animation-delay: 0.1s;
-}
-
-.nav-btn-gamelan.is-playing .icon-waveform line:nth-of-type(5) {
-  animation-delay: 0.3s;
-}
-
-@keyframes wavePulse {
-  0% {
-    transform: scaleY(0.4);
-  }
-
-  100% {
-    transform: scaleY(1.2);
-  }
 }
 
 .nav-square-btn {
@@ -375,28 +284,6 @@ p {
   height: 17px;
 }
 
-.icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid rgba(242, 240, 234, 0.2);
-  background: transparent;
-  color: var(--color-cream);
-}
-
-.icon-btn:hover {
-  border-color: var(--color-gold);
-  color: var(--color-gold);
-}
-
-.icon-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
 .nav-toggle {
   display: none;
   width: 38px;
@@ -404,7 +291,7 @@ p {
   border: 1px solid rgba(242, 240, 234, 0.2);
   background: transparent;
   color: var(--color-cream);
-  border-radius: var(--radius);
+  border-radius: 2px;
 }
 
 .mobile-nav {
@@ -445,11 +332,8 @@ p {
   border: 0;
 }
 
-/* ---------- hero ---------- */
-
-
+/* Hero */
 .hero {
-
   position: relative;
   max-width: 100%;
   border-radius: 0 0 32px 32px;
@@ -464,7 +348,6 @@ p {
   inset: 0;
   z-index: -1;
 }
-
 
 .hero__bg img {
   width: 100%;
@@ -496,13 +379,11 @@ p {
 }
 
 .hero h1 {
-  font-family: var(--font-serif);
   font-size: clamp(2.8rem, 5.2vw, 4.4rem);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.015em;
   color: #FFFFFF;
-  margin: 0;
 }
 
 .hero h1 span {
@@ -510,7 +391,6 @@ p {
 }
 
 .hero h1 .accent-italic {
-  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
   color: var(--color-gold);
@@ -544,15 +424,13 @@ p {
   height: 56px;
   background: linear-gradient(90deg, #661B16, var(--color-red));
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid #BCA7A7;
   border-radius: 16px;
-  border-color: #BCA7A7;
   font-family: var(--font-display);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  text-decoration: none;
   box-shadow: 0 4px 18px rgba(132, 40, 32, 0.4);
   transition: background 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
   cursor: pointer;
@@ -562,8 +440,7 @@ p {
   background: linear-gradient(135deg, #962F26, var(--color-red));
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(132, 40, 32, 0.55);
-  color: #FFFFFF;
-  border-color: var(--color-white);
+  border-color: #FFFFFF;
 }
 
 .btn-hero-secondary {
@@ -575,9 +452,8 @@ p {
   height: 56px;
   background: #1C1E1D;
   color: #F2F0EA;
-  border: 1px solid #736955;
+  border: 1px solid #9B7813;
   border-radius: 16px;
-  border-color: #9B7813;
   font-family: var(--font-display);
   font-size: 0.74rem;
   font-weight: 700;
@@ -667,7 +543,7 @@ p {
   margin-top: 0.25rem;
 }
 
-/* ---------- generic section header ---------- */
+/* Sections */
 .section {
   padding: 6rem 0;
 }
@@ -763,8 +639,7 @@ p {
   text-wrap: pretty;
 }
 
-
-/* ---------- philosophy pillars ---------- */
+/* Pillars */
 .pillars-grid {
   display: grid;
   grid-template-columns: 1fr 1.1fr 1fr;
@@ -789,13 +664,10 @@ p {
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.09);
 }
 
-/* Center featured card — lighter cream, taller, elevated */
 .pillar-card--featured {
-  background: var(--color-cream);
   color: #1C1B1B;
   border-color: rgba(26, 26, 26, 0.06);
   padding: 2.25rem 1.75rem 2rem;
-  border-radius: 12px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(-28px);
 }
@@ -812,7 +684,6 @@ p {
   margin-bottom: 0.25rem;
 }
 
-/* Badge pill */
 .pillar-card__badge {
   font-family: var(--font-display);
   font-size: 0.62rem;
@@ -827,11 +698,9 @@ p {
 }
 
 .pillar-card--featured .pillar-card__badge {
-  color: #7a6928;
   background: rgba(196, 158, 40, 0.16);
 }
 
-/* Icon box — dark rounded square for ALL cards */
 .pillar-card__icon {
   width: 42px;
   height: 42px;
@@ -844,18 +713,11 @@ p {
   flex-shrink: 0;
 }
 
-.pillar-card--featured .pillar-card__icon {
-  background: #1C1B1B;
-  color: #F0C040;
-  border-radius: 6px;
-}
-
 .pillar-card__icon svg {
   width: 20px;
   height: 20px;
 }
 
-/* Title */
 .pillar-card h3 {
   margin-top: 1.5rem;
   font-size: 1.65rem;
@@ -867,7 +729,6 @@ p {
   letter-spacing: -0.01em;
 }
 
-/* Body text */
 .pillar-card p {
   margin-top: 0.9rem;
   font-family: var(--font-sans);
@@ -877,11 +738,6 @@ p {
   flex-grow: 1;
 }
 
-.pillar-card--featured p {
-  color: #68625a;
-}
-
-/* Link row */
 .pillar-card__link {
   margin-top: 1.75rem;
   display: flex;
@@ -900,11 +756,6 @@ p {
   transition: color 0.2s var(--ease);
 }
 
-.pillar-card--featured .pillar-card__link {
-  color: #C9A227;
-  border-top-color: rgba(26, 26, 26, 0.09);
-}
-
 .pillar-card__link:hover {
   color: #A8841A;
 }
@@ -914,12 +765,6 @@ p {
   height: 15px;
   flex-shrink: 0;
   transition: transform 0.2s var(--ease);
-  /* Force arrow color to dark regardless of link text color */
-  stroke: #1C1B1B !important;
-  color: #1C1B1B;
-}
-
-.pillar-card--featured .pillar-card__link svg {
   stroke: #1C1B1B !important;
   color: #1C1B1B;
 }
@@ -928,7 +773,7 @@ p {
   transform: translateX(4px);
 }
 
-/* ---------- card grids (tarian / kerajinan / situs) ---------- */
+/* Card grids */
 .card-grid {
   display: grid;
   gap: 1.5rem;
@@ -938,11 +783,7 @@ p {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.card-grid--4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-/* ---------- horizontal marquee track (tarian & kerajinan) ---------- */
+/* Marquee */
 .marquee-viewport {
   overflow: hidden;
   width: 100%;
@@ -1098,7 +939,7 @@ p {
   transform: translateX(3px);
 }
 
-/* ---------- Tarian Card Customization (Reference Design) ---------- */
+/* Tarian */
 #tarian .culture-card {
   border-radius: 24px;
   padding: 10px;
@@ -1175,7 +1016,7 @@ p {
   padding-top: 1rem;
 }
 
-/* ---------- Kerajinan Arch Card (Reference Design) ---------- */
+/* Kerajinan */
 #kerajinan .culture-card,
 .kerajinan-card {
   border-radius: 150px 150px 24px 24px;
@@ -1245,7 +1086,7 @@ p {
   margin-top: 0.45rem;
 }
 
-/* ---------- Shared Detail Modal (Tarian & Kerajinan) ---------- */
+/* Detail modal */
 .detail-modal[hidden] {
   display: none !important;
 }
@@ -1428,7 +1269,7 @@ p {
   }
 }
 
-/* ---------- Section: Situs Budaya (Keindahan yang Menyimpan Makna) ---------- */
+/* Situs budaya */
 .section--situs,
 #situs-budaya {
   background: var(--color-cream);
@@ -1480,7 +1321,6 @@ p {
   gap: 1.75rem;
 }
 
-/* Situs Card */
 .situs-card {
   background: var(--color-cream);
   border: 1px solid #EAE5DB;
@@ -1622,7 +1462,6 @@ p {
   transform: translateX(4px);
 }
 
-/* Responsive: Situs Budaya (Keindahan yang Menyimpan Makna) */
 @media (max-width: 960px) {
 
   .section--situs,
@@ -1723,7 +1562,7 @@ p {
   }
 }
 
-/* ---------- gallery: jendela keabadian pusaka ---------- */
+/* Gallery */
 .section--gallery {
   position: relative;
   background: #141312;
@@ -1737,7 +1576,6 @@ p {
   margin-bottom: 2.75rem;
 }
 
-/* Eyebrow Pill Tag */
 .gallery-eyebrow-badge {
   display: inline-flex;
   align-items: center;
@@ -1773,7 +1611,6 @@ p {
   line-height: 1.65;
 }
 
-/* 3 Metadata Badges Row */
 .gallery-meta-row {
   display: flex;
   align-items: center;
@@ -1809,7 +1646,6 @@ p {
   user-select: none;
 }
 
-/* ─── TWO-ROW ASYMMETRIC GRID ─── */
 .gallery-etno-grid {
   display: flex;
   flex-direction: column;
@@ -1829,7 +1665,6 @@ p {
   gap: 1.5rem;
 }
 
-/* ─── CARD COMPONENT ─── */
 .gallery-etno-card {
   position: relative;
   border-radius: 8px;
@@ -1859,7 +1694,6 @@ p {
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(236, 194, 70, 0.12);
 }
 
-/* Poleng Edge (Checkered teeth along top border) */
 .gallery-etno-card__film-edge {
   position: absolute;
   top: 0;
@@ -1878,7 +1712,6 @@ p {
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-/* Media Frame & Scrim */
 .gallery-etno-card__media {
   position: absolute;
   inset: 0;
@@ -1919,7 +1752,6 @@ p {
       rgba(10, 9, 8, 0.99) 100%);
 }
 
-/* Card Content Overlay */
 .gallery-etno-card__content {
   position: relative;
   z-index: 3;
@@ -2037,7 +1869,7 @@ p {
   color: #FFFFFF;
 }
 
-/* ─── INTERACTIVE LIGHTBOX MODAL ─── */
+/* Gallery modal */
 .gallery-modal {
   position: fixed;
   inset: 0;
@@ -2281,13 +2113,7 @@ p {
   height: 14px;
 }
 
-.section-divider {
-  border: none;
-  border-top: 1px solid rgba(201, 162, 39, 0.3);
-  margin: 0;
-}
-
-/* ---------- teaser sections (gamelan, peta, aksara) ---------- */
+/* Teasers */
 .teaser-section {
   background-color: #1A1A1A;
   color: var(--color-cream);
@@ -2295,25 +2121,12 @@ p {
   position: relative;
 }
 
-.teaser-section--light {
-  background-color: #F2F0EA;
-  color: #1A1A1A;
-}
-
 .teaser-section .section-heading span:first-child {
   color: var(--color-cream);
 }
 
-.teaser-section--light .section-heading span:first-child {
-  color: #1A1A1A;
-}
-
 .teaser-section .section-desc {
   color: var(--color-text-muted);
-}
-
-.teaser-section--light .section-desc {
-  color: #5a564c;
 }
 
 .teaser-grid {
@@ -2362,7 +2175,6 @@ p {
   z-index: 1;
 }
 
-/* Corner Diamond Accents */
 .teaser-media__diamond {
   position: absolute;
   width: 10px;
@@ -2654,9 +2466,9 @@ p {
   }
 }
 
-/* ---------- footer ---------- */
+/* Footer */
 .site-footer {
-  background: var(--color-black-soft);
+  background: #232323;
   padding: 4.5rem 0 0;
 }
 
@@ -2688,19 +2500,6 @@ p {
   line-height: 1.7;
   color: var(--color-text-muted);
   max-width: 36ch;
-}
-
-.footer-status {
-  display: inline-block;
-  margin-top: 1.25rem;
-  font-family: var(--font-display);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-gold);
-  border: 1px solid rgba(201, 162, 39, 0.4);
-  padding: 0.4rem 0.75rem;
 }
 
 .footer-col h4 {
@@ -2781,7 +2580,7 @@ p {
   margin-top: 0.6rem;
   font-family: var(--font-sans);
   font-size: 0.72rem;
-  color: var(--color-text-muted-light);
+  color: #6b6b63;
   min-height: 1em;
 }
 
@@ -2793,7 +2592,7 @@ p {
   padding: 1.5rem 0;
   font-family: var(--font-sans);
   font-size: 0.75rem;
-  color: var(--color-text-muted-light);
+  color: #6b6b63;
   letter-spacing: 0.02em;
 }
 
@@ -2814,7 +2613,7 @@ p {
   color: var(--color-gold);
 }
 
-/* ---------- responsive ---------- */
+/* Responsive */
 @media (max-width: 960px) {
   .nav-links {
     display: none;
@@ -2846,12 +2645,10 @@ p {
     order: -1;
   }
 
-  .card-grid--3,
-  .card-grid--4 {
+  .card-grid--3 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Gallery Responsive Layout (Tablet) */
   .gallery-meta-row {
     flex-wrap: wrap;
     justify-content: center;
@@ -2911,8 +2708,7 @@ p {
     grid-template-columns: 1fr 1fr;
   }
 
-  .card-grid--3,
-  .card-grid--4 {
+  .card-grid--3 {
     grid-template-columns: 1fr;
   }
 
@@ -2921,7 +2717,6 @@ p {
     align-items: stretch;
   }
 
-  /* Gallery Responsive Layout (Mobile) */
   .gallery-eyebrow-badge {
     font-size: 0.62rem;
     letter-spacing: 0.12em;

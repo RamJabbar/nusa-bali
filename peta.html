@@ -20,7 +20,7 @@
 
 <body>
 
-  <!-- =================== HEADER / NAV =================== -->
+  <!-- Header -->
   <header class="site-header" id="siteHeader">
     <div class="container">
       <a href="index.html#beranda" class="brand">
@@ -63,7 +63,7 @@
   </header>
 
   <main>
-    <!-- =================== PETA BUDAYA =================== -->
+    <!-- Peta budaya -->
     <section class="section" id="peta">
       <div class="container">
         <div class="section-head section-head--center">
@@ -78,19 +78,17 @@
             adiluhung kriya, pura kahyangan, dan upacara adat di 9 kabupaten &amp; kota.
           </p>
 
-          <!-- Filter Chip Row -->
           <div class="peta-filters" id="petaFilters">
             <button class="peta-chip is-active" type="button" data-filter="semua">Semua</button>
-            <button class="peta-chip" type="button" data-filter="tarian">🎭 Tarian</button>
-            <button class="peta-chip" type="button" data-filter="kerajinan">⚒️ Kerajinan</button>
-            <button class="peta-chip" type="button" data-filter="situs-suci">⛩️ Situs Suci</button>
-            <button class="peta-chip" type="button" data-filter="upacara">🧉 Upacara</button>
+            <button class="peta-chip" type="button" data-filter="tarian">Tarian</button>
+            <button class="peta-chip" type="button" data-filter="kerajinan">Kerajinan</button>
+            <button class="peta-chip" type="button" data-filter="situs-suci">Situs Suci</button>
+            <button class="peta-chip" type="button" data-filter="upacara">Upacara</button>
           </div>
         </div>
 
-        <!-- 2-Column Map & Side Panel Layout -->
         <div class="peta-layout">
-          <!-- Left: Map Frame -->
+          <!-- Map -->
           <div class="peta-map-frame">
             <div class="peta-map-frame__header">
               <span class="peta-map-frame__title">
@@ -119,7 +117,7 @@
                 </svg>
               </div>
 
-              <!-- Interactive Inline SVG Map of Bali with 9 Clickable Regencies -->
+              <!-- Bali map -->
               <svg id="baliMap" viewBox="0 0 680 430" role="region" aria-label="Peta Interaktif Kabupaten Bali">
                 <!-- Drop shadow filter for active region -->
                 <defs>
@@ -178,13 +176,13 @@
                 <path class="region" id="reg-denpasar" data-region="denpasar" data-name="Denpasar" tabindex="0"
                   role="button" aria-label="Kota Denpasar" d="M 290 320 L 318 368 L 312 375 L 288 365 L 268 348 Z" />
 
-                <!-- Gunung Agung Sacred Volcano Icon in Karangasem -->
+                <!-- Gunung Agung icon -->
                 <g transform="translate(425, 275)" pointer-events="none">
                   <polygon points="0,-16 -12,10 12,10" fill="url(#mountainGrad)" stroke="#ECC246" stroke-width="1.2" />
                   <polygon points="0,-16 -5,-6 5,-6" fill="#FFF275" />
                 </g>
 
-                <!-- Regency Text Labels -->
+                <!-- Regency labels -->
                 <text class="region-label" x="114" y="285">JEMBRANA</text>
                 <text class="region-label" x="290" y="234">BULELENG</text>
                 <text class="region-label" x="210" y="305">TABANAN</text>
@@ -196,7 +194,7 @@
                 <text class="region-label" x="298" y="360" font-size="7.5">DENPASAR</text>
                 <text class="region-label" x="412" y="390" font-size="7">Nusa Penida</text>
 
-                <!-- Sacred Heritage Points (Red Dots with Pulse Halos) -->
+                <!-- Heritage points -->
                 <circle class="map-point-halo" cx="112" cy="275" r="5" />
                 <circle class="map-point" cx="112" cy="275" r="3.2" data-category="situs-suci" />
 
@@ -232,7 +230,7 @@
               </svg>
             </div>
 
-            <!-- Map Frame Footer Legend -->
+            <!-- Legend -->
             <div class="peta-map-frame__footer">
               <div class="peta-legend">
                 <span class="peta-legend__item">
@@ -252,7 +250,7 @@
             </div>
           </div>
 
-          <!-- Right: Interactive Heritage Panel -->
+          <!-- Heritage panel -->
           <div class="peta-panel" id="petaPanel">
             <div class="peta-panel__top">
               <span class="peta-panel__tag" id="petaPanelTag">
@@ -274,12 +272,11 @@
               </p>
             </div>
 
-            <!-- Cultural Items List -->
             <div class="peta-panel__list" id="petaPanelList">
-              <!-- Dynamically rendered by map.js -->
+              <!-- Rendered by map.js -->
             </div>
 
-            <!-- Empty State -->
+            <!-- Empty state -->
             <p class="peta-panel--empty" id="petaPanelEmpty" hidden>
               Tidak ada warisan budaya yang sesuai dengan filter ini di wilayah terpilih.
             </p>
@@ -291,7 +288,7 @@
           </div>
         </div>
 
-        <!-- Bottom Stats Bar -->
+        <!-- Stats -->
         <div class="peta-stats">
           <div class="peta-stat">
             <div class="peta-stat__num">9</div>
@@ -314,7 +311,7 @@
     </section>
   </main>
 
-  <!-- =================== FOOTER =================== -->
+  <!-- Footer -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">

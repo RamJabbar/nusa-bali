@@ -1,7 +1,4 @@
-/**
- * NUSA BALI HERITAGE — animate.js
- * Dependency-free infinite horizontal marquee module with manual drag/swipe support.
- */
+/* Nusa Bali Heritage — infinite marquee with drag/swipe support */
 
 (function () {
   'use strict';
@@ -47,7 +44,6 @@
     let isDragging = false;
     let hasDragged = false;
     let startX = 0;
-    let startY = 0;
     let dragStartCurrentX = 0;
     let activePointerId = null;
 
@@ -71,7 +67,6 @@
       isDragging = true;
       hasDragged = false;
       startX = e.clientX;
-      startY = e.clientY;
       dragStartCurrentX = currentX;
       activePointerId = e.pointerId;
       isPaused = true;
@@ -90,32 +85,27 @@
       if (!isDragging || e.pointerId !== activePointerId) return;
 
       const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
 
       if (!hasDragged) {
-        // Horizontal drag threshold
-        if (Math.abs(deltaX) > 6) {
-          hasDragged = true;
-          window.__justDragged = true;
-          track.dataset.justDragged = 'true';
-          if (viewport && viewport.setPointerCapture) {
-            try {
-              viewport.setPointerCapture(e.pointerId);
-            } catch (err) {}
-          }
-        } else {
-          return;
+        // Ignore tiny movements so plain clicks still work
+        if (Math.abs(deltaX) <= 6) return;
+
+        hasDragged = true;
+        window.__justDragged = true;
+        track.dataset.justDragged = 'true';
+        if (viewport && viewport.setPointerCapture) {
+          try {
+            viewport.setPointerCapture(e.pointerId);
+          } catch (err) {}
         }
       }
 
-      if (hasDragged) {
-        if (e.cancelable) {
-          e.preventDefault();
-        }
-        currentX = dragStartCurrentX - deltaX;
-        wrapCurrentX();
-        renderTransform();
+      if (e.cancelable) {
+        e.preventDefault();
       }
+      currentX = dragStartCurrentX - deltaX;
+      wrapCurrentX();
+      renderTransform();
     }
 
     function onPointerUp(e) {
@@ -191,7 +181,6 @@
       }
     });
 
-    // Animation loop using requestAnimationFrame
     function loop(timestamp) {
       if (!lastTimestamp) {
         lastTimestamp = timestamp;

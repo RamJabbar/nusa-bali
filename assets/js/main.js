@@ -1,7 +1,4 @@
-/* =========================================================
-   NUSA BALI HERITAGE — main.js
-   Vanilla JS only — no dependencies.
-   ========================================================= */
+/* Nusa Bali Heritage — shared scripts (header, nav, filters, gallery modal) */
 
 document.addEventListener('DOMContentLoaded', () => {
   initStickyHeader();
@@ -14,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGalleryModal();
 });
 
-/* ---------- 1. Sticky header background on scroll ---------- */
+/* Sticky header */
 function initStickyHeader() {
   const header = document.getElementById('siteHeader');
   if (!header) return;
@@ -27,7 +24,7 @@ function initStickyHeader() {
   window.addEventListener('scroll', toggle, { passive: true });
 }
 
-/* ---------- 1b. Active nav link highlight ---------- */
+/* Active nav link */
 function initNavActiveState() {
   const navLinks = document.querySelectorAll('.nav-links a');
   if (!navLinks.length) return;
@@ -69,30 +66,24 @@ function initNavActiveState() {
   }
 }
 
-/* ---------- 1c. Header action buttons (Gamelan & Theme) ---------- */
+/* Gamelan & theme buttons */
 function initHeaderActions() {
-  const gamelanBtn = document.getElementById('gamelanBtn');
-  const heroAudioBtn = document.getElementById('heroAudioBtn');
+  const audioButtons = [
+    document.getElementById('gamelanBtn'),
+    document.getElementById('heroAudioBtn')
+  ].filter(Boolean);
 
+  // Both buttons share one on/off state
   let isPlaying = false;
   const toggleGamelan = () => {
     isPlaying = !isPlaying;
-    if (gamelanBtn) {
-      gamelanBtn.classList.toggle('is-playing', isPlaying);
-      gamelanBtn.setAttribute('aria-pressed', String(isPlaying));
-    }
-    if (heroAudioBtn) {
-      heroAudioBtn.classList.toggle('is-playing', isPlaying);
-      heroAudioBtn.setAttribute('aria-pressed', String(isPlaying));
-    }
+    audioButtons.forEach((btn) => {
+      btn.classList.toggle('is-playing', isPlaying);
+      btn.setAttribute('aria-pressed', String(isPlaying));
+    });
   };
 
-  if (gamelanBtn) {
-    gamelanBtn.addEventListener('click', toggleGamelan);
-  }
-  if (heroAudioBtn) {
-    heroAudioBtn.addEventListener('click', toggleGamelan);
-  }
+  audioButtons.forEach((btn) => btn.addEventListener('click', toggleGamelan));
 
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
@@ -102,7 +93,7 @@ function initHeaderActions() {
   }
 }
 
-/* ---------- 2. Mobile nav toggle ---------- */
+/* Mobile nav */
 function initMobileNav() {
   const btn = document.getElementById('navToggle');
   const panel = document.getElementById('mobileNav');
@@ -123,7 +114,7 @@ function initMobileNav() {
   });
 }
 
-/* ---------- 3. Situs Budaya category filter chips ---------- */
+/* Situs Budaya filter chips */
 function initSitusFilter() {
   const chips = document.querySelectorAll('.filter-chips .chip');
   const cards = document.querySelectorAll('#situsGrid .situs-card');
@@ -149,7 +140,7 @@ function initSitusFilter() {
   });
 }
 
-/* ---------- 4. Newsletter form (front-end only — no backend yet) ---------- */
+/* Newsletter form (front-end only for now) */
 function initNewsletterForm() {
   const form = document.getElementById('newsletterForm');
   const note = document.getElementById('newsletterNote');
@@ -167,13 +158,13 @@ function initNewsletterForm() {
   });
 }
 
-/* ---------- 5. Footer year ---------- */
+/* Footer year */
 function initFooterYear() {
   const el = document.getElementById('footerYear');
   if (el) el.textContent = new Date().getFullYear();
 }
 
-/* ---------- 6. Jendela Keabadian Pusaka — Interactive Archival Modal ---------- */
+/* Jendela Keabadian Pusaka — gallery modal */
 const GALLERY_ARCHIVES = [
   {
     id: 1,
@@ -287,7 +278,6 @@ function initGalleryModal() {
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
 
-    // Focus close button for accessibility
     if (closeBtn) closeBtn.focus();
   };
 
@@ -311,7 +301,6 @@ function initGalleryModal() {
     renderArchive(currentIndex);
   };
 
-  // Wire up cards
   cards.forEach((card) => {
     const cardId = card.dataset.galleryId;
     card.addEventListener('click', () => openModal(cardId));
@@ -323,13 +312,12 @@ function initGalleryModal() {
     });
   });
 
-  // Modal controls
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (backdrop) backdrop.addEventListener('click', closeModal);
   if (nextBtn) nextBtn.addEventListener('click', showNext);
   if (prevBtn) prevBtn.addEventListener('click', showPrev);
 
-  // Keyboard navigation inside modal
+  // Arrow keys / Escape while the modal is open
   window.addEventListener('keydown', (e) => {
     if (modal.hidden) return;
 

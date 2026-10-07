@@ -1,13 +1,4 @@
-/* =========================================================
-   NUSA BALI HERITAGE — aksara.css
-   Dedicated Stylesheet for Jejak Aksara (Balinese Script Tracing)
-   ========================================================= */
-
 @import url('styles.css');
-
-/* =========================================================
-   JEJAK AKSARA BALI — TRACING & CALLIGRAPHY STYLES (#bahasa)
-   ========================================================= */
 
 html,
 body {
@@ -25,7 +16,6 @@ body {
   padding: 5rem 0 7rem;
 }
 
-/* Section Head & Badges */
 .aksara-section-head {
   display: flex;
   justify-content: space-between;
@@ -69,16 +59,6 @@ body {
   color: var(--color-gold);
 }
 
-
-.aksara-unesco-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-red);
-  box-shadow: 0 0 6px rgba(189, 45, 36, 0.8);
-}
-
-/* Two-column layout */
 .aksara-layout {
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
@@ -86,7 +66,6 @@ body {
   align-items: start;
 }
 
-/* ─── LEFT COLUMN: SIDEBAR & SELECTOR ─── */
 .aksara-sidebar {
   display: flex;
   flex-direction: column;
@@ -95,7 +74,6 @@ body {
   max-width: 100%;
 }
 
-/* Progress Card */
 .aksara-progress-card {
   background: rgba(24, 22, 21, 0.88);
   backdrop-filter: blur(8px);
@@ -222,7 +200,6 @@ body {
   font-weight: 600;
 }
 
-/* List Card */
 .aksara-list-card {
   background: rgba(22, 20, 19, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -266,7 +243,6 @@ body {
   color: var(--color-gold);
 }
 
-/* Character Rows */
 .aksara-list {
   display: flex;
   flex-direction: column;
@@ -276,7 +252,6 @@ body {
   padding-right: 0.25rem;
 }
 
-/* Custom scrollbar for list */
 .aksara-list::-webkit-scrollbar {
   width: 4px;
 }
@@ -424,7 +399,6 @@ body {
   height: 13px;
 }
 
-/* Hint Card */
 .aksara-hint-card {
   display: flex;
   align-items: flex-start;
@@ -458,7 +432,6 @@ body {
   color: var(--color-cream);
 }
 
-/* ─── RIGHT COLUMN: WORKSPACE ─── */
 .aksara-workspace {
   background: rgba(20, 19, 18, 0.95);
   border: 1px solid rgba(236, 194, 70, 0.22);
@@ -470,7 +443,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Workspace Header */
 .aksara-workspace__header {
   display: flex;
   justify-content: space-between;
@@ -592,7 +564,6 @@ body {
   height: 12px;
 }
 
-/* Canvas Area */
 .aksara-canvas-wrap {
   position: relative;
   width: 100%;
@@ -620,7 +591,6 @@ body {
   z-index: 2;
 }
 
-/* Subtle crosshair guide overlay */
 .aksara-canvas-guides {
   position: absolute;
   inset: 0;
@@ -658,7 +628,6 @@ body {
   border-radius: 50%;
 }
 
-/* Starting Point Dot */
 .aksara-start-dot {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -713,7 +682,6 @@ body {
   }
 }
 
-/* Bottom Hint Pill */
 .aksara-canvas-pill {
   position: absolute;
   bottom: 12px;
@@ -741,7 +709,6 @@ body {
   height: 12px;
 }
 
-/* Control Row Buttons */
 .aksara-controls {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -773,7 +740,6 @@ body {
   border-style: dashed;
 }
 
-/* Result Panel */
 .aksara-result-panel {
   margin-top: 1.5rem;
   background: rgba(26, 24, 22, 0.95);
@@ -961,9 +927,7 @@ body {
   color: #FCA5A5;
 }
 
-/* ─── RESPONSIVE BREAKPOINTS ─── */
-
-/* Tablet & Smaller Laptops (<= 992px) */
+/* Responsive */
 @media (max-width: 992px) {
   .aksara-section {
     padding: 3.5rem 0 5rem;
@@ -981,7 +945,6 @@ body {
     gap: 1.5rem;
   }
 
-  /* Character selector moves into horizontal scroll row */
   .aksara-list-card {
     padding: 0.9rem 1.1rem;
   }
@@ -1021,7 +984,6 @@ body {
   }
 }
 
-/* Tablets & Large Mobile (<= 768px) */
 @media (max-width: 768px) {
   .aksara-section {
     padding: 2.75rem 0 4rem;
@@ -1073,7 +1035,6 @@ body {
   }
 }
 
-/* Standard Mobile Devices (<= 600px) */
 @media (max-width: 600px) {
   .container {
     padding-inline: 1rem;
@@ -1160,7 +1121,6 @@ body {
     align-items: center;
   }
 
-  /* Optimized 2-column mobile layout for control buttons */
   .aksara-controls {
     grid-template-columns: 1fr 1fr;
     gap: 0.6rem;
@@ -1239,7 +1199,6 @@ body {
   }
 }
 
-/* Small Phones (<= 420px) */
 @media (max-width: 420px) {
   .aksara-section {
     padding: 1.5rem 0 3rem;

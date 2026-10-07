@@ -20,7 +20,7 @@
 
 <body>
 
-  <!-- =================== HEADER / NAV =================== -->
+  <!-- Header -->
   <header class="site-header" id="siteHeader">
     <div class="container">
       <a href="index.html#beranda" class="brand">
@@ -63,10 +63,9 @@
   </header>
 
   <main>
-    <!-- =================== JEJAK AKSARA: KALIGRAFI SAKRAL BALI =================== -->
+    <!-- Jejak aksara -->
     <section class="section aksara-section" id="bahasa">
       <div class="container">
-        <!-- Section Header with Badges -->
         <div class="section-head aksara-section-head">
           <div class="aksara-head-text">
             <p class="eyebrow">
@@ -101,11 +100,10 @@
           </div>
         </div>
 
-        <!-- Interactive Tracing Workspace (Two-column layout) -->
         <div class="aksara-layout">
-          <!-- LEFT COLUMN: Character Selector & Progress -->
+          <!-- Sidebar -->
           <aside class="aksara-sidebar">
-            <!-- Progress Card -->
+            <!-- Progress -->
             <div class="aksara-progress-card">
               <div class="aksara-progress-header">
                 <div class="aksara-progress-label">
@@ -141,7 +139,6 @@
               </div>
             </div>
 
-            <!-- List Card -->
             <div class="aksara-list-card">
               <div class="aksara-list-head">
                 <div class="aksara-list-title">
@@ -151,13 +148,11 @@
                 <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 Pratama</span>
               </div>
 
-              <!-- Character Rows (Rendered and updated by aksara.js) -->
+              <!-- Rows rendered by aksara.js -->
               <div class="aksara-list" id="aksaraList" role="tablist" aria-label="Daftar Aksara Wianjana">
-                <!-- Dynamically populated from aksaraData with exact pathD preview icons -->
               </div>
             </div>
 
-            <!-- Calligraphy Instruction Note -->
             <div class="aksara-hint-card">
               <div class="aksara-hint-icon-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -173,9 +168,8 @@
             </div>
           </aside>
 
-          <!-- RIGHT COLUMN: Tracing Workspace & Controls -->
+          <!-- Workspace -->
           <div class="aksara-workspace">
-            <!-- Workspace Top Bar -->
             <div class="aksara-workspace__header">
               <div class="aksara-workspace__meta">
                 <div class="aksara-workspace__bar" aria-hidden="true"></div>
@@ -206,27 +200,25 @@
               </div>
             </div>
 
-            <!-- Square Canvas Tracing Area -->
             <div class="aksara-canvas-wrap" id="aksaraCanvasWrap">
-              <!-- Decorative subtle crosshair & circular lontar guide lines -->
+              <!-- Guide lines -->
               <div class="aksara-canvas-guides" aria-hidden="true">
                 <div class="aksara-guide-line aksara-guide-line--h"></div>
                 <div class="aksara-guide-line aksara-guide-line--v"></div>
                 <div class="aksara-guide-circle"></div>
               </div>
 
-              <!-- Main Tracing Canvas (Internal 300x300 coordinates scaled for HiDPI) -->
+              <!-- Canvas (300x300 internal, scaled for HiDPI) -->
               <canvas id="aksaraCanvas" class="aksara-canvas" touch-action="none"
                 aria-label="Kanvas penelusuran aksara"></canvas>
 
-              <!-- Starting point overlay dot (matching aksaraData[key].contours[0][0]) -->
+              <!-- Start point dot -->
               <div class="aksara-start-dot" id="aksaraStartDot" aria-hidden="true">
                 <span class="aksara-start-dot__pulse"></span>
                 <span class="aksara-start-dot__pip"></span>
                 <span class="aksara-start-dot__tag">Mulai</span>
               </div>
 
-              <!-- Bottom-left instruction pill -->
               <div class="aksara-canvas-pill" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 20h9" />
@@ -236,9 +228,8 @@
               </div>
             </div>
 
-            <!-- Controls Row: Exactly 4 buttons in specific order & labeling -->
+            <!-- Controls -->
             <div class="aksara-controls">
-              <!-- 1. Hapus & Ulangi -->
               <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnReset">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
@@ -247,7 +238,6 @@
                 Hapus &amp; Ulangi
               </button>
 
-              <!-- 2. Pola Panduan -->
               <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnGuide">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -256,7 +246,6 @@
                 Pola Panduan
               </button>
 
-              <!-- 3. Lihat Penilaian Presisi (Primary Action) -->
               <button type="button" class="btn btn--fill aksara-btn aksara-btn--primary" id="aksaraBtnScore">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="9 11 12 14 22 4" />
@@ -265,7 +254,6 @@
                 Lihat Penilaian Presisi
               </button>
 
-              <!-- 4. Aksara Berikutnya -->
               <button type="button" class="btn btn--gold aksara-btn" id="aksaraBtnNext">
                 Aksara Berikutnya
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -275,7 +263,7 @@
               </button>
             </div>
 
-            <!-- Result Panel (Revealed upon pressing "Lihat Penilaian Presisi") -->
+            <!-- Result panel -->
             <div class="aksara-result-panel" id="aksaraResultPanel" hidden>
               <div class="aksara-result-head">
                 <div class="aksara-result-score-block">
@@ -290,7 +278,7 @@
                   aria-label="Tutup hasil penilaian">✕</button>
               </div>
 
-              <!-- Breakdown metrics: Precision vs Coverage -->
+              <!-- Breakdown -->
               <div class="aksara-result-metrics">
                 <div class="aksara-metric-card">
                   <div class="aksara-metric-header">
@@ -321,7 +309,7 @@
     </section>
   </main>
 
-  <!-- =================== FOOTER =================== -->
+  <!-- Footer -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">
