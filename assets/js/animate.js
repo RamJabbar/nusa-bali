@@ -1,172 +1,156 @@
-/* Nusa Bali Heritage — infinite marquee with drag/swipe support */
+// Nusa Bali Heritage — efek marquee bergulir halus & swipe interaktif
 
 (function () {
   'use strict';
 
-  function initMarquees() {
-    // Skip animation if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (prefersReducedMotion && prefersReducedMotion.matches) {
-      return;
-    }
+  function setupMarquees() {
+    const motionPref = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionPref?.matches) return;
 
-    const tracks = document.querySelectorAll('.marquee-track');
-    tracks.forEach((track) => setupMarqueeTrack(track));
+    const marqueeTracks = document.querySelectorAll('.marquee-track');
+    marqueeTracks.forEach((track) => bindMarqueeTrack(track));
   }
 
-  function setupMarqueeTrack(track) {
-    const originalChildren = Array.from(track.children);
-    if (!originalChildren.length) return;
+  function bindMarqueeTrack(track) {
+    const seedNodes = Array.from(track.children);
+    if (!seedNodes.length) return;
 
-    // Clone children once and append to double content for seamless looping
-    originalChildren.forEach((child) => {
-      const clone = child.cloneNode(true);
-      clone.setAttribute('aria-hidden', 'true');
-      // Prevent tabbing to duplicated links/buttons inside cloned set
-      clone.querySelectorAll('a, button, input, select, textarea').forEach((el) => {
-        el.setAttribute('tabindex', '-1');
+    // Gandakan elemen agar looping tidak terputus
+    seedNodes.forEach((node) => {
+      const dup = node.cloneNode(true);
+      dup.setAttribute('aria-hidden', 'true');
+      dup.querySelectorAll('a, button, input, select, textarea').forEach((interactive) => {
+        interactive.setAttribute('tabindex', '-1');
       });
-      track.appendChild(clone);
+      track.appendChild(dup);
     });
 
-    const viewport = track.closest('.marquee-viewport') || track.parentElement;
+    const containerBox = track.closest('.marquee-viewport') || track.parentElement;
+    const parsedSpeed = parseFloat(track.dataset.speed);
+    const scrollSpeed = isNaN(parsedSpeed) || parsedSpeed <= 0 ? 40 : parsedSpeed;
 
-    // Read speed in px/s from data-speed attribute (fallback to 40)
-    const speedAttr = parseFloat(track.dataset.speed);
-    const speed = isNaN(speedAttr) || speedAttr <= 0 ? 40 : speedAttr;
-
-    let currentX = 0;
+    let scrollX = 0;
     let isPaused = false;
-    let lastTimestamp = null;
-    let resumeTimeout = null;
+    let prevFrameTime = null;
+    let resumeDelayTimer = null;
 
-    // Drag state
-    let isDragging = false;
-    let hasDragged = false;
-    let startX = 0;
-    let dragStartCurrentX = 0;
-    let activePointerId = null;
+    let isSwiping = false;
+    let didSwipe = false;
+    let originX = 0;
+    let baseScrollX = 0;
+    let activePointer = null;
 
-    function wrapCurrentX() {
+    function normalizeBounds() {
       const halfWidth = track.scrollWidth / 2;
       if (halfWidth > 0) {
-        while (currentX < 0) currentX += halfWidth;
-        while (currentX >= halfWidth) currentX -= halfWidth;
+        while (scrollX < 0) scrollX += halfWidth;
+        while (scrollX >= halfWidth) scrollX -= halfWidth;
       }
     }
 
-    function renderTransform() {
-      track.style.transform = `translateX(-${currentX}px)`;
+    function applyTransform() {
+      track.style.transform = `translateX(-${scrollX}px)`;
     }
 
-    // Pointer events for manual dragging (mouse + touch)
     function onPointerDown(e) {
-      // Only main button for mouse, or any touch
       if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-      isDragging = true;
-      hasDragged = false;
-      startX = e.clientX;
-      dragStartCurrentX = currentX;
-      activePointerId = e.pointerId;
+      isSwiping = true;
+      didSwipe = false;
+      originX = e.clientX;
+      baseScrollX = scrollX;
+      activePointer = e.pointerId;
       isPaused = true;
-      lastTimestamp = null;
+      prevFrameTime = null;
 
-      if (resumeTimeout) {
-        clearTimeout(resumeTimeout);
-        resumeTimeout = null;
+      if (resumeDelayTimer) {
+        clearTimeout(resumeDelayTimer);
+        resumeDelayTimer = null;
       }
 
       track.classList.add('is-dragging');
-      if (viewport) viewport.classList.add('is-dragging');
+      if (containerBox) containerBox.classList.add('is-dragging');
     }
 
     function onPointerMove(e) {
-      if (!isDragging || e.pointerId !== activePointerId) return;
+      if (!isSwiping || e.pointerId !== activePointer) return;
 
-      const deltaX = e.clientX - startX;
+      const diffX = e.clientX - originX;
 
-      if (!hasDragged) {
-        // Ignore tiny movements so plain clicks still work
-        if (Math.abs(deltaX) <= 6) return;
-
-        hasDragged = true;
+      if (!didSwipe) {
+        if (Math.abs(diffX) <= 6) return;
+        didSwipe = true;
         window.__justDragged = true;
         track.dataset.justDragged = 'true';
-        if (viewport && viewport.setPointerCapture) {
+        if (containerBox?.setPointerCapture) {
           try {
-            viewport.setPointerCapture(e.pointerId);
-          } catch (err) {}
+            containerBox.setPointerCapture(e.pointerId);
+          } catch (_) {}
         }
       }
 
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-      currentX = dragStartCurrentX - deltaX;
-      wrapCurrentX();
-      renderTransform();
+      if (e.cancelable) e.preventDefault();
+      scrollX = baseScrollX - diffX;
+      normalizeBounds();
+      applyTransform();
     }
 
     function onPointerUp(e) {
-      if (!isDragging || (activePointerId !== null && e.pointerId !== activePointerId)) return;
+      if (!isSwiping || (activePointer !== null && e.pointerId !== activePointer)) return;
 
-      isDragging = false;
-      activePointerId = null;
+      isSwiping = false;
+      activePointer = null;
       track.classList.remove('is-dragging');
-      if (viewport) viewport.classList.remove('is-dragging');
+      if (containerBox) containerBox.classList.remove('is-dragging');
 
-      if (viewport && viewport.releasePointerCapture && viewport.hasPointerCapture && viewport.hasPointerCapture(e.pointerId)) {
+      if (containerBox?.releasePointerCapture && containerBox.hasPointerCapture?.(e.pointerId)) {
         try {
-          viewport.releasePointerCapture(e.pointerId);
-        } catch (err) {}
+          containerBox.releasePointerCapture(e.pointerId);
+        } catch (_) {}
       }
 
-      if (hasDragged) {
+      if (didSwipe) {
         window.__justDragged = true;
         track.dataset.justDragged = 'true';
         setTimeout(() => {
           window.__justDragged = false;
           track.dataset.justDragged = 'false';
-          hasDragged = false;
+          didSwipe = false;
         }, 250);
       }
 
-      // Smoothly resume auto-scroll after manual swipe if cursor is not hovering
-      if (resumeTimeout) clearTimeout(resumeTimeout);
-      resumeTimeout = setTimeout(() => {
-        const isHovered = (viewport && viewport.matches(':hover')) || track.matches(':hover');
+      if (resumeDelayTimer) clearTimeout(resumeDelayTimer);
+      resumeDelayTimer = setTimeout(() => {
+        const isHovered = (containerBox && containerBox.matches(':hover')) || track.matches(':hover');
         const isFocused = track.matches(':focus-within');
         if (!isHovered && !isFocused) {
           isPaused = false;
-          lastTimestamp = null;
+          prevFrameTime = null;
         }
       }, 1500);
     }
 
-    const targetEl = viewport || track;
-    targetEl.addEventListener('pointerdown', onPointerDown);
+    const interactiveArea = containerBox || track;
+    interactiveArea.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove, { passive: false });
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
 
-    // Prevent click opening modals right after a drag
     track.addEventListener('click', (e) => {
-      if (hasDragged || track.dataset.justDragged === 'true' || window.__justDragged) {
+      if (didSwipe || track.dataset.justDragged === 'true' || window.__justDragged) {
         e.preventDefault();
         e.stopPropagation();
       }
     }, true);
 
-    // Pause on hover & focus
     track.addEventListener('mouseenter', () => {
       isPaused = true;
     });
 
     track.addEventListener('mouseleave', () => {
-      if (!isDragging) {
+      if (!isSwiping) {
         isPaused = false;
-        lastTimestamp = null;
+        prevFrameTime = null;
       }
     });
 
@@ -175,36 +159,35 @@
     });
 
     track.addEventListener('focusout', () => {
-      if (!isDragging) {
+      if (!isSwiping) {
         isPaused = false;
-        lastTimestamp = null;
+        prevFrameTime = null;
       }
     });
 
-    function loop(timestamp) {
-      if (!lastTimestamp) {
-        lastTimestamp = timestamp;
+    function step(timestamp) {
+      if (!prevFrameTime) {
+        prevFrameTime = timestamp;
       }
 
-      const delta = (timestamp - lastTimestamp) / 1000;
-      lastTimestamp = timestamp;
+      const elapsed = (timestamp - prevFrameTime) / 1000;
+      prevFrameTime = timestamp;
 
-      // Only advance if delta is sane and marquee is not paused/dragging
-      if (delta > 0 && delta < 0.2 && !isPaused && !isDragging) {
-        currentX += speed * delta;
-        wrapCurrentX();
-        renderTransform();
+      if (elapsed > 0 && elapsed < 0.2 && !isPaused && !isSwiping) {
+        scrollX += scrollSpeed * elapsed;
+        normalizeBounds();
+        applyTransform();
       }
 
-      requestAnimationFrame(loop);
+      requestAnimationFrame(step);
     }
 
-    requestAnimationFrame(loop);
+    requestAnimationFrame(step);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMarquees);
+    document.addEventListener('DOMContentLoaded', setupMarquees);
   } else {
-    initMarquees();
+    setupMarquees();
   }
 })();

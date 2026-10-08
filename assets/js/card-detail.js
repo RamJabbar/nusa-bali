@@ -1,10 +1,9 @@
-/* Nusa Bali Heritage — detail modal for Tarian & Kerajinan cards */
+// Nusa Bali Heritage — modal informasi mendalam tarian & kerajinan
 
 (function () {
   'use strict';
 
-  const CARD_DETAILS = {
-    // Tarian
+  const koleksiPusaka = {
     "tari-kecak": {
       category: "tarian",
       image: "assets/images/tarian/tari-kecak.jpg",
@@ -48,7 +47,6 @@
       body: "Berdasarkan legenda seorang pendeta pengembara yang ditolak masuk upacara kerajaan, lalu mengutuk upacara tersebut agar tidak pernah sempurna sampai ia diundang kembali. Kini, topeng ini wajib dipentaskan di penutup upacara besar (piodalan, ngaben) sebagai permohonan restu kesempurnaan yadnya."
     },
 
-    // Kerajinan
     "ukir-kayu": {
       category: "kerajinan",
       image: "assets/images/kerajinan/ukir-kayu.jpg",
@@ -107,132 +105,119 @@
     }
   };
 
-  let modalEl = null;
-  let modalMediaEl = null;
-  let modalImageEl = null;
-  let modalBadgeEl = null;
-  let modalTitleEl = null;
-  let modalMetaEl = null;
-  let modalBodyEl = null;
-  let lastFocusedEl = null;
+  let modalPopup = null;
+  let mediaContainer = null;
+  let mediaImg = null;
+  let badgeTag = null;
+  let headingTitle = null;
+  let metaOrigin = null;
+  let descBody = null;
+  let lastActiveCard = null;
 
-  function initCardDetails() {
-    modalEl = document.getElementById('detailModal');
-    if (!modalEl) return;
+  function bindCardModalEvents() {
+    modalPopup = document.getElementById('detailModal');
+    if (!modalPopup) return;
 
-    modalMediaEl = document.getElementById('detailModalMedia');
-    modalImageEl = document.getElementById('detailModalImage');
-    modalBadgeEl = document.getElementById('detailModalBadge');
-    modalTitleEl = document.getElementById('detailModalTitle');
-    modalMetaEl = document.getElementById('detailModalMeta');
-    modalBodyEl = document.getElementById('detailModalBody');
+    mediaContainer = document.getElementById('detailModalMedia');
+    mediaImg = document.getElementById('detailModalImage');
+    badgeTag = document.getElementById('detailModalBadge');
+    headingTitle = document.getElementById('detailModalTitle');
+    metaOrigin = document.getElementById('detailModalMeta');
+    descBody = document.getElementById('detailModalBody');
 
-    // One delegated click handler for cards and the modal's close controls
     document.addEventListener('click', (e) => {
-      // Ignore the click that ends a marquee drag
       if (window.__justDragged || e.target.closest('[data-just-dragged="true"]')) {
         return;
       }
 
       if (e.target.closest('[data-close]')) {
-        closeModal();
+        closeCardDetails();
         return;
       }
 
-      const card = e.target.closest('.culture-card[data-id]');
-      if (!card) return;
+      const cardTarget = e.target.closest('.culture-card[data-id]');
+      if (!cardTarget) return;
 
-      // Keep the "Pelajari Makna Filosofis" link from navigating
-      const link = e.target.closest('.culture-card__link');
-      if (link) {
-        e.preventDefault();
-      }
+      const linkEl = e.target.closest('.culture-card__link');
+      if (linkEl) e.preventDefault();
 
-      openModalForCard(card);
+      openCardDetails(cardTarget);
     });
 
-    // Enter / Space on a focused card opens it; Escape closes the modal
     document.addEventListener('keydown', (e) => {
-      if (!modalEl.hasAttribute('hidden')) {
-        if (e.key === 'Escape') {
-          closeModal();
-        }
+      if (!modalPopup.hasAttribute('hidden')) {
+        if (e.key === 'Escape') closeCardDetails();
         return;
       }
 
-      const activeEl = document.activeElement;
-      if (activeEl && activeEl.matches('.culture-card[data-id]')) {
+      const currentFocused = document.activeElement;
+      if (currentFocused?.matches('.culture-card[data-id]')) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          openModalForCard(activeEl);
+          openCardDetails(currentFocused);
         }
       }
     });
   }
 
-  function openModalForCard(card) {
-    const id = card.getAttribute('data-id');
-    const data = CARD_DETAILS[id];
-    if (!data) return;
+  function openCardDetails(cardTarget) {
+    const cardKey = cardTarget.getAttribute('data-id');
+    const itemData = koleksiPusaka[cardKey];
+    if (!itemData) return;
 
-    lastFocusedEl = card;
+    lastActiveCard = cardTarget;
 
-    const titleEl = card.querySelector('h3');
-    const titleText = titleEl ? titleEl.textContent.trim() : id;
+    const headingNode = cardTarget.querySelector('h3');
+    const titleText = headingNode ? headingNode.textContent.trim() : cardKey;
 
-    const cardImg = card.querySelector('.media-frame img') || card.querySelector('img');
-    const imgSrc = data.image || (cardImg ? cardImg.getAttribute('src') : '');
-    const imgAlt = cardImg ? (cardImg.getAttribute('alt') || titleText) : titleText;
+    const cardImageNode = cardTarget.querySelector('.media-frame img') || cardTarget.querySelector('img');
+    const imageSource = itemData.image || cardImageNode?.getAttribute('src') || '';
+    const imageAltText = cardImageNode?.getAttribute('alt') || titleText;
 
-    if (modalImageEl) {
-      modalImageEl.src = imgSrc;
-      modalImageEl.alt = imgAlt;
+    if (mediaImg) {
+      mediaImg.src = imageSource;
+      mediaImg.alt = imageAltText;
     }
 
-    if (modalMediaEl) {
-      modalMediaEl.classList.toggle('detail-modal__media--kerajinan', data.category === 'kerajinan');
-      modalMediaEl.classList.toggle('detail-modal__media--tarian', data.category === 'tarian');
+    if (mediaContainer) {
+      mediaContainer.classList.toggle('detail-modal__media--kerajinan', itemData.category === 'kerajinan');
+      mediaContainer.classList.toggle('detail-modal__media--tarian', itemData.category === 'tarian');
     }
 
-    if (modalBadgeEl) modalBadgeEl.textContent = data.badge;
-    if (modalTitleEl) modalTitleEl.textContent = titleText;
-    if (modalMetaEl) modalMetaEl.textContent = data.meta;
-    if (modalBodyEl) modalBodyEl.textContent = data.body;
+    if (badgeTag) badgeTag.textContent = itemData.badge;
+    if (headingTitle) headingTitle.textContent = titleText;
+    if (metaOrigin) metaOrigin.textContent = itemData.meta;
+    if (descBody) descBody.textContent = itemData.body;
 
-    modalEl.removeAttribute('hidden');
+    modalPopup.removeAttribute('hidden');
 
-    // Pause the marquees behind the modal (reuses their mouseenter handler)
     document.querySelectorAll('.marquee-track').forEach((track) => {
       track.dispatchEvent(new Event('mouseenter'));
     });
 
-    const closeBtn = modalEl.querySelector('.detail-modal__close');
-    if (closeBtn) {
-      closeBtn.focus();
-    }
+    const btnDismiss = modalPopup.querySelector('.detail-modal__close');
+    if (btnDismiss) btnDismiss.focus();
   }
 
-  function closeModal() {
-    if (!modalEl || modalEl.hasAttribute('hidden')) return;
+  function closeCardDetails() {
+    if (!modalPopup || modalPopup.hasAttribute('hidden')) return;
 
-    modalEl.setAttribute('hidden', '');
+    modalPopup.setAttribute('hidden', '');
 
-    // Resume marquees the mouse isn't hovering
     document.querySelectorAll('.marquee-track').forEach((track) => {
       if (!track.matches(':hover')) {
         track.dispatchEvent(new Event('mouseleave'));
       }
     });
 
-    // Give focus back to the card that opened the modal
-    if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') {
-      lastFocusedEl.focus();
+    if (lastActiveCard && typeof lastActiveCard.focus === 'function') {
+      lastActiveCard.focus();
     }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCardDetails);
+    document.addEventListener('DOMContentLoaded', bindCardModalEvents);
   } else {
-    initCardDetails();
+    bindCardModalEvents();
   }
 })();

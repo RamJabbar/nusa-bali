@@ -44,19 +44,19 @@ body {
   background: rgba(32, 30, 27, 0.9);
   border: 1px solid rgba(236, 194, 70, 0.28);
   border-radius: 4px;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--c-gold);
   white-space: nowrap;
 }
 
 .aksara-tag-icon {
   width: 13px;
   height: 13px;
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .aksara-layout {
@@ -96,27 +96,27 @@ body {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
 }
 
 .aksara-icon-target {
   width: 15px;
   height: 15px;
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .aksara-rank-badge {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--c-gold);
   background: rgba(236, 194, 70, 0.1);
   border: 1px solid rgba(236, 194, 70, 0.3);
   padding: 0.2rem 0.55rem;
@@ -137,34 +137,34 @@ body {
 }
 
 .aksara-stat-num {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 2.2rem;
   font-weight: 700;
   line-height: 1;
-  color: var(--color-cream);
+  color: var(--c-cream);
 }
 
 .aksara-stat-denom {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.15rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
 }
 
 .aksara-stat-label {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   margin-left: 0.4rem;
 }
 
 .aksara-stat-percent {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.7rem;
   font-weight: 700;
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .aksara-progress-bar-wrap {
@@ -183,7 +183,7 @@ body {
   height: 100%;
   background: linear-gradient(90deg, #BD2D24, #ECC246);
   border-radius: 3px;
-  transition: width 0.4s var(--ease);
+  transition: width 0.4s var(--tr-smooth);
 }
 
 .aksara-progress-sub {
@@ -191,12 +191,12 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 0.65rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   letter-spacing: 0.04em;
 }
 
 .aksara-threshold {
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-weight: 600;
 }
 
@@ -221,26 +221,26 @@ body {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-cream);
+  color: var(--c-cream);
 }
 
 .aksara-square-bullet {
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-size: 0.75rem;
 }
 
 .aksara-list-kicker {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .aksara-list {
@@ -274,7 +274,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
   cursor: pointer;
-  transition: transform 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  transition: transform 0.2s var(--tr-smooth), background 0.2s var(--tr-smooth), border-color 0.2s var(--tr-smooth), box-shadow 0.2s var(--tr-smooth);
   user-select: none;
   position: relative;
 }
@@ -287,12 +287,12 @@ body {
 
 .aksara-item.is-active {
   background: linear-gradient(135deg, rgba(236, 194, 70, 0.16) 0%, rgba(32, 29, 25, 0.95) 100%);
-  border-color: var(--color-gold);
+  border-color: var(--c-gold);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(236, 194, 70, 0.1);
 }
 
 .aksara-item.is-active .aksara-item__title {
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .aksara-item.is-celebrating {
@@ -328,18 +328,18 @@ body {
   border: 1px solid rgba(236, 194, 70, 0.3);
   border-radius: 4px;
   padding: 3px;
-  transition: border-color 0.2s var(--ease);
+  transition: border-color 0.2s var(--tr-smooth);
 }
 
 .aksara-item.is-active .aksara-item__preview-box {
-  border-color: var(--color-gold);
+  border-color: var(--c-gold);
   background: #181614;
 }
 
 .aksara-item__preview-svg {
   width: 28px;
   height: 28px;
-  color: var(--color-gold);
+  color: var(--c-gold);
   display: block;
 }
 
@@ -349,18 +349,18 @@ body {
 }
 
 .aksara-item__title {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-cream);
+  color: var(--c-cream);
   line-height: 1.2;
   margin-bottom: 0.15rem;
-  transition: color 0.2s var(--ease);
+  transition: color 0.2s var(--tr-smooth);
 }
 
 .aksara-item__meaning {
   font-size: 0.7rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -375,7 +375,7 @@ body {
 }
 
 .aksara-order-num {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.72rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.25);
@@ -386,7 +386,7 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--color-gold);
+  background: var(--c-gold);
   color: #141312;
   display: flex;
   align-items: center;
@@ -413,7 +413,7 @@ body {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  color: var(--color-gold);
+  color: var(--c-gold);
   margin-top: 0.1rem;
 }
 
@@ -424,12 +424,12 @@ body {
 
 .aksara-hint-text {
   font-size: 0.72rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   line-height: 1.45;
 }
 
 .aksara-hint-text strong {
-  color: var(--color-cream);
+  color: var(--c-cream);
 }
 
 .aksara-workspace {
@@ -474,31 +474,31 @@ body {
 }
 
 .aksara-workspace__name {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.65rem;
   font-weight: 700;
-  color: var(--color-gold);
+  color: var(--c-gold);
   line-height: 1.15;
 }
 
 .aksara-workspace__glyph {
   font-family: 'Noto Sans Balinese', sans-serif;
   font-size: 1.5rem;
-  color: var(--color-cream);
+  color: var(--c-cream);
   line-height: 1;
 }
 
 .aksara-workspace__unicode {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   letter-spacing: 0.06em;
 }
 
 .aksara-workspace__meaning {
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   margin-top: 0.15rem;
 }
 
@@ -513,19 +513,19 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
 }
 
 .aksara-badge-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-gold);
+  background: var(--c-gold);
   box-shadow: 0 0 8px rgba(236, 194, 70, 0.7);
 }
 
@@ -537,25 +537,25 @@ body {
   background: rgba(236, 194, 70, 0.08);
   border: 1px solid rgba(236, 194, 70, 0.35);
   border-radius: 4px;
-  color: var(--color-gold);
-  font-family: var(--font-display);
+  color: var(--c-gold);
+  font-family: var(--ff-display);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s var(--ease);
+  transition: all 0.2s var(--tr-smooth);
 }
 
 .aksara-demo-btn:hover {
   background: rgba(236, 194, 70, 0.18);
-  border-color: var(--color-gold);
+  border-color: var(--c-gold);
   transform: translateY(-1px);
 }
 
 .aksara-demo-btn.is-playing {
   background: rgba(189, 45, 36, 0.2);
-  border-color: var(--color-red);
+  border-color: var(--c-red);
   color: #F87171;
 }
 
@@ -661,7 +661,7 @@ body {
   background: rgba(20, 18, 17, 0.85);
   border: 1px solid rgba(189, 45, 36, 0.5);
   color: #FCA5A5;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -695,11 +695,11 @@ body {
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(236, 194, 70, 0.2);
   border-radius: 4px;
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: var(--color-gold);
+  color: var(--c-gold);
   pointer-events: none;
   z-index: 3;
 }
@@ -747,7 +747,7 @@ body {
   border-radius: 8px;
   padding: 1.4rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: resultSlideIn 0.3s var(--ease);
+  animation: resultSlideIn 0.3s var(--tr-smooth);
 }
 
 @keyframes resultSlideIn {
@@ -783,20 +783,20 @@ body {
 }
 
 .aksara-result-score {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 2.4rem;
   font-weight: 700;
-  color: var(--color-gold);
+  color: var(--c-gold);
   line-height: 1;
 }
 
 .aksara-result-kicker {
-  font-family: var(--font-display);
+  font-family: var(--ff-display);
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   margin-top: 0.3rem;
 }
 
@@ -805,7 +805,7 @@ body {
 }
 
 .aksara-result-label {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.2;
@@ -826,7 +826,7 @@ body {
 
 .aksara-result-desc {
   font-size: 0.8rem;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
   line-height: 1.45;
 }
 
@@ -836,7 +836,7 @@ body {
   right: 0;
   background: transparent;
   border: none;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   font-size: 1.1rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -844,7 +844,7 @@ body {
 }
 
 .aksara-result-close:hover {
-  color: var(--color-cream);
+  color: var(--c-cream);
 }
 
 .aksara-result-metrics {
@@ -868,13 +868,13 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 0.72rem;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
   margin-bottom: 0.5rem;
 }
 
 .aksara-metric-val {
-  color: var(--color-gold);
-  font-family: var(--font-serif);
+  color: var(--c-gold);
+  font-family: var(--ff-serif);
   font-size: 0.95rem;
 }
 
@@ -888,9 +888,9 @@ body {
 
 .aksara-metric-fill {
   height: 100%;
-  background: var(--color-gold);
+  background: var(--c-gold);
   border-radius: 3px;
-  transition: width 0.4s var(--ease);
+  transition: width 0.4s var(--tr-smooth);
 }
 
 .aksara-alert {
@@ -918,7 +918,7 @@ body {
 .aksara-alert--info {
   background: rgba(236, 194, 70, 0.08);
   border: 1px solid rgba(236, 194, 70, 0.3);
-  color: var(--color-cream);
+  color: var(--c-cream);
 }
 
 .aksara-alert--warn {

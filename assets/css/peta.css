@@ -8,7 +8,7 @@
   border-radius: 999px;
   background: rgba(236, 194, 70, 0.08);
   border: 1px solid rgba(236, 194, 70, 0.35);
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 2px;
@@ -33,22 +33,22 @@
   border-radius: 999px;
   background: rgba(38, 36, 33, 0.8);
   border: 1px solid rgba(236, 194, 70, 0.25);
-  color: var(--color-cream);
+  color: var(--c-cream);
   font-size: 0.82rem;
   font-weight: 600;
-  transition: all 0.2s var(--ease);
+  transition: all 0.2s var(--tr-smooth);
   cursor: pointer;
 }
 
 .peta-chip:hover {
-  border-color: var(--color-gold);
+  border-color: var(--c-gold);
   background: rgba(236, 194, 70, 0.15);
   transform: translateY(-1px);
 }
 
 .peta-chip.is-active {
-  background: var(--color-gold);
-  border-color: var(--color-gold);
+  background: var(--c-gold);
+  border-color: var(--c-gold);
   color: #1C1B1B;
   font-weight: 700;
   box-shadow: 0 4px 14px rgba(236, 194, 70, 0.35);
@@ -86,7 +86,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-cream);
+  color: var(--c-cream);
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -95,8 +95,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--color-red);
-  box-shadow: 0 0 8px var(--color-red);
+  background: var(--c-red);
+  box-shadow: 0 0 8px var(--c-red);
   animation: pulse-red 2s infinite;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .peta-map-frame__scale {
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   font-family: monospace;
 }
 
@@ -135,14 +135,14 @@
   stroke-width: 1.4;
   stroke-linejoin: round;
   stroke-linecap: round;
-  transition: all 0.28s var(--ease);
+  transition: all 0.28s var(--tr-smooth);
   cursor: pointer;
   outline: none;
 }
 
 .region:hover {
   fill: rgba(236, 194, 70, 0.25);
-  stroke: var(--color-gold);
+  stroke: var(--c-gold);
   stroke-width: 2;
   filter: drop-shadow(0 0 8px rgba(236, 194, 70, 0.5));
 }
@@ -160,15 +160,15 @@
 }
 
 .region-label {
-  fill: var(--color-cream-dim);
-  font-family: var(--font-sans);
+  fill: var(--c-sand);
+  font-family: var(--ff-sans);
   font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 1px;
   text-anchor: middle;
   pointer-events: none;
   user-select: none;
-  transition: all 0.25s var(--ease);
+  transition: all 0.25s var(--tr-smooth);
 }
 
 .region.is-active + .region-label,
@@ -180,11 +180,11 @@
 }
 
 .map-point {
-  fill: var(--color-red);
-  stroke: var(--color-gold);
+  fill: var(--c-red);
+  stroke: var(--c-gold);
   stroke-width: 1.2;
   cursor: pointer;
-  transition: transform 0.2s var(--ease);
+  transition: transform 0.2s var(--tr-smooth);
 }
 
 .map-point:hover {
@@ -193,7 +193,7 @@
 
 .map-point-halo {
   fill: none;
-  stroke: var(--color-gold);
+  stroke: var(--c-gold);
   stroke-width: 0.8;
   opacity: 0.6;
   animation: halo-pulse 3s infinite;
@@ -228,7 +228,7 @@
   padding-top: 0.85rem;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   font-size: 0.72rem;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
 }
 
 .peta-legend {
@@ -252,17 +252,17 @@
 }
 
 .legend-swatch--outline {
-  border: 1.2px solid var(--color-gold);
+  border: 1.2px solid var(--c-gold);
   background: rgba(236, 194, 70, 0.1);
 }
 
 .legend-swatch--selected {
-  background: var(--color-gold);
+  background: var(--c-gold);
   box-shadow: 0 0 6px rgba(236, 194, 70, 0.6);
 }
 
 .peta-hint {
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-style: italic;
   font-size: 0.72rem;
 }
@@ -293,15 +293,15 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--color-gold);
+  color: var(--c-gold);
 }
 
 .peta-dot-gold {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-gold);
-  box-shadow: 0 0 6px var(--color-gold);
+  background: var(--c-gold);
+  box-shadow: 0 0 6px var(--c-gold);
 }
 
 .peta-panel__count {
@@ -310,7 +310,7 @@
   border-radius: 999px;
   padding: 0.2rem 0.75rem;
   font-size: 0.72rem;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
 }
 
 .peta-panel__header {
@@ -326,7 +326,7 @@
 }
 
 .peta-regency-badge {
-  background: var(--color-red);
+  background: var(--c-red);
   color: #FFFFFF;
   font-size: 0.68rem;
   font-weight: 700;
@@ -337,22 +337,22 @@
 }
 
 .peta-panel__nickname {
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-size: 0.78rem;
   font-weight: 600;
 }
 
 .peta-panel__title {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 2.1rem;
-  color: var(--color-gold);
+  color: var(--c-gold);
   line-height: 1.1;
   margin-bottom: 0.5rem;
 }
 
 .peta-panel__desc {
   font-size: 0.85rem;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
   line-height: 1.55;
 }
 
@@ -378,16 +378,16 @@
 .peta-item-card {
   background: rgba(45, 42, 38, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-left: 3.5px solid var(--color-red);
+  border-left: 3.5px solid var(--c-red);
   border-radius: 6px;
   padding: 0.85rem 1rem;
-  transition: all 0.22s var(--ease);
+  transition: all 0.22s var(--tr-smooth);
 }
 
 .peta-item-card:hover {
   background: rgba(55, 51, 46, 0.85);
   border-color: rgba(236, 194, 70, 0.3);
-  border-left-color: var(--color-gold);
+  border-left-color: var(--c-gold);
   transform: translateX(3px);
 }
 
@@ -413,8 +413,8 @@
 .peta-item-card__title {
   font-size: 0.92rem;
   font-weight: 700;
-  color: var(--color-cream);
-  font-family: var(--font-sans);
+  color: var(--c-cream);
+  font-family: var(--ff-sans);
 }
 
 .peta-category-badge {
@@ -425,14 +425,14 @@
   border-radius: 3px;
   background: rgba(236, 194, 70, 0.12);
   border: 1px solid rgba(236, 194, 70, 0.3);
-  color: var(--color-gold);
+  color: var(--c-gold);
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
 
 .peta-item-card__desc {
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   line-height: 1.45;
   margin-left: 1.6rem;
 }
@@ -440,7 +440,7 @@
 .peta-panel--empty {
   padding: 2.5rem 1.5rem;
   text-align: center;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
   font-size: 0.88rem;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 6px;
@@ -456,13 +456,13 @@
   padding-top: 0.85rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.72rem;
-  color: var(--color-text-muted);
+  color: var(--c-muted);
 }
 
 .peta-panel__reset-btn {
   background: none;
   border: none;
-  color: var(--color-gold);
+  color: var(--c-gold);
   font-size: 0.72rem;
   font-weight: 600;
   text-decoration: underline;
@@ -494,10 +494,10 @@
 }
 
 .peta-stat__num {
-  font-family: var(--font-serif);
+  font-family: var(--ff-serif);
   font-size: 1.9rem;
   font-weight: 700;
-  color: var(--color-gold);
+  color: var(--c-gold);
   line-height: 1.1;
 }
 
@@ -506,7 +506,7 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--color-cream-dim);
+  color: var(--c-sand);
   margin-top: 0.25rem;
 }
 

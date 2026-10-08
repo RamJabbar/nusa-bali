@@ -1,10 +1,7 @@
-/* Nusa Bali Heritage — interactive Bali map and regency panel */
+// Nusa Bali Heritage — visualisasi peta sakral sembilan kabupaten/kota Bali
 
-document.addEventListener('DOMContentLoaded', () => {
-  initBaliMap();
-});
 
-const REGENCY_DATA = {
+const baliRegencyData = {
   gianyar: {
     name: 'Gianyar',
     regency: 'KABUPATEN GIANYAR',
@@ -316,15 +313,14 @@ const REGENCY_DATA = {
   }
 };
 
-function initBaliMap() {
+function setupInteractiveMap() {
   const mapSvg = document.getElementById('baliMap');
-  const regions = document.querySelectorAll('#baliMap .region');
+  const regionPaths = document.querySelectorAll('#baliMap .region');
   const filterChips = document.querySelectorAll('#petaFilters .peta-chip');
   const panelList = document.getElementById('petaPanelList');
-  const emptyState = document.getElementById('petaPanelEmpty');
+  const emptyFeedback = document.getElementById('petaPanelEmpty');
   const resetBtn = document.getElementById('petaResetBtn');
 
-  // Panel header elements
   const panelTag = document.getElementById('petaPanelTag');
   const panelCount = document.getElementById('petaPanelCount');
   const panelRegencyBadge = document.getElementById('petaRegencyBadge');
@@ -332,50 +328,50 @@ function initBaliMap() {
   const panelTitle = document.getElementById('petaPanelTitle');
   const panelDesc = document.getElementById('petaPanelDesc');
 
-  if (!mapSvg || !regions.length) return;
+  if (!mapSvg || !regionPaths.length) return;
 
-  let currentRegion = 'gianyar';
-  let currentFilter = 'semua';
+  let activeRegionKey = 'gianyar';
+  let activeFilterCategory = 'semua';
 
   function selectRegion(regionId) {
-    if (!REGENCY_DATA[regionId]) return;
-    currentRegion = regionId;
+    if (!baliRegencyData[regionId]) return;
+    activeRegionKey = regionId;
 
-    regions.forEach((r) => {
-      const isSelected = r.dataset.region === regionId;
-      r.classList.toggle('is-active', isSelected);
-      r.setAttribute('aria-selected', String(isSelected));
+    regionPaths.forEach((path) => {
+      const isSelected = path.dataset.region === regionId;
+      path.classList.toggle('is-active', isSelected);
+      path.setAttribute('aria-selected', String(isSelected));
     });
 
-    renderPanel();
+    renderPanelContent();
   }
 
-  function renderPanel() {
-    const data = REGENCY_DATA[currentRegion];
-    if (!data) return;
+  function renderPanelContent() {
+    const regencyInfo = baliRegencyData[activeRegionKey];
+    if (!regencyInfo) return;
 
-    if (panelTag) panelTag.textContent = data.tag;
-    if (panelRegencyBadge) panelRegencyBadge.textContent = data.regency;
-    if (panelNickname) panelNickname.textContent = data.nickname;
-    if (panelTitle) panelTitle.textContent = data.name;
-    if (panelDesc) panelDesc.textContent = data.desc;
+    if (panelTag) panelTag.textContent = regencyInfo.tag;
+    if (panelRegencyBadge) panelRegencyBadge.textContent = regencyInfo.regency;
+    if (panelNickname) panelNickname.textContent = regencyInfo.nickname;
+    if (panelTitle) panelTitle.textContent = regencyInfo.name;
+    if (panelDesc) panelDesc.textContent = regencyInfo.desc;
 
-    const filteredItems = data.items.filter((item) => {
-      return currentFilter === 'semua' || item.category === currentFilter;
+    const matchedItems = regencyInfo.items.filter((item) => {
+      return activeFilterCategory === 'semua' || item.category === activeFilterCategory;
     });
 
     if (panelCount) {
-      panelCount.textContent = `${filteredItems.length} Warisan Terpilih`;
+      panelCount.textContent = `${matchedItems.length} Warisan Terpilih`;
     }
 
     if (panelList) {
       panelList.innerHTML = '';
-      if (emptyState) emptyState.hidden = filteredItems.length > 0;
+      if (emptyFeedback) emptyFeedback.hidden = matchedItems.length > 0;
 
-      filteredItems.forEach((item) => {
-        const card = document.createElement('article');
-        card.className = 'peta-item-card';
-        card.innerHTML = `
+      matchedItems.forEach((item) => {
+        const itemCard = document.createElement('article');
+        itemCard.className = 'peta-item-card';
+        itemCard.innerHTML = `
           <div class="peta-item-card__head">
             <div class="peta-item-card__title-group">
               <h4 class="peta-item-card__title">${item.title}</h4>
@@ -384,36 +380,35 @@ function initBaliMap() {
           </div>
           <p class="peta-item-card__desc">${item.desc}</p>
         `;
-        panelList.appendChild(card);
+        panelList.appendChild(itemCard);
       });
     }
 
-    updateMapPoints();
+    syncMapPoints();
   }
 
-  // Dim map dots that don't belong to the active filter
-  function updateMapPoints() {
-    const points = document.querySelectorAll('#baliMap .map-point');
-    points.forEach((pt) => {
-      const ptCat = pt.dataset.category;
-      if (currentFilter === 'semua' || !ptCat || ptCat === currentFilter) {
-        pt.style.opacity = '1';
-        pt.style.transform = '';
+  function syncMapPoints() {
+    const mapPoints = document.querySelectorAll('#baliMap .map-point');
+    mapPoints.forEach((point) => {
+      const cat = point.dataset.category;
+      if (activeFilterCategory === 'semua' || !cat || cat === activeFilterCategory) {
+        point.style.opacity = '1';
+        point.style.transform = '';
       } else {
-        pt.style.opacity = '0.25';
+        point.style.opacity = '0.25';
       }
     });
   }
 
-  regions.forEach((region) => {
-    region.addEventListener('click', () => {
-      selectRegion(region.dataset.region);
+  regionPaths.forEach((path) => {
+    path.addEventListener('click', () => {
+      selectRegion(path.dataset.region);
     });
 
-    region.addEventListener('keydown', (e) => {
+    path.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        selectRegion(region.dataset.region);
+        selectRegion(path.dataset.region);
       }
     });
   });
@@ -422,14 +417,14 @@ function initBaliMap() {
     chip.addEventListener('click', () => {
       filterChips.forEach((c) => c.classList.remove('is-active'));
       chip.classList.add('is-active');
-      currentFilter = chip.dataset.filter || 'semua';
-      renderPanel();
+      activeFilterCategory = chip.dataset.filter || 'semua';
+      renderPanelContent();
     });
   });
 
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      currentFilter = 'semua';
+      activeFilterCategory = 'semua';
       filterChips.forEach((c) => {
         c.classList.toggle('is-active', c.dataset.filter === 'semua');
       });
@@ -437,6 +432,11 @@ function initBaliMap() {
     });
   }
 
-  // Gianyar is the default region on load
   selectRegion('gianyar');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupInteractiveMap);
+} else {
+  setupInteractiveMap();
 }

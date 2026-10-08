@@ -1,56 +1,54 @@
-/* Nusa Bali Heritage — shared scripts (header, nav, filters, gallery modal) */
+// Nusa Bali Heritage — interaksi global & modal arsip pusaka
 
-document.addEventListener('DOMContentLoaded', () => {
-  initStickyHeader();
-  initMobileNav();
-  initNavActiveState();
-  initHeaderActions();
-  initSitusFilter();
-  initNewsletterForm();
-  initFooterYear();
-  initGalleryModal();
-});
-
-/* Sticky header */
-function initStickyHeader() {
-  const header = document.getElementById('siteHeader');
-  if (!header) return;
-
-  const toggle = () => {
-    header.classList.toggle('is-scrolled', window.scrollY > 24);
-  };
-
-  toggle();
-  window.addEventListener('scroll', toggle, { passive: true });
+function initSharedFeatures() {
+  setupHeaderScroll();
+  setupMobileDrawer();
+  setupScrollSpy();
+  setupHeaderButtons();
+  setupFilterSitus();
+  setupNewsletter();
+  setupCopyrightYear();
+  setupGalleryModal();
 }
 
-/* Active nav link */
-function initNavActiveState() {
-  const navLinks = document.querySelectorAll('.nav-links a');
-  if (!navLinks.length) return;
+function setupHeaderScroll() {
+  const siteHeader = document.getElementById('siteHeader');
+  if (!siteHeader) return;
 
-  navLinks.forEach((link) => {
+  const handleScroll = () => {
+    siteHeader.classList.toggle('is-scrolled', window.scrollY > 24);
+  };
+
+  handleScroll();
+  window.addEventListener('scroll', handleScroll, { passive: true });
+}
+
+function setupScrollSpy() {
+  const menuLinks = document.querySelectorAll('.nav-links a');
+  if (!menuLinks.length) return;
+
+  menuLinks.forEach((link) => {
     link.addEventListener('click', () => {
-      navLinks.forEach((l) => l.removeAttribute('aria-current'));
+      menuLinks.forEach((item) => item.removeAttribute('aria-current'));
       link.setAttribute('aria-current', 'page');
     });
   });
 
-  const sections = Array.from(navLinks)
+  const trackedSections = Array.from(menuLinks)
     .map((link) => {
-      const href = link.getAttribute('href');
-      return href && href.startsWith('#') ? document.querySelector(href) : null;
+      const targetHash = link.getAttribute('href');
+      return targetHash && targetHash.startsWith('#') ? document.querySelector(targetHash) : null;
     })
     .filter(Boolean);
 
-  if ('IntersectionObserver' in window && sections.length) {
-    const observer = new IntersectionObserver(
+  if ('IntersectionObserver' in window && trackedSections.length) {
+    const spy = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const id = entry.target.getAttribute('id');
-            navLinks.forEach((link) => {
-              if (link.getAttribute('href') === `#${id}`) {
+            const activeId = entry.target.getAttribute('id');
+            menuLinks.forEach((link) => {
+              if (link.getAttribute('href') === `#${activeId}`) {
                 link.setAttribute('aria-current', 'page');
               } else {
                 link.removeAttribute('aria-current');
@@ -62,110 +60,100 @@ function initNavActiveState() {
       { rootMargin: '-25% 0px -65% 0px' }
     );
 
-    sections.forEach((s) => observer.observe(s));
+    trackedSections.forEach((sec) => spy.observe(sec));
   }
 }
 
-/* Gamelan & theme buttons */
-function initHeaderActions() {
-  const audioButtons = [
+function setupHeaderButtons() {
+  const audioTriggers = [
     document.getElementById('gamelanBtn'),
     document.getElementById('heroAudioBtn')
   ].filter(Boolean);
 
-  // Both buttons share one on/off state
-  let isPlaying = false;
-  const toggleGamelan = () => {
-    isPlaying = !isPlaying;
-    audioButtons.forEach((btn) => {
-      btn.classList.toggle('is-playing', isPlaying);
-      btn.setAttribute('aria-pressed', String(isPlaying));
+  let isSoundActive = false;
+  const toggleSound = () => {
+    isSoundActive = !isSoundActive;
+    audioTriggers.forEach((btn) => {
+      btn.classList.toggle('is-playing', isSoundActive);
+      btn.setAttribute('aria-pressed', String(isSoundActive));
     });
   };
 
-  audioButtons.forEach((btn) => btn.addEventListener('click', toggleGamelan));
+  audioTriggers.forEach((btn) => btn.addEventListener('click', toggleSound));
 
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
+  const btnTheme = document.getElementById('themeToggle');
+  if (btnTheme) {
+    btnTheme.addEventListener('click', () => {
       document.body.classList.toggle('light-theme');
     });
   }
 }
 
-/* Mobile nav */
-function initMobileNav() {
-  const btn = document.getElementById('navToggle');
-  const panel = document.getElementById('mobileNav');
-  if (!btn || !panel) return;
+function setupMobileDrawer() {
+  const toggleBtn = document.getElementById('navToggle');
+  const drawerPanel = document.getElementById('mobileNav');
+  if (!toggleBtn || !drawerPanel) return;
 
-  btn.addEventListener('click', () => {
-    const isOpen = !panel.hidden;
-    panel.hidden = isOpen;
-    btn.setAttribute('aria-expanded', String(!isOpen));
+  toggleBtn.addEventListener('click', () => {
+    const isClosed = drawerPanel.hidden;
+    drawerPanel.hidden = !isClosed;
+    toggleBtn.setAttribute('aria-expanded', String(isClosed));
   });
 
-  // close the panel after tapping a link
-  panel.querySelectorAll('a').forEach((link) => {
+  drawerPanel.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
-      panel.hidden = true;
-      btn.setAttribute('aria-expanded', 'false');
+      drawerPanel.hidden = true;
+      toggleBtn.setAttribute('aria-expanded', 'false');
     });
   });
 }
 
-/* Situs Budaya filter chips */
-function initSitusFilter() {
-  const chips = document.querySelectorAll('.filter-chips .chip');
-  const cards = document.querySelectorAll('#situsGrid .situs-card');
-  const emptyState = document.getElementById('situsEmptyState');
-  if (!chips.length || !cards.length) return;
+function setupFilterSitus() {
+  const filterPills = document.querySelectorAll('.filter-chips .chip');
+  const situsCards = document.querySelectorAll('#situsGrid .situs-card');
+  const emptyFeedback = document.getElementById('situsEmptyState');
+  if (!filterPills.length || !situsCards.length) return;
 
-  chips.forEach((chip) => {
-    chip.addEventListener('click', () => {
-      chips.forEach((c) => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
+  filterPills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach((p) => p.classList.remove('is-active'));
+      pill.classList.add('is-active');
 
-      const filter = chip.dataset.filter;
-      let visibleCount = 0;
+      const selectedCategory = pill.dataset.filter;
+      let matchedCount = 0;
 
-      cards.forEach((card) => {
-        const matches = filter === 'semua' || card.dataset.category === filter;
+      situsCards.forEach((card) => {
+        const matches = selectedCategory === 'semua' || card.dataset.category === selectedCategory;
         card.style.display = matches ? '' : 'none';
-        if (matches) visibleCount += 1;
+        if (matches) matchedCount += 1;
       });
 
-      if (emptyState) emptyState.hidden = visibleCount > 0;
+      if (emptyFeedback) emptyFeedback.hidden = matchedCount > 0;
     });
   });
 }
 
-/* Newsletter form (front-end only for now) */
-function initNewsletterForm() {
-  const form = document.getElementById('newsletterForm');
-  const note = document.getElementById('newsletterNote');
-  if (!form) return;
+function setupNewsletter() {
+  const newsletterForm = document.getElementById('newsletterForm');
+  const feedbackNote = document.getElementById('newsletterNote');
+  if (!newsletterForm) return;
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const email = form.querySelector('#newsletterEmail')?.value.trim();
+  newsletterForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const emailVal = newsletterForm.querySelector('#newsletterEmail')?.value.trim();
+    if (!emailVal) return;
 
-    if (!email) return;
-
-    // TODO: hubungkan ke layanan email/backend sungguhan saat sudah siap.
-    if (note) note.textContent = `Terima kasih, ${email} telah tercatat dalam daftar.`;
-    form.reset();
+    if (feedbackNote) feedbackNote.textContent = `Terima kasih, ${emailVal} telah tercatat dalam daftar.`;
+    newsletterForm.reset();
   });
 }
 
-/* Footer year */
-function initFooterYear() {
-  const el = document.getElementById('footerYear');
-  if (el) el.textContent = new Date().getFullYear();
+function setupCopyrightYear() {
+  const yearHolder = document.getElementById('footerYear');
+  if (yearHolder) yearHolder.textContent = new Date().getFullYear();
 }
 
-/* Jendela Keabadian Pusaka — gallery modal */
-const GALLERY_ARCHIVES = [
+const galleryArchives = [
   {
     id: 1,
     title: 'Canang Sari & Porosan Suci',
@@ -228,105 +216,109 @@ const GALLERY_ARCHIVES = [
   }
 ];
 
-function initGalleryModal() {
-  const modal = document.getElementById('galleryModal');
-  const backdrop = document.getElementById('galleryModalBackdrop');
-  const closeBtn = document.getElementById('galleryModalClose');
-  const prevBtn = document.getElementById('galleryModalPrev');
-  const nextBtn = document.getElementById('galleryModalNext');
+function setupGalleryModal() {
+  const modalBox = document.getElementById('galleryModal');
+  const overlayBackdrop = document.getElementById('galleryModalBackdrop');
+  const btnClose = document.getElementById('galleryModalClose');
+  const btnPrev = document.getElementById('galleryModalPrev');
+  const btnNext = document.getElementById('galleryModalNext');
 
-  const imgEl = document.getElementById('galleryModalImg');
-  const catEl = document.getElementById('galleryModalCat');
-  const counterEl = document.getElementById('galleryModalCounter');
-  const titleEl = document.getElementById('galleryModalTitle');
-  const descEl = document.getElementById('galleryModalDesc');
-  const locEl = document.getElementById('galleryModalLoc');
-  const philEl = document.getElementById('galleryModalPhil');
-  const statusEl = document.getElementById('galleryModalStatus');
+  const previewImg = document.getElementById('galleryModalImg');
+  const previewCat = document.getElementById('galleryModalCat');
+  const previewCounter = document.getElementById('galleryModalCounter');
+  const previewTitle = document.getElementById('galleryModalTitle');
+  const previewDesc = document.getElementById('galleryModalDesc');
+  const previewLoc = document.getElementById('galleryModalLoc');
+  const previewPhil = document.getElementById('galleryModalPhil');
+  const previewStatus = document.getElementById('galleryModalStatus');
 
-  const cards = document.querySelectorAll('.gallery-etno-card');
+  const galleryCards = document.querySelectorAll('.gallery-etno-card');
+  if (!modalBox || !galleryCards.length) return;
 
-  if (!modal || !cards.length) return;
+  let activeIndex = 0;
+  let lastTriggerEl = null;
 
-  let currentIndex = 0;
-  let lastActiveElement = null;
+  const renderSlide = (idx) => {
+    const item = galleryArchives[idx];
+    if (!item) return;
 
-  const renderArchive = (index) => {
-    const data = GALLERY_ARCHIVES[index];
-    if (!data) return;
-
-    if (imgEl) {
-      imgEl.src = data.image;
-      imgEl.alt = data.alt;
+    if (previewImg) {
+      previewImg.src = item.image;
+      previewImg.alt = item.alt;
     }
-    if (catEl) catEl.textContent = data.category;
-    if (counterEl) counterEl.textContent = `0${data.id} / 0${GALLERY_ARCHIVES.length}`;
-    if (titleEl) titleEl.textContent = data.title;
-    if (descEl) descEl.textContent = data.desc;
-    if (locEl) locEl.textContent = data.location;
-    if (philEl) philEl.textContent = data.philosophy;
-    if (statusEl) statusEl.textContent = data.status;
+    if (previewCat) previewCat.textContent = item.category;
+    if (previewCounter) previewCounter.textContent = `0${item.id} / 0${galleryArchives.length}`;
+    if (previewTitle) previewTitle.textContent = item.title;
+    if (previewDesc) previewDesc.textContent = item.desc;
+    if (previewLoc) previewLoc.textContent = item.location;
+    if (previewPhil) previewPhil.textContent = item.philosophy;
+    if (previewStatus) previewStatus.textContent = item.status;
   };
 
-  const openModal = (id) => {
-    const foundIndex = GALLERY_ARCHIVES.findIndex((item) => item.id === Number(id));
-    currentIndex = foundIndex >= 0 ? foundIndex : 0;
-    renderArchive(currentIndex);
+  const openSlide = (id) => {
+    const matchIdx = galleryArchives.findIndex((item) => item.id === Number(id));
+    activeIndex = matchIdx >= 0 ? matchIdx : 0;
+    renderSlide(activeIndex);
 
-    lastActiveElement = document.activeElement;
-    modal.hidden = false;
-    modal.setAttribute('aria-hidden', 'false');
+    lastTriggerEl = document.activeElement;
+    modalBox.hidden = false;
+    modalBox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
 
-    if (closeBtn) closeBtn.focus();
+    if (btnClose) btnClose.focus();
   };
 
-  const closeModal = () => {
-    modal.hidden = true;
-    modal.setAttribute('aria-hidden', 'true');
+  const dismissModal = () => {
+    modalBox.hidden = true;
+    modalBox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
 
-    if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
-      lastActiveElement.focus();
+    if (lastTriggerEl && typeof lastTriggerEl.focus === 'function') {
+      lastTriggerEl.focus();
     }
   };
 
-  const showNext = () => {
-    currentIndex = (currentIndex + 1) % GALLERY_ARCHIVES.length;
-    renderArchive(currentIndex);
+  const nextSlide = () => {
+    activeIndex = (activeIndex + 1) % galleryArchives.length;
+    renderSlide(activeIndex);
   };
 
-  const showPrev = () => {
-    currentIndex = (currentIndex - 1 + GALLERY_ARCHIVES.length) % GALLERY_ARCHIVES.length;
-    renderArchive(currentIndex);
+  const prevSlide = () => {
+    activeIndex = (activeIndex - 1 + galleryArchives.length) % galleryArchives.length;
+    renderSlide(activeIndex);
   };
 
-  cards.forEach((card) => {
+  galleryCards.forEach((card) => {
     const cardId = card.dataset.galleryId;
-    card.addEventListener('click', () => openModal(cardId));
+    card.addEventListener('click', () => openSlide(cardId));
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        openModal(cardId);
+        openSlide(cardId);
       }
     });
   });
 
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (backdrop) backdrop.addEventListener('click', closeModal);
-  if (nextBtn) nextBtn.addEventListener('click', showNext);
-  if (prevBtn) prevBtn.addEventListener('click', showPrev);
+  if (btnClose) btnClose.addEventListener('click', dismissModal);
+  if (overlayBackdrop) overlayBackdrop.addEventListener('click', dismissModal);
+  if (btnNext) btnNext.addEventListener('click', nextSlide);
+  if (btnPrev) btnPrev.addEventListener('click', prevSlide);
 
-  // Arrow keys / Escape while the modal is open
   window.addEventListener('keydown', (e) => {
-    if (modal.hidden) return;
+    if (modalBox.hidden) return;
 
     if (e.key === 'Escape') {
-      closeModal();
+      dismissModal();
     } else if (e.key === 'ArrowRight') {
-      showNext();
+      nextSlide();
     } else if (e.key === 'ArrowLeft') {
-      showPrev();
+      prevSlide();
     }
   });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSharedFeatures);
+} else {
+  initSharedFeatures();
 }

@@ -1,16 +1,17 @@
+// Nusa Bali Heritage — modul penelusuran kaligrafi sakral Aksara Bali
+
 (function () {
   'use strict';
 
-  // Scoring settings
-  const TOLERANCE_RADIUS = 18;    // Distance in 300x300 space considered a hit
-  const PRECISION_MAX_DIST = 32;  // Maximum distance after which point precision is 0
-  const WEIGHT_PRECISION = 0.50;  // 50% weight for line precision
-  const WEIGHT_COVERAGE = 0.50;   // 50% weight for path coverage
-  const MASTERED_THRESHOLD = 75;  // Score >= 75 marks character as mastered
-  const STORAGE_KEY = 'nusabali_aksara_mastered';
+  // Pengaturan toleransi dan bobot penilaian presisi
+  const hitTolerance = 18;
+  const maxDeviation = 32;
+  const precisionWeight = 0.50;
+  const coverageWeight = 0.50;
+  const passingScore = 75;
+  const storageKey = 'nusabali_aksara_mastered';
 
-  // Meaning text, order number and glyph for each aksara
-  const AKSARA_METADATA = {
+  const aksaraMeta = {
     ha: {
       meaningShort: 'Simbol Prana • Nafas Mula Kehidupan',
       meaningLong: 'Simbol Prana • Nafas Mula Kehidupan & Hyang Widhi',
@@ -73,72 +74,67 @@
     }
   };
 
-  const AKSARA_KEYS = ['ha', 'na', 'ca', 'ra', 'ka', 'da', 'ta', 'sa', 'wa', 'la'];
+  const aksaraList = ['ha', 'na', 'ca', 'ra', 'ka', 'da', 'ta', 'sa', 'wa', 'la'];
 
-  // State
-  let currentKey = 'ha';
-  let userStrokes = [];        // Array of strokes; stroke is Array of {x, y, distToRef}
-  let currentStroke = null;
-  let isDrawing = false;
-  let showGuide = true;
-  let isScored = false;
-  let demoAnimId = null;
-  let isDemoPlaying = false;
+  let activeKey = 'ha';
+  let strokePaths = [];
+  let currentPath = null;
+  let isPenActive = false;
+  let displayGuide = true;
+  let isEvaluated = false;
+  let demoRafId = null;
+  let isDemoActive = false;
 
-  // Cached DOM elements
-  let canvas = null;
-  let ctx = null;
+  let padCanvas = null;
+  let drawCtx = null;
   let canvasWrap = null;
-  let startDotEl = null;
-  let resultPanel = null;
-  let demoBtn = null;
+  let startIndicator = null;
+  let resultScoreboard = null;
+  let btnDemo = null;
 
-  // Mastery progress (localStorage)
-  function getMasteredList() {
+  function loadMasteredAksara() {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : [];
-    } catch (e) {
+    } catch (_) {
       return [];
     }
   }
 
-  function setCharacterMastered(key) {
-    const list = getMasteredList();
+  function markAksaraMastered(key) {
+    const list = loadMasteredAksara();
     if (!list.includes(key)) {
       list.push(key);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      } catch (e) { }
+        localStorage.setItem(storageKey, JSON.stringify(list));
+      } catch (_) {}
     }
-    updateMasteryUI(list, key);
+    refreshMasteryStats(list, key);
   }
 
-  function updateMasteryUI(list, justMasteredKey = null) {
-    const masteredCount = list.length;
-    const percent = Math.round((masteredCount / 10) * 100);
+  function refreshMasteryStats(list, justMasteredKey = null) {
+    const totalMastered = list.length;
+    const progressPercent = Math.round((totalMastered / 10) * 100);
 
-    // Update progress numbers
     const countEl = document.getElementById('aksaraMasteredCount');
-    if (countEl) countEl.textContent = masteredCount;
+    if (countEl) countEl.textContent = totalMastered;
 
     const percentEl = document.getElementById('aksaraProgressPercent');
-    if (percentEl) percentEl.textContent = `${percent}%`;
+    if (percentEl) percentEl.textContent = `${progressPercent}%`;
 
     const barEl = document.getElementById('aksaraProgressFill');
-    if (barEl) barEl.style.width = `${percent}%`;
+    if (barEl) barEl.style.width = `${progressPercent}%`;
 
     const headerProgEl = document.getElementById('aksaraHeaderProgress');
-    if (headerProgEl) headerProgEl.textContent = `${masteredCount} / 10 Pratama`;
+    if (headerProgEl) headerProgEl.textContent = `${totalMastered} / 10 Pratama`;
 
-    // Update list item status badges
-    AKSARA_KEYS.forEach((key) => {
+    aksaraList.forEach((key) => {
       const statusEl = document.getElementById(`status-${key}`);
       const rowEl = document.getElementById(`aksara-row-${key}`);
       if (!statusEl || !rowEl) return;
 
-      const isMastered = list.includes(key);
-      if (isMastered) {
+      const isCompleted = list.includes(key);
+      if (isCompleted) {
         rowEl.classList.add('is-mastered');
         statusEl.innerHTML = `
           <span class="aksara-badge-check" title="Aksara Dikuasai">
@@ -148,14 +144,12 @@
           </span>`;
       } else {
         rowEl.classList.remove('is-mastered');
-        const meta = AKSARA_METADATA[key] || { order: '00' };
+        const meta = aksaraMeta[key] || { order: '00' };
         statusEl.innerHTML = `<span class="aksara-order-num">${meta.order}</span>`;
       }
 
-      // Celebratory animation if just mastered
       if (justMasteredKey && key === justMasteredKey) {
         rowEl.classList.remove('is-celebrating');
-        // Force reflow
         void rowEl.offsetWidth;
         rowEl.classList.add('is-celebrating');
         setTimeout(() => rowEl.classList.remove('is-celebrating'), 1200);
@@ -163,55 +157,53 @@
     });
   }
 
-  function initAksara() {
-    // Only runs on the page that has the #bahasa section
+  function setupAksaraStudio() {
     const section = document.getElementById('bahasa');
     if (!section) return;
 
-    if (!getAksaraData()) {
-      console.warn('aksaraData is not available. Ensure assets/js/aksara-data.js is loaded first.');
+    if (!fetchAksaraDataset()) {
+      console.warn('Dataset aksara belum siap dimuat.');
       return;
     }
 
-    initDOMRefs();
-    renderCharacterSelector();
-    initCanvas();
-    initEventListeners();
-    updateMasteryUI(getMasteredList());
-    selectAksara('ha');
+    cacheDOMElements();
+    buildCharacterTabs();
+    setupDrawingSurface();
+    bindStudioEvents();
+    refreshMasteryStats(loadMasteredAksara());
+    switchAksara('ha');
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAksara);
+    document.addEventListener('DOMContentLoaded', setupAksaraStudio);
   } else {
-    initAksara();
+    setupAksaraStudio();
   }
 
-  function initDOMRefs() {
-    canvas = document.getElementById('aksaraCanvas');
-    ctx = canvas ? canvas.getContext('2d') : null;
+  function cacheDOMElements() {
+    padCanvas = document.getElementById('aksaraCanvas');
+    drawCtx = padCanvas ? padCanvas.getContext('2d') : null;
     canvasWrap = document.getElementById('aksaraCanvasWrap');
-    startDotEl = document.getElementById('aksaraStartDot');
-    resultPanel = document.getElementById('aksaraResultPanel');
-    demoBtn = document.getElementById('aksaraDemoBtn');
+    startIndicator = document.getElementById('aksaraStartDot');
+    resultScoreboard = document.getElementById('aksaraResultPanel');
+    btnDemo = document.getElementById('aksaraDemoBtn');
   }
 
-  // Character list
-  function renderCharacterSelector() {
+  function buildCharacterTabs() {
     const listContainer = document.getElementById('aksaraList');
     if (!listContainer) return;
 
-    const data = getAksaraData();
-    const mastered = getMasteredList();
+    const dataset = fetchAksaraDataset();
+    const completedList = loadMasteredAksara();
 
-    let html = '';
-    AKSARA_KEYS.forEach((key) => {
-      const item = data[key];
+    let tabMarkup = '';
+    aksaraList.forEach((key) => {
+      const item = dataset[key];
       if (!item) return;
-      const meta = AKSARA_METADATA[key] || { meaningShort: '', order: '00', char: '' };
-      const isMastered = mastered.includes(key);
+      const meta = aksaraMeta[key] || { meaningShort: '', order: '00', char: '' };
+      const isDone = completedList.includes(key);
 
-      html += `
+      tabMarkup += `
         <div class="aksara-item" id="aksara-row-${key}" data-key="${key}" role="tab" tabindex="0" aria-selected="false">
           <div class="aksara-item__preview-box" aria-hidden="true">
             <svg viewBox="0 0 300 300" class="aksara-item__preview-svg" preserveAspectRatio="xMidYMid meet">
@@ -223,318 +215,298 @@
             <p class="aksara-item__meaning">${meta.meaningShort}</p>
           </div>
           <div class="aksara-item__status" id="status-${key}">
-            ${isMastered
-          ? `<span class="aksara-badge-check" title="Aksara Dikuasai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12" /></svg></span>`
-          : `<span class="aksara-order-num">${meta.order}</span>`
-        }
+            ${isDone
+              ? `<span class="aksara-badge-check" title="Aksara Dikuasai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12" /></svg></span>`
+              : `<span class="aksara-order-num">${meta.order}</span>`
+            }
           </div>
         </div>
       `;
     });
 
-    listContainer.innerHTML = html;
+    listContainer.innerHTML = tabMarkup;
 
     listContainer.querySelectorAll('.aksara-item').forEach((row) => {
-      const key = row.getAttribute('data-key');
-      const selectRow = () => {
-        if (key !== currentKey) selectAksara(key);
+      const rowKey = row.getAttribute('data-key');
+      const pickRow = () => {
+        if (rowKey !== activeKey) switchAksara(rowKey);
       };
 
-      row.addEventListener('click', selectRow);
+      row.addEventListener('click', pickRow);
       row.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          selectRow();
+          pickRow();
         }
       });
     });
   }
 
-  // Canvas setup and drawing input
-  function initCanvas() {
-    if (!canvas || !ctx) return;
+  function setupDrawingSurface() {
+    if (!padCanvas || !drawCtx) return;
 
-    resizeCanvas();
-    window.addEventListener('resize', debounce(resizeCanvas, 100));
+    fitCanvasToDPR();
+    window.addEventListener('resize', debounce(fitCanvasToDPR, 100));
 
-    // Pointer events cover mouse, touch and stylus
-    canvas.addEventListener('pointerdown', onPointerDown);
-    canvas.addEventListener('pointermove', onPointerMove);
-    canvas.addEventListener('pointerup', onPointerUp);
-    canvas.addEventListener('pointercancel', onPointerUp);
+    padCanvas.addEventListener('pointerdown', onPointerDown);
+    padCanvas.addEventListener('pointermove', onPointerMove);
+    padCanvas.addEventListener('pointerup', onPointerUp);
+    padCanvas.addEventListener('pointercancel', onPointerUp);
   }
 
-  function resizeCanvas() {
-    if (!canvas || !ctx) return;
+  function fitCanvasToDPR() {
+    if (!padCanvas || !drawCtx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
+    const bounds = padCanvas.getBoundingClientRect();
+    if (bounds.width === 0 || bounds.height === 0) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    const ratio = window.devicePixelRatio || 1;
+    padCanvas.width = Math.round(bounds.width * ratio);
+    padCanvas.height = Math.round(bounds.height * ratio);
 
-    redrawCanvas();
-    updateStartDotPosition();
+    renderCanvasFrame();
+    positionStartIndicator();
   }
 
-  function getCanvasCoord(e) {
-    const rect = canvas.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 300;
-    const y = ((e.clientY - rect.top) / rect.height) * 300;
+  function mapPointerToLogicalCoords(e) {
+    const bounds = padCanvas.getBoundingClientRect();
+    const posX = ((e.clientX - bounds.left) / bounds.width) * 300;
+    const posY = ((e.clientY - bounds.top) / bounds.height) * 300;
     return {
-      x: Math.max(0, Math.min(300, x)),
-      y: Math.max(0, Math.min(300, y))
+      x: Math.max(0, Math.min(300, posX)),
+      y: Math.max(0, Math.min(300, posY))
     };
   }
 
   function onPointerDown(e) {
-    // Only primary button / touch
     if (e.button !== undefined && e.button !== 0) return;
 
-    // Stop stroke demo if running
-    if (isDemoPlaying) {
+    if (isDemoActive) {
       stopStrokeDemo();
     }
 
-    // Reset scored visual feedback when starting a new stroke
-    if (isScored) {
-      isScored = false;
-      if (resultPanel) resultPanel.hidden = true;
+    if (isEvaluated) {
+      isEvaluated = false;
+      if (resultScoreboard) resultScoreboard.hidden = true;
     }
 
-    isDrawing = true;
+    isPenActive = true;
     try {
-      canvas.setPointerCapture(e.pointerId);
-    } catch (err) { }
+      padCanvas.setPointerCapture(e.pointerId);
+    } catch (_) {}
 
-    const pt = getCanvasCoord(e);
-    currentStroke = [pt];
-    userStrokes.push(currentStroke);
-    redrawCanvas();
+    const coord = mapPointerToLogicalCoords(e);
+    currentPath = [coord];
+    strokePaths.push(currentPath);
+    renderCanvasFrame();
   }
 
   function onPointerMove(e) {
-    if (!isDrawing || !currentStroke) return;
+    if (!isPenActive || !currentPath) return;
 
-    const pt = getCanvasCoord(e);
-    const last = currentStroke[currentStroke.length - 1];
+    const coord = mapPointerToLogicalCoords(e);
+    const lastPoint = currentPath[currentPath.length - 1];
 
-    // Light distance throttle to avoid point clustering
-    const dist = Math.hypot(pt.x - last.x, pt.y - last.y);
-    if (dist < 2.5) return;
+    const stepDist = Math.hypot(coord.x - lastPoint.x, coord.y - lastPoint.y);
+    if (stepDist < 2.5) return;
 
-    currentStroke.push(pt);
-    redrawCanvas();
+    currentPath.push(coord);
+    renderCanvasFrame();
   }
 
   function onPointerUp(e) {
-    if (!isDrawing) return;
-    isDrawing = false;
+    if (!isPenActive) return;
+    isPenActive = false;
 
-    if (e && e.pointerId) {
+    if (e?.pointerId) {
       try {
-        canvas.releasePointerCapture(e.pointerId);
-      } catch (err) { }
+        padCanvas.releasePointerCapture(e.pointerId);
+      } catch (_) {}
     }
 
-    currentStroke = null;
-    redrawCanvas();
+    currentPath = null;
+    renderCanvasFrame();
   }
 
-  // Guide, grid and stroke rendering
-  function redrawCanvas() {
-    if (!canvas || !ctx) return;
+  function renderCanvasFrame() {
+    if (!padCanvas || !drawCtx) return;
 
-    const sx = canvas.width / 300;
-    const sy = canvas.height / 300;
+    const scaleX = padCanvas.width / 300;
+    const scaleY = padCanvas.height / 300;
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawCtx.setTransform(1, 0, 0, 1, 0, 0);
+    drawCtx.clearRect(0, 0, padCanvas.width, padCanvas.height);
 
-    // Draw in the 300x300 logical space
-    ctx.setTransform(sx, 0, 0, sy, 0, 0);
+    drawCtx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
-    const charData = getCurrentChar();
+    const activeChar = getActiveCharData();
 
-    drawDecorativeGrid();
+    drawGridLines();
 
-    // Dashed gold guide
-    if (showGuide && charData && charData.pathD) {
-      ctx.save();
-      const guidePath = new Path2D(charData.pathD);
-      ctx.strokeStyle = 'rgba(236, 194, 70, 0.45)';
-      ctx.lineWidth = 2.4;
-      ctx.setLineDash([6, 5]);
-      ctx.stroke(guidePath);
-      ctx.restore();
+    if (displayGuide && activeChar?.pathD) {
+      drawCtx.save();
+      const pathShape = new Path2D(activeChar.pathD);
+      drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.45)';
+      drawCtx.lineWidth = 2.4;
+      drawCtx.setLineDash([6, 5]);
+      drawCtx.stroke(pathShape);
+      drawCtx.restore();
     }
 
-    // Red dot at the start of the first contour
-    if (charData && charData.contours && charData.contours.length && charData.contours[0].length) {
-      const startPt = charData.contours[0][0];
-      drawStartDotCanvas(startPt[0], startPt[1]);
+    if (activeChar?.contours?.length && activeChar.contours[0].length) {
+      const originPoint = activeChar.contours[0][0];
+      renderStartGlyphDot(originPoint[0], originPoint[1]);
     }
 
-    if (userStrokes.length > 0) {
-      renderUserStrokes();
+    if (strokePaths.length > 0) {
+      drawUserInk();
     }
   }
 
-  function drawDecorativeGrid() {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(236, 194, 70, 0.07)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
+  function drawGridLines() {
+    drawCtx.save();
+    drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.07)';
+    drawCtx.lineWidth = 1;
+    drawCtx.setLineDash([4, 4]);
 
-    // Center crosshairs
-    ctx.beginPath();
-    ctx.moveTo(150, 20);
-    ctx.lineTo(150, 280);
-    ctx.moveTo(20, 150);
-    ctx.lineTo(280, 150);
-    ctx.stroke();
+    drawCtx.beginPath();
+    drawCtx.moveTo(150, 20);
+    drawCtx.lineTo(150, 280);
+    drawCtx.moveTo(20, 150);
+    drawCtx.lineTo(280, 150);
+    drawCtx.stroke();
 
-    // Subtle center concentric circle
-    ctx.beginPath();
-    ctx.arc(150, 150, 85, 0, Math.PI * 2);
-    ctx.stroke();
+    drawCtx.beginPath();
+    drawCtx.arc(150, 150, 85, 0, Math.PI * 2);
+    drawCtx.stroke();
 
-    // Corner decorative tick marks
-    ctx.setLineDash([]);
-    ctx.strokeStyle = 'rgba(236, 194, 70, 0.14)';
-    const corners = [
+    drawCtx.setLineDash([]);
+    drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.14)';
+    const cornerMarkers = [
       [24, 24, 36, 24, 24, 36],
       [276, 24, 264, 24, 276, 36],
       [24, 276, 36, 276, 24, 264],
       [276, 276, 264, 276, 276, 264]
     ];
-    corners.forEach(([x1, y1, x2, y2, x3, y3]) => {
-      ctx.beginPath();
-      ctx.moveTo(x2, y2);
-      ctx.lineTo(x1, y1);
-      ctx.lineTo(x3, y3);
-      ctx.stroke();
+    cornerMarkers.forEach(([ax, ay, bx, by, cx, cy]) => {
+      drawCtx.beginPath();
+      drawCtx.moveTo(bx, by);
+      drawCtx.lineTo(ax, ay);
+      drawCtx.lineTo(cx, cy);
+      drawCtx.stroke();
     });
 
-    ctx.restore();
+    drawCtx.restore();
   }
 
-  function drawStartDotCanvas(x, y) {
-    ctx.save();
-    // Outer glow
-    ctx.fillStyle = 'rgba(189, 45, 36, 0.22)';
-    ctx.beginPath();
-    ctx.arc(x, y, 9, 0, Math.PI * 2);
-    ctx.fill();
+  function renderStartGlyphDot(px, py) {
+    drawCtx.save();
+    drawCtx.fillStyle = 'rgba(189, 45, 36, 0.22)';
+    drawCtx.beginPath();
+    drawCtx.arc(px, py, 9, 0, Math.PI * 2);
+    drawCtx.fill();
 
-    // Red core
-    ctx.fillStyle = '#BD2D24';
-    ctx.beginPath();
-    ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-    ctx.fill();
+    drawCtx.fillStyle = '#BD2D24';
+    drawCtx.beginPath();
+    drawCtx.arc(px, py, 4.5, 0, Math.PI * 2);
+    drawCtx.fill();
 
-    // White center
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    drawCtx.fillStyle = '#FFFFFF';
+    drawCtx.beginPath();
+    drawCtx.arc(px, py, 1.8, 0, Math.PI * 2);
+    drawCtx.fill();
+    drawCtx.restore();
   }
 
-  function renderUserStrokes() {
-    ctx.save();
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+  function drawUserInk() {
+    drawCtx.save();
+    drawCtx.lineCap = 'round';
+    drawCtx.lineJoin = 'round';
 
-    if (!isScored) {
-      // Normal mode: cream strokes
-      ctx.lineWidth = 7.2;
-      ctx.strokeStyle = '#FAF8F5'; // var(--color-cream)
+    if (!isEvaluated) {
+      drawCtx.lineWidth = 7.2;
+      drawCtx.strokeStyle = '#FAF8F5'; // warna krem var(--c-cream)
 
-      userStrokes.forEach((stroke) => {
-        if (!stroke || stroke.length === 0) return;
+      strokePaths.forEach((path) => {
+        if (!path || path.length === 0) return;
 
-        if (stroke.length === 1) {
-          ctx.fillStyle = '#FAF8F5';
-          ctx.beginPath();
-          ctx.arc(stroke[0].x, stroke[0].y, 3.6, 0, Math.PI * 2);
-          ctx.fill();
+        if (path.length === 1) {
+          drawCtx.fillStyle = '#FAF8F5';
+          drawCtx.beginPath();
+          drawCtx.arc(path[0].x, path[0].y, 3.6, 0, Math.PI * 2);
+          drawCtx.fill();
           return;
         }
 
-        ctx.beginPath();
-        ctx.moveTo(stroke[0].x, stroke[0].y);
+        drawCtx.beginPath();
+        drawCtx.moveTo(path[0].x, path[0].y);
 
-        // Smooth the line with quadratic curves
-        for (let i = 1; i < stroke.length - 1; i++) {
-          const midX = (stroke[i].x + stroke[i + 1].x) / 2;
-          const midY = (stroke[i].y + stroke[i + 1].y) / 2;
-          ctx.quadraticCurveTo(stroke[i].x, stroke[i].y, midX, midY);
+        for (let i = 1; i < path.length - 1; i++) {
+          const midPointX = (path[i].x + path[i + 1].x) / 2;
+          const midPointY = (path[i].y + path[i + 1].y) / 2;
+          drawCtx.quadraticCurveTo(path[i].x, path[i].y, midPointX, midPointY);
         }
-        ctx.lineTo(stroke[stroke.length - 1].x, stroke[stroke.length - 1].y);
-        ctx.stroke();
+        drawCtx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
+        drawCtx.stroke();
       });
     } else {
-      // Scored mode: tint each segment by how close it is to the reference
-      ctx.lineWidth = 7.2;
+      drawCtx.lineWidth = 7.2;
 
-      userStrokes.forEach((stroke) => {
-        if (!stroke || stroke.length === 0) return;
+      strokePaths.forEach((path) => {
+        if (!path || path.length === 0) return;
 
-        if (stroke.length === 1) {
-          const p = stroke[0];
-          const isAccurate = (p.distToRef !== undefined && p.distToRef <= TOLERANCE_RADIUS);
-          ctx.fillStyle = isAccurate ? '#4ADE80' : '#EF4444';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 3.6, 0, Math.PI * 2);
-          ctx.fill();
+        if (path.length === 1) {
+          const p = path[0];
+          const isAccurate = (p.distToRef !== undefined && p.distToRef <= hitTolerance);
+          drawCtx.fillStyle = isAccurate ? '#4ADE80' : '#EF4444';
+          drawCtx.beginPath();
+          drawCtx.arc(p.x, p.y, 3.6, 0, Math.PI * 2);
+          drawCtx.fill();
           return;
         }
 
-        for (let i = 0; i < stroke.length - 1; i++) {
-          const p1 = stroke[i];
-          const p2 = stroke[i + 1];
-          const avgDist = ((p1.distToRef || 0) + (p2.distToRef || 0)) / 2;
+        for (let i = 0; i < path.length - 1; i++) {
+          const p1 = path[i];
+          const p2 = path[i + 1];
+          const meanDist = ((p1.distToRef || 0) + (p2.distToRef || 0)) / 2;
 
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
+          drawCtx.beginPath();
+          drawCtx.moveTo(p1.x, p1.y);
+          drawCtx.lineTo(p2.x, p2.y);
 
-          if (avgDist <= TOLERANCE_RADIUS) {
-            ctx.strokeStyle = 'rgba(74, 222, 128, 0.95)'; // Soft emerald green
-          } else if (avgDist <= PRECISION_MAX_DIST) {
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.92)'; // Soft amber
+          if (meanDist <= hitTolerance) {
+            drawCtx.strokeStyle = 'rgba(74, 222, 128, 0.95)';
+          } else if (meanDist <= maxDeviation) {
+            drawCtx.strokeStyle = 'rgba(251, 191, 36, 0.92)';
           } else {
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.92)';   // Soft crimson red
+            drawCtx.strokeStyle = 'rgba(239, 68, 68, 0.92)';
           }
-          ctx.stroke();
+          drawCtx.stroke();
         }
       });
     }
 
-    ctx.restore();
+    drawCtx.restore();
   }
 
-  function updateStartDotPosition() {
-    if (!startDotEl) return;
-    const charData = getCurrentChar();
+  function positionStartIndicator() {
+    if (!startIndicator) return;
+    const charData = getActiveCharData();
 
-    if (charData && charData.contours && charData.contours.length && charData.contours[0].length) {
+    if (charData?.contours?.length && charData.contours[0].length) {
       const pt = charData.contours[0][0];
       const leftPercent = (pt[0] / 300) * 100;
       const topPercent = (pt[1] / 300) * 100;
-      startDotEl.style.left = `${leftPercent}%`;
-      startDotEl.style.top = `${topPercent}%`;
-      startDotEl.style.display = 'block';
+      startIndicator.style.left = `${leftPercent}%`;
+      startIndicator.style.top = `${topPercent}%`;
+      startIndicator.style.display = 'block';
     } else {
-      startDotEl.style.display = 'none';
+      startIndicator.style.display = 'none';
     }
   }
 
-  // Stroke order demo
   function toggleStrokeDemo() {
-    if (isDemoPlaying) {
+    if (isDemoActive) {
       stopStrokeDemo();
     } else {
       startStrokeDemo();
@@ -542,14 +514,14 @@
   }
 
   function startStrokeDemo() {
-    const charData = getCurrentChar();
-    if (!charData || !charData.contours || !charData.contours.length) return;
+    const charData = getActiveCharData();
+    if (!charData?.contours?.length) return;
 
-    isDemoPlaying = true;
+    isDemoActive = true;
 
-    if (demoBtn) {
-      demoBtn.classList.add('is-playing');
-      demoBtn.innerHTML = `
+    if (btnDemo) {
+      btnDemo.classList.add('is-playing');
+      btnDemo.innerHTML = `
         <svg viewBox="0 0 24 24" fill="currentColor">
           <rect x="6" y="5" width="4" height="14" rx="1"/>
           <rect x="14" y="5" width="4" height="14" rx="1"/>
@@ -558,72 +530,67 @@
       `;
     }
 
-    // Animate one contour at a time, pointIdx points per frame
-    const allContours = charData.contours;
+    const contoursList = charData.contours;
     let contourIdx = 0;
-    let pointIdx = 0;
+    let cursorIdx = 0;
 
-    function step() {
-      if (!isDemoPlaying) return;
+    function renderDemoTick() {
+      if (!isDemoActive) return;
 
-      redrawCanvas();
+      renderCanvasFrame();
 
-      // Completed contours + the one currently being drawn
-      ctx.save();
-      const sx = canvas.width / 300;
-      const sy = canvas.height / 300;
-      ctx.setTransform(sx, 0, 0, sy, 0, 0);
+      drawCtx.save();
+      const scaleFactorX = padCanvas.width / 300;
+      const scaleFactorY = padCanvas.height / 300;
+      drawCtx.setTransform(scaleFactorX, 0, 0, scaleFactorY, 0, 0);
 
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      drawCtx.lineCap = 'round';
+      drawCtx.lineJoin = 'round';
 
       for (let c = 0; c < contourIdx; c++) {
-        const pts = allContours[c];
-        if (pts.length < 2) continue;
-        ctx.strokeStyle = 'rgba(236, 194, 70, 0.85)';
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (let p = 1; p < pts.length; p++) {
-          ctx.lineTo(pts[p][0], pts[p][1]);
+        const polyline = contoursList[c];
+        if (polyline.length < 2) continue;
+        drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.85)';
+        drawCtx.lineWidth = 5;
+        drawCtx.beginPath();
+        drawCtx.moveTo(polyline[0][0], polyline[0][1]);
+        for (let p = 1; p < polyline.length; p++) {
+          drawCtx.lineTo(polyline[p][0], polyline[p][1]);
         }
-        ctx.stroke();
+        drawCtx.stroke();
       }
 
-      const currentPts = allContours[contourIdx];
-      if (currentPts && currentPts.length > 1) {
-        ctx.strokeStyle = '#ECC246';
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(currentPts[0][0], currentPts[0][1]);
-        const maxP = Math.min(pointIdx, currentPts.length - 1);
-        for (let p = 1; p <= maxP; p++) {
-          ctx.lineTo(currentPts[p][0], currentPts[p][1]);
+      const activeContour = contoursList[contourIdx];
+      if (activeContour && activeContour.length > 1) {
+        drawCtx.strokeStyle = '#ECC246';
+        drawCtx.lineWidth = 6;
+        drawCtx.beginPath();
+        drawCtx.moveTo(activeContour[0][0], activeContour[0][1]);
+        const boundP = Math.min(cursorIdx, activeContour.length - 1);
+        for (let p = 1; p <= boundP; p++) {
+          drawCtx.lineTo(activeContour[p][0], activeContour[p][1]);
         }
-        ctx.stroke();
+        drawCtx.stroke();
 
-        // Brush head
-        const headPt = currentPts[maxP];
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(headPt[0], headPt[1], 4.5, 0, Math.PI * 2);
-        ctx.fill();
+        const penTip = activeContour[boundP];
+        drawCtx.fillStyle = '#FFFFFF';
+        drawCtx.beginPath();
+        drawCtx.arc(penTip[0], penTip[1], 4.5, 0, Math.PI * 2);
+        drawCtx.fill();
 
-        ctx.fillStyle = 'rgba(236, 194, 70, 0.45)';
-        ctx.beginPath();
-        ctx.arc(headPt[0], headPt[1], 9, 0, Math.PI * 2);
-        ctx.fill();
+        drawCtx.fillStyle = 'rgba(236, 194, 70, 0.45)';
+        drawCtx.beginPath();
+        drawCtx.arc(penTip[0], penTip[1], 9, 0, Math.PI * 2);
+        drawCtx.fill();
       }
 
-      ctx.restore();
+      drawCtx.restore();
 
-      // Advance point index
-      pointIdx += 3; // speed factor
-      if (pointIdx >= currentPts.length) {
+      cursorIdx += 3;
+      if (cursorIdx >= activeContour.length) {
         contourIdx++;
-        pointIdx = 0;
-        if (contourIdx >= allContours.length) {
-          // Hold the finished drawing briefly, then reset
+        cursorIdx = 0;
+        if (contourIdx >= contoursList.length) {
           setTimeout(() => {
             stopStrokeDemo();
           }, 800);
@@ -631,120 +598,114 @@
         }
       }
 
-      demoAnimId = requestAnimationFrame(step);
+      demoRafId = requestAnimationFrame(renderDemoTick);
     }
 
-    demoAnimId = requestAnimationFrame(step);
+    demoRafId = requestAnimationFrame(renderDemoTick);
   }
 
   function stopStrokeDemo() {
-    isDemoPlaying = false;
-    if (demoAnimId) {
-      cancelAnimationFrame(demoAnimId);
-      demoAnimId = null;
+    isDemoActive = false;
+    if (demoRafId) {
+      cancelAnimationFrame(demoRafId);
+      demoRafId = null;
     }
-    if (demoBtn) {
-      demoBtn.classList.remove('is-playing');
-      demoBtn.innerHTML = `
+    if (btnDemo) {
+      btnDemo.classList.remove('is-playing');
+      btnDemo.innerHTML = `
         <svg viewBox="0 0 24 24" fill="currentColor">
           <polygon points="6 4 18 12 6 20 6 4" />
         </svg>
         PERAGAKAN GORESAN
       `;
     }
-    redrawCanvas();
+    renderCanvasFrame();
   }
 
-  // Scoring
-  function calculateScore() {
-    const charData = getCurrentChar();
+  function evaluateTracePrecision() {
+    const charData = getActiveCharData();
+    if (!charData?.contours?.length) return;
 
-    if (!charData || !charData.contours || !charData.contours.length) return;
-
-    const refPoints = [];
+    const referenceCoords = [];
     charData.contours.forEach((contour) => {
       contour.forEach((pt) => {
-        refPoints.push({ x: pt[0], y: pt[1] });
+        referenceCoords.push({ x: pt[0], y: pt[1] });
       });
     });
 
-    const drawnPoints = [];
-    userStrokes.forEach((stroke) => {
-      stroke.forEach((pt) => {
-        drawnPoints.push(pt);
+    const collectedPoints = [];
+    strokePaths.forEach((path) => {
+      path.forEach((pt) => {
+        collectedPoints.push(pt);
       });
     });
 
-    if (drawnPoints.length < 5) {
-      showEmptyDrawingAlert();
+    if (collectedPoints.length < 5) {
+      notifyEmptyCanvas();
       return;
     }
 
-    // Precision: how close each drawn point is to its nearest reference point
-    let totalPrecisionAccuracy = 0;
-    for (let i = 0; i < drawnPoints.length; i++) {
-      const p = drawnPoints[i];
-      let minDistSq = Infinity;
+    let sumPrecision = 0;
+    for (let i = 0; i < collectedPoints.length; i++) {
+      const drawnPt = collectedPoints[i];
+      let shortestDistSq = Infinity;
 
-      for (let j = 0; j < refPoints.length; j++) {
-        const dx = p.x - refPoints[j].x;
-        const dy = p.y - refPoints[j].y;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < minDistSq) {
-          minDistSq = distSq;
+      for (let j = 0; j < referenceCoords.length; j++) {
+        const deltaX = drawnPt.x - referenceCoords[j].x;
+        const deltaY = drawnPt.y - referenceCoords[j].y;
+        const distSq = deltaX * deltaX + deltaY * deltaY;
+        if (distSq < shortestDistSq) {
+          shortestDistSq = distSq;
         }
       }
 
-      const dist = Math.sqrt(minDistSq);
-      p.distToRef = dist; // used later to tint each segment
+      const dist = Math.sqrt(shortestDistSq);
+      drawnPt.distToRef = dist;
 
-      const pointAccuracy = Math.max(0, 1 - (dist / PRECISION_MAX_DIST));
-      totalPrecisionAccuracy += pointAccuracy;
+      const accuracy = Math.max(0, 1 - (dist / maxDeviation));
+      sumPrecision += accuracy;
     }
 
-    const precisionRatio = totalPrecisionAccuracy / drawnPoints.length;
+    const precisionRatio = sumPrecision / collectedPoints.length;
 
-    // Coverage: share of reference points that have a drawn point within tolerance
-    const tolSq = TOLERANCE_RADIUS * TOLERANCE_RADIUS;
-    let coveredCount = 0;
+    const toleranceSq = hitTolerance * hitTolerance;
+    let coveredPointsCount = 0;
 
-    for (let i = 0; i < refPoints.length; i++) {
-      const r = refPoints[i];
+    for (let i = 0; i < referenceCoords.length; i++) {
+      const refPt = referenceCoords[i];
       let isHit = false;
 
-      for (let j = 0; j < drawnPoints.length; j++) {
-        const d = drawnPoints[j];
-        const dx = r.x - d.x;
-        const dy = r.y - d.y;
-        if (dx * dx + dy * dy <= tolSq) {
+      for (let j = 0; j < collectedPoints.length; j++) {
+        const drawn = collectedPoints[j];
+        const dx = refPt.x - drawn.x;
+        const dy = refPt.y - drawn.y;
+        if (dx * dx + dy * dy <= toleranceSq) {
           isHit = true;
           break;
         }
       }
 
-      if (isHit) coveredCount++;
+      if (isHit) coveredPointsCount++;
     }
 
-    const coverageRatio = refPoints.length > 0 ? (coveredCount / refPoints.length) : 0;
-
-    const weightedScore = (precisionRatio * WEIGHT_PRECISION) + (coverageRatio * WEIGHT_COVERAGE);
-    const finalScore = Math.max(0, Math.min(100, Math.round(weightedScore * 100)));
+    const coverageRatio = referenceCoords.length > 0 ? (coveredPointsCount / referenceCoords.length) : 0;
+    const compositeScore = (precisionRatio * precisionWeight) + (coverageRatio * coverageWeight);
+    const finalScore = Math.max(0, Math.min(100, Math.round(compositeScore * 100)));
 
     const precPct = Math.round(precisionRatio * 100);
     const covPct = Math.round(coverageRatio * 100);
 
-    displayResultPanel(finalScore, precPct, covPct);
+    renderEvaluationMetrics(finalScore, precPct, covPct);
 
-    // Redraw so strokes get the green/amber/red tint
-    isScored = true;
-    redrawCanvas();
+    isEvaluated = true;
+    renderCanvasFrame();
 
-    if (finalScore >= MASTERED_THRESHOLD) {
-      setCharacterMastered(currentKey);
+    if (finalScore >= passingScore) {
+      markAksaraMastered(activeKey);
     }
   }
 
-  function getResultElements() {
+  function getMetricDOMNodes() {
     return {
       score: document.getElementById('aksaraResultScore'),
       label: document.getElementById('aksaraResultLabel'),
@@ -757,26 +718,26 @@
     };
   }
 
-  function showEmptyDrawingAlert() {
-    if (!resultPanel) return;
+  function notifyEmptyCanvas() {
+    if (!resultScoreboard) return;
 
-    resultPanel.hidden = false;
-    const el = getResultElements();
+    resultScoreboard.hidden = false;
+    const nodes = getMetricDOMNodes();
 
-    if (el.score) el.score.textContent = '0%';
-    if (el.label) {
-      el.label.textContent = 'Kanvas Masih Kosong';
-      el.label.className = 'aksara-result-label label--low';
+    if (nodes.score) nodes.score.textContent = '0%';
+    if (nodes.label) {
+      nodes.label.textContent = 'Kanvas Masih Kosong';
+      nodes.label.className = 'aksara-result-label label--low';
     }
-    if (el.desc) {
-      el.desc.textContent = 'Silakan goreskan aksara di atas kanvas mengikuti pola panduan emas sebelum memeriksa presisi.';
+    if (nodes.desc) {
+      nodes.desc.textContent = 'Silakan goreskan aksara di atas kanvas mengikuti pola panduan emas sebelum memeriksa presisi.';
     }
-    if (el.precisionVal) el.precisionVal.textContent = '0%';
-    if (el.coverageVal) el.coverageVal.textContent = '0%';
-    if (el.precisionBar) el.precisionBar.style.width = '0%';
-    if (el.coverageBar) el.coverageBar.style.width = '0%';
-    if (el.status) {
-      el.status.innerHTML = `
+    if (nodes.precisionVal) nodes.precisionVal.textContent = '0%';
+    if (nodes.coverageVal) nodes.coverageVal.textContent = '0%';
+    if (nodes.precisionBar) nodes.precisionBar.style.width = '0%';
+    if (nodes.coverageBar) nodes.coverageBar.style.width = '0%';
+    if (nodes.status) {
+      nodes.status.innerHTML = `
         <div class="aksara-alert aksara-alert--warn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -788,17 +749,17 @@
     }
   }
 
-  function displayResultPanel(score, precPct, covPct) {
-    if (!resultPanel) return;
+  function renderEvaluationMetrics(score, precPct, covPct) {
+    if (!resultScoreboard) return;
 
-    resultPanel.hidden = false;
-    const el = getResultElements();
+    resultScoreboard.hidden = false;
+    const nodes = getMetricDOMNodes();
 
-    if (el.score) el.score.textContent = `${score}%`;
-    if (el.precisionVal) el.precisionVal.textContent = `${precPct}%`;
-    if (el.coverageVal) el.coverageVal.textContent = `${covPct}%`;
-    if (el.precisionBar) el.precisionBar.style.width = `${precPct}%`;
-    if (el.coverageBar) el.coverageBar.style.width = `${covPct}%`;
+    if (nodes.score) nodes.score.textContent = `${score}%`;
+    if (nodes.precisionVal) nodes.precisionVal.textContent = `${precPct}%`;
+    if (nodes.coverageVal) nodes.coverageVal.textContent = `${covPct}%`;
+    if (nodes.precisionBar) nodes.precisionBar.style.width = `${precPct}%`;
+    if (nodes.coverageBar) nodes.coverageBar.style.width = `${covPct}%`;
 
     let labelText = '';
     let labelClass = '';
@@ -818,17 +779,17 @@
       descText = 'Goresan masih banyak keluar dari jalur pola emas. Tetap tenang dan ulangi tarikan dari simpul awal.';
     }
 
-    if (el.label) {
-      el.label.textContent = labelText;
-      el.label.className = `aksara-result-label ${labelClass}`;
+    if (nodes.label) {
+      nodes.label.textContent = labelText;
+      nodes.label.className = `aksara-result-label ${labelClass}`;
     }
-    if (el.desc) {
-      el.desc.textContent = descText;
+    if (nodes.desc) {
+      nodes.desc.textContent = descText;
     }
 
-    if (el.status) {
-      if (score >= MASTERED_THRESHOLD) {
-        el.status.innerHTML = `
+    if (nodes.status) {
+      if (score >= passingScore) {
+        nodes.status.innerHTML = `
           <div class="aksara-alert aksara-alert--success">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -837,7 +798,7 @@
             <span><strong>Aksara Berhasil Dikuasai!</strong> Tanda kelulusan telah dicatat pada jurnal pusaka Anda.</span>
           </div>`;
       } else {
-        el.status.innerHTML = `
+        nodes.status.innerHTML = `
           <div class="aksara-alert aksara-alert--info">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
@@ -850,91 +811,81 @@
     }
   }
 
-  // Buttons and navigation
-  function initEventListeners() {
-    // "Hapus & Ulangi"
-    const resetBtn = document.getElementById('aksaraBtnReset');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        userStrokes = [];
-        isScored = false;
-        if (resultPanel) resultPanel.hidden = true;
-        if (isDemoPlaying) stopStrokeDemo();
-        redrawCanvas();
+  function bindStudioEvents() {
+    const btnReset = document.getElementById('aksaraBtnReset');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        strokePaths = [];
+        isEvaluated = false;
+        if (resultScoreboard) resultScoreboard.hidden = true;
+        if (isDemoActive) stopStrokeDemo();
+        renderCanvasFrame();
       });
     }
 
-    // "Pola Panduan"
-    const guideBtn = document.getElementById('aksaraBtnGuide');
-    if (guideBtn) {
-      guideBtn.addEventListener('click', () => {
-        showGuide = !showGuide;
-        guideBtn.classList.toggle('is-off', !showGuide);
-        redrawCanvas();
+    const btnGuide = document.getElementById('aksaraBtnGuide');
+    if (btnGuide) {
+      btnGuide.addEventListener('click', () => {
+        displayGuide = !displayGuide;
+        btnGuide.classList.toggle('is-off', !displayGuide);
+        renderCanvasFrame();
       });
     }
 
-    // "Lihat Penilaian Presisi"
-    const scoreBtn = document.getElementById('aksaraBtnScore');
-    if (scoreBtn) {
-      scoreBtn.addEventListener('click', () => {
-        if (isDemoPlaying) stopStrokeDemo();
-        calculateScore();
+    const btnScore = document.getElementById('aksaraBtnScore');
+    if (btnScore) {
+      btnScore.addEventListener('click', () => {
+        if (isDemoActive) stopStrokeDemo();
+        evaluateTracePrecision();
       });
     }
 
-    // "Aksara Berikutnya"
-    const nextBtn = document.getElementById('aksaraBtnNext');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        const curIdx = AKSARA_KEYS.indexOf(currentKey);
-        const nextIdx = (curIdx + 1) % AKSARA_KEYS.length;
-        selectAksara(AKSARA_KEYS[nextIdx]);
+    const btnNext = document.getElementById('aksaraBtnNext');
+    if (btnNext) {
+      btnNext.addEventListener('click', () => {
+        const curIdx = aksaraList.indexOf(activeKey);
+        const nextIdx = (curIdx + 1) % aksaraList.length;
+        switchAksara(aksaraList[nextIdx]);
       });
     }
 
-    // Stroke demo button
-    if (demoBtn) {
-      demoBtn.addEventListener('click', toggleStrokeDemo);
+    if (btnDemo) {
+      btnDemo.addEventListener('click', toggleStrokeDemo);
     }
 
-    // Result panel close
-    const resultClose = document.getElementById('aksaraResultClose');
-    if (resultClose) {
-      resultClose.addEventListener('click', () => {
-        if (resultPanel) resultPanel.hidden = true;
+    const btnDismissResult = document.getElementById('aksaraResultClose');
+    if (btnDismissResult) {
+      btnDismissResult.addEventListener('click', () => {
+        if (resultScoreboard) resultScoreboard.hidden = true;
       });
     }
   }
 
-  // Select a character
-  function selectAksara(key) {
-    const data = getAksaraData();
-    if (!data || !data[key]) return;
+  function switchAksara(key) {
+    const dataset = fetchAksaraDataset();
+    if (!dataset || !dataset[key]) return;
 
-    if (isDemoPlaying) stopStrokeDemo();
+    if (isDemoActive) stopStrokeDemo();
 
-    currentKey = key;
-    userStrokes = [];
-    isScored = false;
-    if (resultPanel) resultPanel.hidden = true;
+    activeKey = key;
+    strokePaths = [];
+    isEvaluated = false;
+    if (resultScoreboard) resultScoreboard.hidden = true;
 
-    // Update active highlight in selector list
-    AKSARA_KEYS.forEach((k) => {
+    aksaraList.forEach((k) => {
       const row = document.getElementById(`aksara-row-${k}`);
       if (!row) return;
-      const isActive = (k === key);
-      row.classList.toggle('is-active', isActive);
-      row.setAttribute('aria-selected', String(isActive));
+      const isCurrent = (k === key);
+      row.classList.toggle('is-active', isCurrent);
+      row.setAttribute('aria-selected', String(isCurrent));
 
-      // Scroll into view on horizontal mobile selector
-      if (isActive && window.innerWidth <= 992) {
+      if (isCurrent && window.innerWidth <= 992) {
         row.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     });
 
-    const item = data[key];
-    const meta = AKSARA_METADATA[key] || { meaningLong: '', char: '' };
+    const item = dataset[key];
+    const meta = aksaraMeta[key] || { meaningLong: '', char: '' };
 
     const nameEl = document.getElementById('aksaraActiveName');
     if (nameEl) nameEl.textContent = `Aksara ${item.label}`;
@@ -948,25 +899,24 @@
     const meaningEl = document.getElementById('aksaraActiveMeaning');
     if (meaningEl) meaningEl.textContent = meta.meaningLong;
 
-    updateStartDotPosition();
-    redrawCanvas();
+    positionStartIndicator();
+    renderCanvasFrame();
   }
 
-  // aksaraData is a top-level const in aksara-data.js, so it isn't always on window
-  function getAksaraData() {
+  function fetchAksaraDataset() {
     return (typeof aksaraData !== 'undefined') ? aksaraData : (window.aksaraData || null);
   }
 
-  function getCurrentChar() {
-    const data = getAksaraData();
-    return data ? data[currentKey] : null;
+  function getActiveCharData() {
+    const dataset = fetchAksaraDataset();
+    return dataset ? dataset[activeKey] : null;
   }
 
-  function debounce(fn, wait) {
-    let timeout;
+  function debounce(callback, delay) {
+    let timer;
     return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), wait);
+      clearTimeout(timer);
+      timer = setTimeout(() => callback.apply(this, args), delay);
     };
   }
 })();
