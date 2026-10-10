@@ -33,6 +33,9 @@ Selama file belum ada, `onerror` di tiap `<img>` akan menyembunyikan ikon
 | `assets/images/galeri/tari-pendet.jpg` | 800×600 | 4:3 | Penari Pendet menebar bunga cempaka |
 | `assets/images/galeri/empu-keris.jpg` | 600×800 | 3:4 | Empu menempa keris, percikan api |
 | `assets/images/gamelan/gong-kebyar-purwa-rancak.jpg` | 800×600 | 4:3 | Ansambel Gong Kebyar Purwa Rancak berlapis emas prada |
+| `assets/images/gamelan/gangsa-pemade.jpg` | 800×600 | 4:3 | Bilah Gangsa Pemade perunggu berukir prada dan bumbung bambu |
+| `assets/images/gamelan/reyong-pencon.jpg` | 800×600 | 4:3 | Instrumen Reyong Bali 12 pot pencon berpelawah ukir merah emas |
+| `assets/images/gamelan/kendang-sepasang.jpg` | 800×600 | 4:3 | Sepasang Kendang Bali (Lanang dan Wadon) dengan dudukan ukir prada |
 | `assets/images/peta/gunung-agung-topografi.jpg` | 800×600 | 4:3 | Lanskap topografi suci Gunung Agung dan terasering Bali |
 | `assets/images/aksara/lontar-kerti.jpg` | 800×600 | 4:3 | Koleksi pusaka naskah lontar kerti bertuliskan Aksara Bali |
 

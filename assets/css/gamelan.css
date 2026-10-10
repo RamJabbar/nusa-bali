@@ -1,0 +1,1262 @@
+@import url('styles.css');
+
+/* ==========================================================================
+   NUSA BALI HERITAGE — GAMELAN BALI STYLES
+   Desain kuratorial luhur: palet arang obsidian, emas prada, merah kirmizi sakral.
+   ========================================================================== */
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   1. HERO SECTION GAMELAN
+   -------------------------------------------------------------------------- */
+.gamelan-hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 8.5rem 0 5rem;
+  background: #141312;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 10%, rgba(236, 194, 70, 0.08) 0%, transparent 70%),
+    radial-gradient(circle at 90% 40%, rgba(189, 45, 36, 0.06) 0%, transparent 60%);
+  border-bottom: 1px solid rgba(236, 194, 70, 0.16);
+  overflow: hidden;
+}
+
+.gamelan-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.22;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+}
+
+.gamelan-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gamelan-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 860px;
+}
+
+.eyebrow-gamelan {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(236, 194, 70, 0.09);
+  border: 1px solid rgba(236, 194, 70, 0.32);
+  color: var(--c-gold);
+  font-family: var(--ff-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.gamelan-hero__title {
+  font-family: var(--ff-display);
+  font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--c-cream);
+  margin-bottom: 1.5rem;
+}
+
+.gamelan-hero__title .accent-italic {
+  display: block;
+  font-family: var(--ff-serif);
+  font-size: 0.88em;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--c-gold);
+}
+
+.gamelan-hero__desc {
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--c-sand);
+  margin-bottom: 2.25rem;
+  max-width: 760px;
+}
+
+.gamelan-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.stats-bar--gamelan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: rgba(28, 27, 27, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 194, 70, 0.2);
+  border-radius: 8px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.stat-pill__icon {
+  width: 22px;
+  height: 22px;
+  color: var(--c-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.stat-pill__value {
+  font-family: var(--ff-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-cream);
+  line-height: 1.2;
+}
+
+.stat-pill__label {
+  font-size: 0.75rem;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.15rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. BALE TABUH DIGITAL (PLAYABLE VIRTUAL GAMELAN)
+   -------------------------------------------------------------------------- */
+.bale-tabuh-section {
+  position: relative;
+  background: #121110;
+  padding: 5.5rem 0 6.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.tabuh-console {
+  background: #181716;
+  border: 1px solid rgba(236, 194, 70, 0.3);
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.tabuh-console::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--c-gold), var(--c-red), var(--c-gold), transparent);
+}
+
+/* Toolbar Pengaturan Akustik */
+.tabuh-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.inst-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inst-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  background: rgba(36, 34, 31, 0.85);
+  border: 1px solid rgba(236, 194, 70, 0.22);
+  border-radius: 6px;
+  color: var(--c-sand);
+  font-family: var(--ff-display);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.25s var(--tr-smooth);
+}
+
+.inst-tab-btn:hover {
+  background: rgba(236, 194, 70, 0.12);
+  border-color: var(--c-gold);
+  color: var(--c-gold);
+}
+
+.inst-tab-btn.is-active {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: #121110;
+  box-shadow: 0 4px 15px rgba(236, 194, 70, 0.28);
+}
+
+.tabuh-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.toggle-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  background: rgba(28, 26, 24, 0.9);
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  border-radius: 999px;
+  color: var(--c-sand);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.toggle-pill-btn .status-dot {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  background: rgba(169, 164, 154, 0.2);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.toggle-pill-btn.is-active {
+  border-color: var(--c-gold);
+  color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.08);
+}
+
+.toggle-pill-btn.is-active .status-dot {
+  background: var(--c-gold);
+  color: #121110;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--c-muted);
+  font-size: 0.75rem;
+}
+
+.volume-control input[type="range"] {
+  accent-color: var(--c-gold);
+  width: 90px;
+}
+
+/* Status Banner Nada Aktif */
+.tabuh-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(20, 19, 18, 0.8);
+  border: 1px solid rgba(236, 194, 70, 0.18);
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.note-display-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--ff-display);
+  font-size: 0.85rem;
+  color: var(--c-sand);
+}
+
+.note-display-pill.is-active {
+  color: var(--c-gold);
+}
+
+.note-pill__aksara {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 1.35rem;
+  color: var(--c-gold);
+}
+
+.note-pill__name {
+  font-weight: 700;
+}
+
+.note-pill__cosmic {
+  font-size: 0.78rem;
+  color: var(--c-muted);
+}
+
+.tabuh-hint-key {
+  font-size: 0.74rem;
+  color: var(--c-muted);
+}
+
+/* Rancak & Bilah Gangsa Pemade */
+.rancak-frame {
+  position: relative;
+  background: linear-gradient(180deg, #2A1F18 0%, #1A130F 100%);
+  border: 2px solid #5A402A;
+  border-radius: 10px;
+  padding: 2.25rem 1.5rem 1.5rem;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rancak-decor {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ff-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: #C49A45;
+  text-transform: uppercase;
+}
+
+.gangsa-keys-container {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.55rem;
+  min-height: 270px;
+  align-items: flex-end;
+}
+
+.gangsa-key {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  height: 100%;
+}
+
+.gangsa-key__inner {
+  position: relative;
+  width: 100%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #FFEAB0 0%, #E4B856 22%, #A4782A 75%, #6B4C14 100%);
+  border: 1px solid #FFE494;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.2rem;
+  transition: transform 0.08s var(--tr-smooth), box-shadow 0.08s var(--tr-smooth);
+}
+
+.gangsa-key__rivet {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #5B4119 30%, #20170A 90%);
+  border: 1px solid #947132;
+}
+
+.gangsa-key__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.gangsa-key__aksara {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 1.45rem;
+  color: #382405;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.gangsa-key__name {
+  font-family: var(--ff-display);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #2F1E05;
+  letter-spacing: 0.02em;
+}
+
+.gangsa-key__solfege {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4C330B;
+}
+
+.gangsa-key__badge {
+  font-family: var(--ff-display);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #2A1A04;
+  background: rgba(255, 255, 255, 0.35);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.gangsa-key__tube {
+  width: 72%;
+  height: 38px;
+  background: linear-gradient(90deg, #1A150F 0%, #3B2E20 50%, #1A150F 100%);
+  border: 1px solid #4C3B29;
+  border-radius: 0 0 4px 4px;
+  margin-top: 4px;
+}
+
+.gangsa-key:hover .gangsa-key__inner {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(236, 194, 70, 0.35);
+}
+
+.gangsa-key.is-struck .gangsa-key__inner {
+  transform: translateY(4px);
+  background: linear-gradient(180deg, #FFF6D8 0%, #FFD768 25%, #C29336 80%, #7A5817 100%);
+  box-shadow: 0 0 25px rgba(236, 194, 70, 0.8), inset 0 0 6px rgba(255, 255, 255, 0.8);
+}
+
+/* Panel Reyong 12 Pot */
+.reyong-frame {
+  background: linear-gradient(180deg, #381E1C 0%, #1E1211 100%);
+  border: 2px solid #6E3B36;
+  border-radius: 10px;
+  padding: 2.25rem 1.25rem 1.5rem;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.reyong-pots-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.5rem;
+}
+
+.reyong-pot {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  touch-action: manipulation;
+}
+
+.reyong-pot__boss {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #FBE39A 0%, #D8A53B 40%, #7D5715 85%, #422D08 100%);
+  border: 1px solid #FFE494;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s var(--tr-smooth);
+}
+
+.reyong-pot__pencu {
+  width: 32%;
+  height: 32%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF3CA 0%, #ECC246 60%, #875F11 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.reyong-pot__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reyong-pot__aksara {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 0.95rem;
+  color: var(--c-gold);
+}
+
+.reyong-pot__key {
+  font-family: var(--ff-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--c-muted);
+}
+
+.reyong-pot:hover .reyong-pot__boss {
+  transform: translateY(-2px);
+}
+
+.reyong-pot.is-struck .reyong-pot__boss {
+  transform: translateY(3px) scale(0.96);
+  box-shadow: 0 0 20px rgba(236, 194, 70, 0.7);
+}
+
+/* Panel Kendang & Ceng-ceng */
+.rhythm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.rhythm-pad {
+  background: rgba(30, 28, 26, 0.9);
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  border-radius: 8px;
+  padding: 1.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s var(--tr-smooth);
+}
+
+.rhythm-pad__icon {
+  width: 44px;
+  height: 44px;
+  color: var(--c-gold);
+}
+
+.rhythm-pad__title {
+  font-family: var(--ff-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-cream);
+}
+
+.rhythm-pad__sub {
+  font-size: 0.72rem;
+  color: var(--c-muted);
+  text-align: center;
+}
+
+.rhythm-pad:hover {
+  border-color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.1);
+  transform: translateY(-2px);
+}
+
+.rhythm-pad.is-struck {
+  border-color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.22);
+  transform: translateY(2px);
+  box-shadow: 0 0 20px rgba(236, 194, 70, 0.4);
+}
+
+/* Panel Gong Ageng */
+.gong-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0;
+  gap: 1.5rem;
+}
+
+.gong-ageng-visual {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 40%, #FFE9B3 0%, #D8A53B 35%, #6E490E 80%, #2E1F07 100%);
+  border: 4px solid #FFE7A0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s var(--tr-smooth), box-shadow 0.2s var(--tr-smooth);
+}
+
+.gong-ageng-boss {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF3CA 0%, #ECC246 65%, #66460A 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+.gong-ageng-visual:hover {
+  transform: scale(1.03);
+}
+
+.gong-ageng-visual.is-struck {
+  animation: gongVibrate 0.8s ease-out;
+  box-shadow: 0 0 40px rgba(236, 194, 70, 0.8);
+}
+
+@keyframes gongVibrate {
+  0% { transform: scale(0.96); }
+  25% { transform: scale(1.05); }
+  50% { transform: scale(0.98); }
+  75% { transform: scale(1.02); }
+  100% { transform: scale(1.0); }
+}
+
+/* --------------------------------------------------------------------------
+   3. STUDIO KOTEKAN INTERAKTIF (DUET POLOS & SANGSIH)
+   -------------------------------------------------------------------------- */
+.kotekan-studio-section {
+  position: relative;
+  background: #141312;
+  padding: 5.5rem 0 6.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.kotekan-wrapper {
+  background: #191817;
+  border: 1px solid rgba(236, 194, 70, 0.24);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.kotekan-header-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.kotekan-controls-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kotekan-select {
+  background: rgba(30, 28, 26, 0.9);
+  border: 1px solid rgba(236, 194, 70, 0.3);
+  border-radius: 6px;
+  color: var(--c-cream);
+  padding: 0.5rem 0.85rem;
+  font-family: var(--ff-sans);
+  font-size: 0.82rem;
+}
+
+.kotekan-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.kotekan-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.kotekan-row__label {
+  width: 100px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.kotekan-row__label span {
+  font-family: var(--ff-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.kotekan-row--polos .kotekan-row__label span {
+  color: var(--c-gold);
+}
+
+.kotekan-row--sangsih .kotekan-row__label span {
+  color: #E2665D;
+}
+
+.kotekan-row__label small {
+  font-size: 0.68rem;
+  color: var(--c-muted);
+}
+
+.kotekan-steps {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 580px;
+}
+
+.kotekan-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: rgba(34, 32, 29, 0.8);
+  border: 1px solid rgba(236, 194, 70, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s var(--tr-smooth);
+}
+
+.kotekan-row--polos .kotekan-cell.has-note {
+  background: rgba(236, 194, 70, 0.2);
+  border-color: rgba(236, 194, 70, 0.4);
+}
+
+.kotekan-row--sangsih .kotekan-cell.has-note {
+  background: rgba(189, 45, 36, 0.25);
+  border-color: rgba(189, 45, 36, 0.5);
+}
+
+.kotekan-cell__note {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.kotekan-row--polos .kotekan-cell__note {
+  color: var(--c-gold);
+}
+
+.kotekan-row--sangsih .kotekan-cell__note {
+  color: #FFAAA3;
+}
+
+.kotekan-cell.is-current-step {
+  border-color: #FFF !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.6);
+  transform: scale(1.08);
+}
+
+.kotekan-status-feedback {
+  font-size: 0.85rem;
+  color: var(--c-sand);
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. LABORATORIUM AKUSTIK: FENOMENA OMBAK
+   -------------------------------------------------------------------------- */
+.ombak-lab-section {
+  position: relative;
+  background: #11100F;
+  padding: 5.5rem 0 6.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.ombak-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .ombak-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.canvas-frame {
+  background: #161514;
+  border: 1px solid rgba(236, 194, 70, 0.28);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.canvas-frame canvas {
+  width: 100%;
+  height: 220px;
+  display: block;
+}
+
+.ombak-controls-card {
+  background: #191817;
+  border: 1px solid rgba(236, 194, 70, 0.2);
+  border-radius: 10px;
+  padding: 1.75rem;
+}
+
+.ombak-param {
+  margin-bottom: 1.5rem;
+}
+
+.ombak-param__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ombak-param__label {
+  font-family: var(--ff-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--c-gold);
+}
+
+.ombak-param__val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--c-cream);
+}
+
+.ombak-param input[type="range"] {
+  width: 100%;
+  accent-color: var(--c-gold);
+}
+
+.ombak-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.65rem;
+  margin-top: 1.75rem;
+}
+
+.ombak-btn {
+  padding: 0.65rem 0.85rem;
+  background: rgba(30, 28, 26, 0.9);
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  border-radius: 6px;
+  color: var(--c-sand);
+  font-family: var(--ff-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.ombak-btn:hover {
+  border-color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.12);
+}
+
+.ombak-btn.is-active {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: #121110;
+}
+
+/* --------------------------------------------------------------------------
+   5. ARSITEKTUR SEKAHA (SPATIAL SEKAHA EXPLORER)
+   -------------------------------------------------------------------------- */
+.spatial-section {
+  position: relative;
+  background: #141312;
+  padding: 5.5rem 0 6.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.spatial-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .spatial-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stage-diagram {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 50%, #252320 0%, #151413 80%);
+  border: 1px solid rgba(236, 194, 70, 0.28);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stage-altar-label {
+  text-align: center;
+  font-family: var(--ff-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--c-gold);
+  text-transform: uppercase;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed rgba(236, 194, 70, 0.2);
+}
+
+.stage-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.stage-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.stage-spot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.95rem;
+  background: rgba(30, 28, 26, 0.85);
+  border: 1px solid rgba(236, 194, 70, 0.22);
+  border-radius: 6px;
+  color: var(--c-cream);
+  font-family: var(--ff-display);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.stage-spot:hover {
+  border-color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.15);
+  transform: translateY(-2px);
+}
+
+.stage-spot.is-selected {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: #121110;
+  box-shadow: 0 4px 15px rgba(236, 194, 70, 0.35);
+}
+
+.spatial-detail-card {
+  background: #191817;
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.spatial-aksara {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 2.2rem;
+  color: var(--c-gold);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.spatial-title {
+  font-size: 1.6rem;
+  color: var(--c-cream);
+  margin-bottom: 0.35rem;
+}
+
+.spatial-kicker {
+  font-size: 0.82rem;
+  color: var(--c-gold);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.spatial-desc {
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: var(--c-sand);
+  margin-bottom: 1.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. TIGA ERA GAMELAN BALI (TUA, MADYA, BARU)
+   -------------------------------------------------------------------------- */
+.era-section {
+  position: relative;
+  background: #121110;
+  padding: 5.5rem 0 6.5rem;
+  border-bottom: 1px solid rgba(236, 194, 70, 0.14);
+}
+
+.era-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+
+.era-chip {
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(34, 32, 29, 0.8);
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  color: var(--c-cream);
+  font-family: var(--ff-display);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.era-chip:hover {
+  border-color: var(--c-gold);
+  background: rgba(236, 194, 70, 0.12);
+}
+
+.era-chip.is-active {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: #121110;
+}
+
+.era-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.era-card {
+  background: #181716;
+  border: 1px solid rgba(236, 194, 70, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.25s var(--tr-smooth), box-shadow 0.25s var(--tr-smooth);
+}
+
+.era-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(236, 194, 70, 0.45);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+}
+
+.era-card__media {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #201D1A;
+}
+
+.era-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--tr-smooth);
+}
+
+.era-card:hover .era-card__media img {
+  transform: scale(1.05);
+}
+
+.era-card__badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(20, 19, 18, 0.88);
+  border: 1px solid var(--c-gold);
+  border-radius: 4px;
+  font-family: var(--ff-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--c-gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.era-card__content {
+  padding: 1.5rem;
+}
+
+.era-card__title {
+  font-size: 1.35rem;
+  color: var(--c-cream);
+  margin-bottom: 0.4rem;
+}
+
+.era-card__period {
+  font-size: 0.78rem;
+  color: var(--c-gold);
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+}
+
+.era-card__desc {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--c-sand);
+  margin-bottom: 1.25rem;
+}
+
+.era-card__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.era-card__tag {
+  font-size: 0.72rem;
+  color: var(--c-muted);
+  background: rgba(34, 32, 29, 0.9);
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   7. GLOSARIUM KARAWITAN BALI
+   -------------------------------------------------------------------------- */
+.glosarium-section {
+  position: relative;
+  background: #141312;
+  padding: 5.5rem 0 6.5rem;
+}
+
+.glosarium-search-wrap {
+  max-width: 580px;
+  margin: 0 auto 3rem;
+  position: relative;
+}
+
+.glosarium-search-input {
+  width: 100%;
+  padding: 0.85rem 1.25rem 0.85rem 3rem;
+  background: #1A1918;
+  border: 1px solid rgba(236, 194, 70, 0.25);
+  border-radius: 999px;
+  color: var(--c-cream);
+  font-family: var(--ff-sans);
+  font-size: 0.95rem;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.glosarium-search-input:focus {
+  outline: none;
+  border-color: var(--c-gold);
+  box-shadow: 0 0 15px rgba(236, 194, 70, 0.25);
+}
+
+.glosarium-search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--c-gold);
+}
+
+.glosarium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.glosarium-item {
+  background: #191817;
+  border: 1px solid rgba(236, 194, 70, 0.18);
+  border-radius: 8px;
+  padding: 1.35rem;
+  transition: border-color 0.2s var(--tr-smooth);
+}
+
+.glosarium-item:hover {
+  border-color: var(--c-gold);
+}
+
+.glosarium-term {
+  font-family: var(--ff-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--c-gold);
+  margin-bottom: 0.35rem;
+}
+
+.glosarium-aksara {
+  font-family: 'Noto Sans Balinese', serif;
+  font-size: 0.95rem;
+  color: var(--c-muted);
+  margin-left: 0.5rem;
+}
+
+.glosarium-def {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--c-sand);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE OPTIMIZATIONS
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .gangsa-keys-container {
+    gap: 0.35rem;
+    min-height: 220px;
+    min-width: 480px;
+  }
+
+  .gangsa-key__aksara {
+    font-size: 1.15rem;
+  }
+
+  .gangsa-key__name {
+    font-size: 0.65rem;
+  }
+
+  .gangsa-key__badge {
+    font-size: 0.58rem;
+    padding: 0.05rem 0.2rem;
+  }
+
+  .tabuh-console {
+    padding: 1rem;
+  }
+
+  .rancak-frame {
+    padding: 1.5rem 0.75rem 1rem;
+  }
+
+  .reyong-pots-container {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.6rem;
+    min-width: 420px;
+  }
+}
