@@ -242,17 +242,28 @@ function setupGalleryModal() {
     const item = galleryArchives[idx];
     if (!item) return;
 
-    if (previewImg) {
-      previewImg.src = item.image;
-      previewImg.alt = item.alt;
+    const updateDetails = () => {
+      if (previewImg) {
+        previewImg.src = item.image;
+        previewImg.alt = item.alt;
+        previewImg.style.opacity = '1';
+      }
+      if (previewCat) previewCat.textContent = item.category;
+      if (previewCounter) previewCounter.textContent = `0${item.id} / 0${galleryArchives.length}`;
+      if (previewTitle) previewTitle.textContent = item.title;
+      if (previewDesc) previewDesc.textContent = item.desc;
+      if (previewLoc) previewLoc.textContent = item.location;
+      if (previewPhil) previewPhil.textContent = item.philosophy;
+      if (previewStatus) previewStatus.textContent = item.status;
+    };
+
+    if (previewImg && !modalBox.hidden) {
+      previewImg.style.transition = 'opacity 0.18s var(--tr-smooth)';
+      previewImg.style.opacity = '0.35';
+      setTimeout(updateDetails, 120);
+    } else {
+      updateDetails();
     }
-    if (previewCat) previewCat.textContent = item.category;
-    if (previewCounter) previewCounter.textContent = `0${item.id} / 0${galleryArchives.length}`;
-    if (previewTitle) previewTitle.textContent = item.title;
-    if (previewDesc) previewDesc.textContent = item.desc;
-    if (previewLoc) previewLoc.textContent = item.location;
-    if (previewPhil) previewPhil.textContent = item.philosophy;
-    if (previewStatus) previewStatus.textContent = item.status;
   };
 
   const openSlide = (id) => {

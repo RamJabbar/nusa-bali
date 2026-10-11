@@ -85,7 +85,7 @@
         if (containerBox?.setPointerCapture) {
           try {
             containerBox.setPointerCapture(e.pointerId);
-          } catch (_) {}
+          } catch (_) { }
         }
       }
 
@@ -106,7 +106,7 @@
       if (containerBox?.releasePointerCapture && containerBox.hasPointerCapture?.(e.pointerId)) {
         try {
           containerBox.releasePointerCapture(e.pointerId);
-        } catch (_) {}
+        } catch (_) { }
       }
 
       if (didSwipe) {
@@ -185,9 +185,156 @@
     requestAnimationFrame(step);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupMarquees);
-  } else {
+  function setupScrollReveals() {
+    const motionPref = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionPref?.matches) return;
+
+    if (!('IntersectionObserver' in window)) return;
+
+    // Single elements to reveal on approach across all pages
+    const singleTargets = [
+      ...document.querySelectorAll('.section-head'),
+      ...document.querySelectorAll('.gallery-header-wrap'),
+      ...document.querySelectorAll('.teaser-section .teaser-media'),
+      ...document.querySelectorAll('.teaser-section .teaser-content'),
+      ...document.querySelectorAll('.marquee-viewport'),
+      ...document.querySelectorAll('.tabuh-console'),
+      ...document.querySelectorAll('.kotekan-wrapper'),
+      ...document.querySelectorAll('.ombak-grid'),
+      ...document.querySelectorAll('.stage-diagram'),
+      ...document.querySelectorAll('.spatial-detail-card'),
+      ...document.querySelectorAll('.peta-map-frame'),
+      ...document.querySelectorAll('.peta-panel'),
+      ...document.querySelectorAll('.aksara-workspace'),
+      ...document.querySelectorAll('.glosarium-search-wrap'),
+      ...document.querySelectorAll('.glosarium-grid'),
+      ...document.querySelectorAll('.site-footer .footer-top')
+    ];
+
+    // Repeated card groups with staggered timing across all pages
+    const groupPillars = Array.from(document.querySelectorAll('.pillars-grid .pillar-card'));
+    const groupSitus = Array.from(document.querySelectorAll('#situsGrid .situs-card'));
+    const groupGalleryTop = Array.from(document.querySelectorAll('.gallery-etno-row--top .gallery-etno-card'));
+    const groupGalleryBottom = Array.from(document.querySelectorAll('.gallery-etno-row--bottom .gallery-etno-card'));
+    const groupEraCards = Array.from(document.querySelectorAll('.era-cards-grid .era-card'));
+    const groupPetaStats = Array.from(document.querySelectorAll('.peta-stats .peta-stat'));
+    const groupAksaraSidebar = Array.from(document.querySelectorAll('.aksara-sidebar > *'));
+
+    groupPillars.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 90}ms`);
+    });
+
+    groupSitus.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 80}ms`);
+    });
+
+    groupGalleryTop.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
+    });
+
+    groupGalleryBottom.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
+    });
+
+    groupEraCards.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 80}ms`);
+    });
+
+    groupPetaStats.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 90}ms`);
+    });
+
+    groupAksaraSidebar.forEach((card, idx) => {
+      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
+    });
+
+    const allRevealElements = [
+      ...singleTargets,
+      ...groupPillars,
+      ...groupSitus,
+      ...groupGalleryTop,
+      ...groupGalleryBottom,
+      ...groupEraCards,
+      ...groupPetaStats,
+      ...groupAksaraSidebar
+    ];
+
+    if (!allRevealElements.length) return;
+
+    // Progressive enhancement: only flag after elements exist and observer is active
+    document.documentElement.classList.add('has-reveal');
+
+    allRevealElements.forEach((el) => {
+      el.classList.add('reveal-item');
+    });
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            el.classList.add('is-revealed');
+            obs.unobserve(el);
+
+            const cleanUp = () => {
+              el.classList.remove('reveal-item');
+              el.style.removeProperty('--reveal-delay');
+              el.removeEventListener('transitionend', onEnd);
+            };
+
+            const onEnd = (e) => {
+              if (e.target === el && (e.propertyName === 'opacity' || e.propertyName === 'transform')) {
+                cleanUp();
+              }
+            };
+
+            el.addEventListener('transitionend', onEnd);
+            setTimeout(cleanUp, 1000);
+          }
+        });
+      },
+      {
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.12
+      }
+    );
+
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    allRevealElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      // If already in visible viewport at load or above scroll position, reveal immediately
+      if (rect.top < vh && rect.bottom > 0) {
+        el.classList.add('is-revealed');
+        setTimeout(() => {
+          el.classList.remove('reveal-item');
+          el.style.removeProperty('--reveal-delay');
+        }, 700);
+      } else {
+        revealObserver.observe(el);
+      }
+    });
+
+    // Safety fallback: ensure every element is visible even in edge cases
+    setTimeout(() => {
+      allRevealElements.forEach((el) => {
+        if (el.classList.contains('reveal-item')) {
+          el.classList.add('is-revealed');
+          el.classList.remove('reveal-item');
+          el.style.removeProperty('--reveal-delay');
+          revealObserver.unobserve(el);
+        }
+      });
+    }, 3500);
+  }
+
+  function initAnimations() {
     setupMarquees();
+    setupScrollReveals();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAnimations);
+  } else {
+    initAnimations();
   }
 })();
