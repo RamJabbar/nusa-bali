@@ -220,33 +220,19 @@
     const groupPetaStats = Array.from(document.querySelectorAll('.peta-stats .peta-stat'));
     const groupAksaraSidebar = Array.from(document.querySelectorAll('.aksara-sidebar > *'));
 
-    groupPillars.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 90}ms`);
-    });
+    function applyStagger(elements, stepMs) {
+      elements.forEach((card, idx) => {
+        card.style.setProperty('--reveal-delay', `${idx * stepMs}ms`);
+      });
+    }
 
-    groupSitus.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 80}ms`);
-    });
-
-    groupGalleryTop.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
-    });
-
-    groupGalleryBottom.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
-    });
-
-    groupEraCards.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 80}ms`);
-    });
-
-    groupPetaStats.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 90}ms`);
-    });
-
-    groupAksaraSidebar.forEach((card, idx) => {
-      card.style.setProperty('--reveal-delay', `${idx * 110}ms`);
-    });
+    applyStagger(groupPillars, 90);
+    applyStagger(groupSitus, 80);
+    applyStagger(groupGalleryTop, 110);
+    applyStagger(groupGalleryBottom, 110);
+    applyStagger(groupEraCards, 80);
+    applyStagger(groupPetaStats, 90);
+    applyStagger(groupAksaraSidebar, 110);
 
     const allRevealElements = [
       ...singleTargets,

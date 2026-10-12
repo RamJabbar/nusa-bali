@@ -5,9 +5,7 @@
 (function () {
   'use strict';
 
-  // =========================================================================
-  // 1. DATA KONFIGURASI LARAS & INSTRUMEN GAMELAN BALI
-  // =========================================================================
+  // Laras & data instrumen
 
   // Laras Pelog Selisir (5-Nada Pentatonik Sakral) 2 Oktaf untuk Gangsa Pemade
   // Disesuaikan dengan skala frekuensi ansambel Gong Kebyar klasik (pusat A440)
@@ -160,9 +158,7 @@
     { id: 'reyong_12', name: 'Ding (Puncak)', aksara: 'ᬤᬶᬂ', freq: 896, key: 'L', potIndex: 12 }
   ];
 
-  // =========================================================================
-  // 2. WEB AUDIO API SYNTHESIZER: AKUSTIK PERUNGGU & TABUH BALI
-  // =========================================================================
+  // Sintesis audio gamelan Bali (Web Audio API)
 
   class BalineseGamelanAudioEngine {
     constructor() {
@@ -692,9 +688,7 @@
   // Inisialisasi Instance Audio Engine Global
   const audioEngine = new BalineseGamelanAudioEngine();
 
-  // =========================================================================
-  // 3. KOMPONEN INTERAKTIF BALE TABUH (PLAYABLE INSTRUMENTS)
-  // =========================================================================
+  // Bale Tabuh (instrumen virtual interaktif)
 
   function setupBaleTabuh() {
     const keysContainer = document.getElementById('gangsaKeysContainer');
@@ -826,48 +820,21 @@
     const gongAgengBtn = document.getElementById('padGongAgeng');
     const gongKempurBtn = document.getElementById('padGongKempur');
 
-    if (kendangDugBtn) {
-      kendangDugBtn.addEventListener('pointerdown', () => {
-        audioEngine.playKendang('dug');
-        kendangDugBtn.classList.add('is-struck');
-        setTimeout(() => kendangDugBtn.classList.remove('is-struck'), 160);
+    const bindPadStrike = (btn, action, duration = 160) => {
+      if (!btn) return;
+      btn.addEventListener('pointerdown', () => {
+        action();
+        btn.classList.add('is-struck');
+        setTimeout(() => btn.classList.remove('is-struck'), duration);
       });
-    }
-    if (kendangPlakBtn) {
-      kendangPlakBtn.addEventListener('pointerdown', () => {
-        audioEngine.playKendang('plak');
-        kendangPlakBtn.classList.add('is-struck');
-        setTimeout(() => kendangPlakBtn.classList.remove('is-struck'), 160);
-      });
-    }
-    if (cengCrashBtn) {
-      cengCrashBtn.addEventListener('pointerdown', () => {
-        audioEngine.playCengCeng('crash');
-        cengCrashBtn.classList.add('is-struck');
-        setTimeout(() => cengCrashBtn.classList.remove('is-struck'), 160);
-      });
-    }
-    if (cengChokeBtn) {
-      cengChokeBtn.addEventListener('pointerdown', () => {
-        audioEngine.playCengCeng('choke');
-        cengChokeBtn.classList.add('is-struck');
-        setTimeout(() => cengChokeBtn.classList.remove('is-struck'), 160);
-      });
-    }
-    if (gongAgengBtn) {
-      gongAgengBtn.addEventListener('pointerdown', () => {
-        audioEngine.playGong('ageng');
-        gongAgengBtn.classList.add('is-struck');
-        setTimeout(() => gongAgengBtn.classList.remove('is-struck'), 300);
-      });
-    }
-    if (gongKempurBtn) {
-      gongKempurBtn.addEventListener('pointerdown', () => {
-        audioEngine.playGong('kempur');
-        gongKempurBtn.classList.add('is-struck');
-        setTimeout(() => gongKempurBtn.classList.remove('is-struck'), 240);
-      });
-    }
+    };
+
+    bindPadStrike(kendangDugBtn, () => audioEngine.playKendang('dug'));
+    bindPadStrike(kendangPlakBtn, () => audioEngine.playKendang('plak'));
+    bindPadStrike(cengCrashBtn, () => audioEngine.playCengCeng('crash'));
+    bindPadStrike(cengChokeBtn, () => audioEngine.playCengCeng('choke'));
+    bindPadStrike(gongAgengBtn, () => audioEngine.playGong('ageng'), 300);
+    bindPadStrike(gongKempurBtn, () => audioEngine.playGong('kempur'), 240);
 
     // Dukungan Multi-Touch Glissando (sapuan jari pada bilah Gangsa)
     let activeTouchedGangsaId = null;
@@ -1022,9 +989,7 @@
     });
   }
 
-  // =========================================================================
-  // KOORDINATOR PEMUTARAN AUDIO GLOBAL (Mencegah Tabrakan Suara Bersamaan)
-  // =========================================================================
+  // Koordinator pemutaran audio global
   let stopKotekanFn = null;
   let stopGendingFn = null;
   let stopOmbakLabFn = null;
@@ -1035,9 +1000,7 @@
     if (except !== 'ombak' && typeof stopOmbakLabFn === 'function') stopOmbakLabFn();
   }
 
-  // =========================================================================
-  // 4. STUDIO KOTEKAN INTERAKTIF (DUET POLOS & SANGSIH)
-  // =========================================================================
+  // Studio Kotekan (duet Polos & Sangsih)
 
   function setupKotekanStudio() {
     const playDuetBtn = document.getElementById('playKotekanBtn');
@@ -1250,9 +1213,7 @@
     });
   }
 
-  // =========================================================================
-  // 5. LABORATORIUM AKUSTIK: FENOMENA OMBAK & PENGUMBANG-PENGISEP
-  // =========================================================================
+  // Laboratorium akustik: fenomena ombak & pengumbang-pengisep
 
   function setupOmbakLab() {
     const canvas = document.getElementById('ombakWaveCanvas');
@@ -1502,9 +1463,7 @@
     drawWaveforms();
   }
 
-  // =========================================================================
-  // 6. AUTOPLAYER GENDING KLASIK BALI (TABUH GILAK & KEBYAR)
-  // =========================================================================
+  // Autoplayer gending klasik Bali
 
   function setupGendingAutoplayer() {
     const playGendingBtn = document.getElementById('playGendingBtn');
@@ -1773,9 +1732,7 @@
     updateGendingMeta();
   }
 
-  // =========================================================================
-  // 7. DENAH & ARSITEKTUR SEKAHA (SPATIAL SEKAHA EXPLORER)
-  // =========================================================================
+  // Denah spatial sekaha (Spatial Sekaha Explorer)
 
   function setupSpatialExplorer() {
     const spots = document.querySelectorAll('.stage-spot');
@@ -1890,9 +1847,7 @@
     setSpot('kendang');
   }
 
-  // =========================================================================
-  // 8. FILTER MORFOLOGI TIGA ERA GAMELAN BALI (TUA, MADYA, BARU)
-  // =========================================================================
+  // Filter tiga era gamelan Bali
 
   function setupEraFilter() {
     const filterBtns = document.querySelectorAll('.era-chip');
@@ -1918,9 +1873,7 @@
     });
   }
 
-  // =========================================================================
-  // 9. PENCARIAN GLOSARIUM KARAWITAN BALI
-  // =========================================================================
+  // Pencarian glosarium karawitan Bali
 
   function setupGlosarium() {
     const searchInput = document.getElementById('glosariumSearch');
@@ -1946,11 +1899,8 @@
     });
   }
 
-  // =========================================================================
-  // 10. ENTRY POINT DOM READY
-  // =========================================================================
-
-  document.addEventListener('DOMContentLoaded', () => {
+  // Inisialisasi
+  function initGamelan() {
     setupBaleTabuh();
     setupKotekanStudio();
     setupOmbakLab();
@@ -1959,14 +1909,12 @@
     setupEraFilter();
     setupGlosarium();
 
-    // Hentikan pemutaran audio jika tab disembunyikan/berpindah
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         stopAllAudioPlayback();
       }
     });
 
-    // Auto-unlock Web Audio pada klik pertama di seluruh halaman
     const unlockAudio = () => {
       audioEngine.ensureContext();
       document.removeEventListener('pointerdown', unlockAudio);
@@ -1974,8 +1922,13 @@
     };
     document.addEventListener('pointerdown', unlockAudio, { once: true });
     document.addEventListener('keydown', unlockAudio, { once: true });
-  });
+  }
 
-  // Ekspor API Global untuk integrasi pengujian
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGamelan);
+  } else {
+    initGamelan();
+  }
+
   window.GamelanAudioEngine = audioEngine;
 })();

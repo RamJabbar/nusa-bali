@@ -1,19 +1,6 @@
 @import url('styles.css');
 
-/* ==========================================================================
-   NUSA BALI HERITAGE — GAMELAN BALI STYLES
-   Desain kuratorial luhur: palet arang obsidian, emas prada, merah kirmizi sakral.
-   ========================================================================== */
-
-html,
-body {
-  overflow-x: hidden;
-  max-width: 100%;
-}
-
-/* --------------------------------------------------------------------------
-   1. HERO SECTION GAMELAN
-   -------------------------------------------------------------------------- */
+/* Hero */
 .gamelan-hero {
   position: relative;
   min-height: 80vh;
@@ -162,9 +149,7 @@ body {
   margin-top: 0.15rem;
 }
 
-/* --------------------------------------------------------------------------
-   2. BALE TABUH DIGITAL (PLAYABLE VIRTUAL GAMELAN)
-   -------------------------------------------------------------------------- */
+/* Bale Tabuh */
 .bale-tabuh-section {
   position: relative;
   background: #121110;
@@ -650,9 +635,7 @@ body {
   100% { transform: scale(1.0); }
 }
 
-/* --------------------------------------------------------------------------
-   3. STUDIO KOTEKAN INTERAKTIF (DUET POLOS & SANGSIH)
-   -------------------------------------------------------------------------- */
+/* Studio Kotekan */
 .kotekan-studio-section {
   position: relative;
   background: #141312;
@@ -794,9 +777,7 @@ body {
   margin-top: 0.5rem;
 }
 
-/* --------------------------------------------------------------------------
-   4. LABORATORIUM AKUSTIK: FENOMENA OMBAK
-   -------------------------------------------------------------------------- */
+/* Laboratorium Ombak */
 .ombak-lab-section {
   position: relative;
   background: #11100F;
@@ -900,9 +881,7 @@ body {
   color: #121110;
 }
 
-/* --------------------------------------------------------------------------
-   5. ARSITEKTUR SEKAHA (SPATIAL SEKAHA EXPLORER)
-   -------------------------------------------------------------------------- */
+/* Spatial Sekaha */
 .spatial-section {
   position: relative;
   background: #141312;
@@ -1026,9 +1005,7 @@ body {
   margin-bottom: 1.75rem;
 }
 
-/* --------------------------------------------------------------------------
-   6. TIGA ERA GAMELAN BALI (TUA, MADYA, BARU)
-   -------------------------------------------------------------------------- */
+/* Tiga Era Gamelan */
 .era-section {
   position: relative;
   background: #121110;
@@ -1162,9 +1139,7 @@ body {
   border-radius: 3px;
 }
 
-/* --------------------------------------------------------------------------
-   7. GLOSARIUM KARAWITAN BALI
-   -------------------------------------------------------------------------- */
+/* Glosarium Karawitan */
 .glosarium-section {
   position: relative;
   background: #141312;
@@ -1244,9 +1219,7 @@ body {
   color: var(--c-sand);
 }
 
-/* --------------------------------------------------------------------------
-   RESPONSIVE OPTIMIZATIONS
-   -------------------------------------------------------------------------- */
+/* Responsive */
 @media (max-width: 768px) {
   .gangsa-keys-container {
     gap: 0.35rem;
@@ -1477,9 +1450,7 @@ body {
   }
 }
 
-/* ==========================================================================
-   GAMELAN INTERACTIVE TACTILE ACTIVE STATES & REDUCED MOTION
-   ========================================================================== */
+/* Tactile states & reduced motion */
 
 .inst-tab-btn:active,
 .toggle-pill-btn:active,
