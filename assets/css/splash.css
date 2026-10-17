@@ -1,0 +1,472 @@
+/* ==========================================================================
+   NUSA BALI HERITAGE — ANIMATED SPLASH SCREEN STYLES
+   Visual Identity:
+   - Charcoal Black: #1A1A1A
+   - Cream: #F2F0EA
+   - Bali Red Accent: #B3261E
+   - Bali Gold Detail: #C9A227 / #ECC246
+   ========================================================================== */
+
+/* 1. Instant suppression when already visited in this session */
+html.splash-screen--disabled .splash-screen,
+html.splash-screen--disabled #splashScreen {
+  display: none !important;
+}
+
+/* 2. Body scroll prevention during splash */
+body.splash-active {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+/* 3. Root Splash Overlay */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #1A1A1A;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Pure CSS emergency fallback dismissal (3.4s) ensuring site is never blocked if JS fails */
+  animation: splashFadeOutFallback 0.55s cubic-bezier(0.4, 0, 0.2, 1) 3.4s forwards;
+}
+
+/* Dismissing & Hidden Classes */
+.splash-screen.splash-screen--hiding {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.splash-screen.splash-screen--hidden {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* 4. Ambient Background Layer */
+.splash-screen__backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 48%, rgba(42, 38, 32, 0.95) 0%, #1A1A1A 68%, #121212 100%);
+  opacity: 0;
+  animation: splashBgFadeIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes splashBgFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 5. Balinese Architectural Corner Ornaments */
+.splash-screen__corners {
+  position: absolute;
+  inset: 28px;
+  pointer-events: none;
+}
+
+.splash-screen__corner {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  opacity: 0;
+  animation: splashCornerFadeIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+}
+
+.splash-screen__corner--tl {
+  top: 0;
+  left: 0;
+}
+
+.splash-screen__corner--tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.splash-screen__corner--bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+.splash-screen__corner--br {
+  bottom: 0;
+  right: 0;
+  transform: scale(-1);
+}
+
+.splash-screen__corner-inner {
+  transform-origin: 24px 24px;
+  animation: splashCornerScale 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+@keyframes splashCornerFadeIn {
+  from { opacity: 0; }
+  to { opacity: 0.9; }
+}
+
+@keyframes splashCornerScale {
+  from { transform: scale(0.75); }
+  to { transform: scale(1); }
+}
+
+/* 6. Central Composition Container */
+.splash-screen__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  max-width: 90vw;
+}
+
+/* 7. Logo & Balinese Sacred Mandala Container */
+.splash-screen__logo-container {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Balinese Sacred Mandala Halo (Patra Sari / Asta Dala) */
+.splash-screen__ornament {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 230px;
+  height: 230px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.78) rotate(-10deg);
+  animation: splashMandalaReveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.splash-screen__mandala {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes splashMandalaReveal {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.78) rotate(-10deg);
+  }
+  100% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+/* Center Emblem Logo */
+.splash-screen__logo-frame {
+  position: relative;
+  z-index: 2;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.88);
+  filter: drop-shadow(0 0 18px rgba(201, 162, 39, 0.45));
+  animation: splashLogoScaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+.splash-screen__emblem-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes splashLogoScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 8. Header Typography */
+.splash-screen__header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.splash-screen__title {
+  font-family: var(--ff-display, 'Cinzel', 'Playfair Display', Georgia, serif);
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #F2F0EA;
+  text-transform: uppercase;
+  margin: 0 0 0.8rem;
+  line-height: 1.15;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: splashTitleRise 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
+}
+
+@keyframes splashTitleRise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Delicate Balinese Ornate Divider */
+.splash-screen__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  opacity: 0;
+  animation: splashDividerAppear 0.65s cubic-bezier(0.16, 1, 0.3, 1) 1.15s forwards;
+}
+
+.splash-screen__divider-line {
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A227);
+}
+
+.splash-screen__divider-line:last-child {
+  background: linear-gradient(90deg, #C9A227, transparent);
+}
+
+.splash-screen__divider-gem {
+  width: 6px;
+  height: 6px;
+  background: #B3261E;
+  border: 1px solid #ECC246;
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(179, 38, 30, 0.7);
+}
+
+@keyframes splashDividerAppear {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.7);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scaleX(1);
+  }
+}
+
+/* Tagline */
+.splash-screen__tagline {
+  font-family: var(--ff-sans, 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: #F2F0EA;
+  text-transform: uppercase;
+  margin: 0 0 2rem;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: splashTaglineRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.25s forwards;
+}
+
+@keyframes splashTaglineRise {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 0.92;
+    transform: translateY(0);
+  }
+}
+
+/* 9. Smooth Gold Progress Bar */
+.splash-screen__progress {
+  width: 180px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: splashProgressAppear 0.5s ease 1.35s forwards;
+}
+
+.splash-screen__progress-track {
+  height: 2px;
+  width: 100%;
+  background: rgba(201, 162, 39, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-screen__progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #B3261E 0%, #C9A227 45%, #ECC246 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(236, 194, 70, 0.7);
+  animation: splashProgressFill 1.1s cubic-bezier(0.4, 0, 0.2, 1) 1.4s forwards;
+}
+
+@keyframes splashProgressAppear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes splashProgressFill {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 65%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* 10. CSS Keyframe Fallback Dismissal (Safety Guarantee) */
+@keyframes splashFadeOutFallback {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  99% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+    pointer-events: none;
+  }
+}
+
+/* 11. Responsive Breakpoints */
+@media (max-width: 768px) {
+  .splash-screen__corners {
+    inset: 18px;
+  }
+
+  .splash-screen__corner {
+    width: 52px;
+    height: 52px;
+  }
+
+  .splash-screen__logo-container {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 1.3rem;
+  }
+
+  .splash-screen__ornament {
+    width: 200px;
+    height: 200px;
+  }
+
+  .splash-screen__logo-frame {
+    width: 84px;
+    height: 84px;
+  }
+
+  .splash-screen__title {
+    font-size: 1.65rem;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.65rem;
+  }
+
+  .splash-screen__tagline {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 1.7rem;
+  }
+
+  .splash-screen__progress {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .splash-screen__corners {
+    inset: 12px;
+  }
+
+  .splash-screen__corner {
+    width: 42px;
+    height: 42px;
+  }
+
+  .splash-screen__logo-container {
+    width: 74px;
+    height: 74px;
+    margin-bottom: 1.1rem;
+  }
+
+  .splash-screen__ornament {
+    width: 175px;
+    height: 175px;
+  }
+
+  .splash-screen__logo-frame {
+    width: 74px;
+    height: 74px;
+  }
+
+  .splash-screen__title {
+    font-size: 1.35rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.55rem;
+  }
+
+  .splash-screen__tagline {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.5rem;
+  }
+
+  .splash-screen__progress {
+    width: 130px;
+  }
+}
+
+/* 12. Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .splash-screen,
+  #splashScreen {
+    display: none !important;
+    animation: none !important;
+  }
+}
