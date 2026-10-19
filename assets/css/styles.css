@@ -11,6 +11,9 @@
   --ff-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   --tr-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-subtle: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* Reset */
@@ -93,15 +96,32 @@ p {
   .hero p.hero__lede,
   .hero__actions,
   .stat-card,
+  .heading-line-inner,
   .reveal-item,
-  .has-reveal .reveal-item {
+  .has-reveal .reveal-item,
+  .has-reveal .reveal-heading,
+  .has-reveal .reveal-eyebrow,
+  .has-reveal .reveal-desc,
+  .has-reveal .reveal-media,
+  .has-reveal .reveal-media img,
+  .has-reveal .reveal-card,
+  .has-reveal .reveal-line,
+  .has-reveal .reveal-ornament,
+  .gamelan-hero__bg img,
+  .gamelan-hero__title,
+  .gamelan-hero__desc,
+  .gamelan-hero__actions,
+  .stats-bar--gamelan .stat-pill {
     opacity: 1 !important;
     transform: none !important;
+    letter-spacing: inherit !important;
     transition: none !important;
+    animation: none !important;
   }
 
   .pillar-card--featured,
-  .has-reveal .pillar-card--featured.reveal-item {
+  .has-reveal .pillar-card--featured.reveal-item,
+  .has-reveal .pillar-card--featured.reveal-card {
     transform: translateY(-28px) !important;
   }
 }
@@ -393,18 +413,6 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: heroBgReveal 1.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
-@keyframes heroBgReveal {
-  from {
-    opacity: 0.65;
-    transform: scale(1.035);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 .hero__bg::after {
@@ -436,7 +444,6 @@ p {
   line-height: 1.08;
   letter-spacing: -0.015em;
   color: #FFFFFF;
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.12s backwards;
 }
 
 .hero h1 span {
@@ -457,7 +464,6 @@ p {
   font-size: 1.05rem;
   line-height: 1.85;
   font-weight: 400;
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.24s backwards;
 }
 
 .hero__actions {
@@ -467,18 +473,6 @@ p {
   width: 100%;
   max-width: 410px;
   justify-self: end;
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.36s backwards;
-}
-
-@keyframes heroFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .btn-hero-primary {
@@ -563,22 +557,6 @@ p {
   text-align: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   transition: transform 0.25s var(--tr-smooth), border-color 0.25s var(--tr-smooth), box-shadow 0.25s var(--tr-smooth);
-}
-
-.stats-bar .stat-card:nth-child(1) {
-  animation: heroFadeUp 0.65s var(--tr-smooth) 0.48s backwards;
-}
-
-.stats-bar .stat-card:nth-child(2) {
-  animation: heroFadeUp 0.65s var(--tr-smooth) 0.58s backwards;
-}
-
-.stats-bar .stat-card:nth-child(3) {
-  animation: heroFadeUp 0.65s var(--tr-smooth) 0.68s backwards;
-}
-
-.stats-bar .stat-card:nth-child(4) {
-  animation: heroFadeUp 0.65s var(--tr-smooth) 0.78s backwards;
 }
 
 .stat-card:hover {
@@ -3253,23 +3231,135 @@ p {
 }
 
 /* ==========================================================================
-   SCROLL REVEAL SYSTEM & STAGGER TRANSITIONS
+   NUSA BALI HERITAGE — PREMIUM SCROLL REVEAL & MOTION SYSTEM
    Progressive enhancement: by default elements remain in normal layout.
-   When JS activates, .has-reveal is set on <html> and .reveal-item
-   elements fade in and translate upward smoothly.
+   When JS activates and confirms IntersectionObserver support,
+   .has-reveal is set on <html> and specialized reveal animations trigger.
    ========================================================================== */
 
-.has-reveal .reveal-item {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.6s var(--tr-smooth), transform 0.6s var(--tr-smooth);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
+/* 1. Heading Text Reveal (Clipping Mask) */
+.heading-line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
 }
 
-/* Preserve the distinctive -28px architectural elevation of the featured pillar card */
-.has-reveal .pillar-card--featured.reveal-item {
-  transform: translateY(-10px);
+.heading-line-inner {
+  display: inline-block;
+  transform: translateY(115%) rotate(1.4deg);
+  opacity: 0;
+  transform-origin: left bottom;
+  will-change: transform, opacity;
+  transition: transform 0.9s var(--ease-out-expo), opacity 0.85s var(--ease-out-expo);
+  transition-delay: var(--heading-delay, 0ms);
+}
+
+.is-revealed .heading-line-inner,
+.hero-is-active .heading-line-inner {
+  transform: translateY(0) rotate(0deg);
+  opacity: 1;
+}
+
+/* 2. Eyebrows & Small Labels (Horizontal Reveal & Letter Tracking) */
+.has-reveal .reveal-eyebrow {
+  opacity: 0;
+  transform: translateX(-16px);
+  letter-spacing: 0.22em;
+  will-change: transform, opacity, letter-spacing;
+  transition: opacity 0.7s var(--ease-out-expo), transform 0.75s var(--ease-out-expo), letter-spacing 0.8s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-eyebrow.is-revealed,
+.hero-is-active .reveal-eyebrow {
+  opacity: 1;
+  transform: translateX(0);
+  letter-spacing: inherit;
+}
+
+/* 3. Paragraphs & Story Descriptions (Soft Vertical Rise) */
+.has-reveal .reveal-desc {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: transform, opacity;
+  transition: opacity 0.8s var(--tr-smooth), transform 0.85s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-desc.is-revealed,
+.hero-is-active .reveal-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 4. Main Media & Story Images (Clipping & Scale Settling) */
+.has-reveal .reveal-media {
+  position: relative;
+  overflow: hidden;
+}
+
+.has-reveal .reveal-media img {
+  opacity: 0;
+  transform: scale(1.10);
+  will-change: transform, opacity;
+  transition: opacity 0.9s var(--ease-out-expo), transform 1.4s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-media.is-revealed img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Subtle antique gold light sheen on revealed imagery */
+.has-reveal .reveal-media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(236, 194, 70, 0.18) 0%, transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 1.3s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-media.is-revealed::before {
+  opacity: 1;
+}
+
+/* 5. Cultural Cards & Staggered Groups */
+.has-reveal .reveal-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+  will-change: transform, opacity;
+  transition: opacity 0.75s var(--tr-smooth), transform 0.8s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-card.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Featured Pillar Card elevation preservation (-28px) */
+.has-reveal .pillar-card--featured.reveal-card {
+  transform: translateY(0) scale(0.98);
+}
+
+.has-reveal .pillar-card--featured.reveal-card.is-revealed {
+  opacity: 1;
+  transform: translateY(-28px) scale(1);
+}
+
+/* Generic .reveal-item backward compatibility */
+.has-reveal .reveal-item {
+  opacity: 0;
+  transform: translateY(22px);
+  will-change: opacity, transform;
+  transition: opacity 0.75s var(--tr-smooth), transform 0.8s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 .has-reveal .reveal-item.is-revealed {
@@ -3277,7 +3367,221 @@ p {
   transform: translateY(0);
 }
 
+.has-reveal .pillar-card--featured.reveal-item {
+  transform: translateY(0);
+}
+
 .has-reveal .pillar-card--featured.reveal-item.is-revealed {
   opacity: 1;
   transform: translateY(-28px);
+}
+
+/* 6. Gold Dividers & Ornaments */
+.has-reveal .reveal-line {
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0.2;
+  will-change: transform, opacity;
+  transition: transform 0.95s var(--ease-out-expo), opacity 0.95s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-line.is-revealed {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.has-reveal .reveal-ornament {
+  opacity: 0;
+  transform: scale(0.82) rotate(-8deg);
+  will-change: transform, opacity;
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.85s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal-ornament.is-revealed {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Corner diamonds on teaser frames */
+.has-reveal .teaser-media .teaser-media__diamond {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-reveal .teaser-media.is-revealed .teaser-media__diamond {
+  opacity: 1;
+}
+
+.has-reveal .teaser-media.is-revealed .teaser-media__diamond--tl,
+.has-reveal .teaser-media.is-revealed .teaser-media__diamond--br,
+.has-reveal .teaser-media.is-revealed .teaser-media__diamond--tr,
+.has-reveal .teaser-media.is-revealed .teaser-media__diamond--bl {
+  transform: rotate(45deg) scale(1);
+}
+
+/* 7. Splash Screen Guard: Freeze all background transitions & animations while splash screen is active */
+body.splash-active *:not(#splashScreen):not(#splashScreen *) {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Hero Cinematic Entrance States */
+.hero__bg img {
+  transform-origin: center center;
+}
+
+.hero-ready .hero__bg img {
+  opacity: 0.7;
+  transform: scale(1.09);
+  transition: none !important;
+}
+
+.hero-ready .hero p.hero__lede {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: none !important;
+}
+
+.hero-ready .hero__actions {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: none !important;
+}
+
+.hero-ready .stats-bar .stat-card {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: none !important;
+}
+
+.hero-ready .gamelan-hero__bg img {
+  opacity: 0.7;
+  transform: scale(1.09);
+  transition: none !important;
+}
+
+.hero-ready .gamelan-hero__desc,
+.hero-ready .gamelan-hero__actions,
+.hero-ready .stats-bar--gamelan .stat-pill {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: none !important;
+}
+
+.hero-is-active .hero__bg img {
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 2.2s var(--ease-out-expo), opacity 1.6s var(--ease-out-expo);
+}
+
+.hero-is-active .hero p.hero__lede {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.85s var(--tr-smooth) 0.28s, transform 0.9s var(--ease-out-expo) 0.28s;
+}
+
+.hero-is-active .hero__actions {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.85s var(--tr-smooth) 0.42s, transform 0.9s var(--ease-out-expo) 0.42s;
+}
+
+.hero-is-active .stats-bar .stat-card {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s var(--tr-smooth), transform 0.85s var(--ease-out-expo);
+}
+
+.hero-is-active .stats-bar .stat-card:nth-child(1) {
+  transition-delay: 0.52s;
+}
+
+.hero-is-active .stats-bar .stat-card:nth-child(2) {
+  transition-delay: 0.64s;
+}
+
+.hero-is-active .stats-bar .stat-card:nth-child(3) {
+  transition-delay: 0.76s;
+}
+
+.hero-is-active .stats-bar .stat-card:nth-child(4) {
+  transition-delay: 0.88s;
+}
+
+.hero-is-active .gamelan-hero__bg img {
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 2.2s var(--ease-out-expo), opacity 1.6s var(--ease-out-expo);
+}
+
+.hero-is-active .gamelan-hero__desc {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.85s var(--tr-smooth) 0.28s, transform 0.9s var(--ease-out-expo) 0.28s;
+}
+
+.hero-is-active .gamelan-hero__actions {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.85s var(--tr-smooth) 0.42s, transform 0.9s var(--ease-out-expo) 0.42s;
+}
+
+.hero-is-active .stats-bar--gamelan .stat-pill {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s var(--tr-smooth), transform 0.85s var(--ease-out-expo);
+}
+
+/* 8. Interactive Card Motion Polish */
+.culture-card {
+  transition: transform 0.32s var(--ease-out-smooth), border-color 0.32s var(--ease-out-smooth), box-shadow 0.32s var(--ease-out-smooth);
+}
+
+.culture-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(236, 194, 70, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 18px rgba(236, 194, 70, 0.12);
+}
+
+.situs-card {
+  transition: transform 0.32s var(--ease-out-smooth), border-color 0.32s var(--ease-out-smooth), box-shadow 0.32s var(--ease-out-smooth);
+}
+
+.situs-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(236, 194, 70, 0.42);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.6), 0 0 20px rgba(236, 194, 70, 0.12);
+}
+
+.situs-card:hover .situs-card__status svg {
+  transform: translateX(4px);
+  color: var(--c-gold);
+}
+
+.gallery-etno-card {
+  transition: transform 0.32s var(--ease-out-smooth), border-color 0.32s var(--ease-out-smooth), box-shadow 0.32s var(--ease-out-smooth);
+}
+
+.gallery-etno-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(236, 194, 70, 0.45);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.65), 0 0 22px rgba(236, 194, 70, 0.14);
+}
+
+.gallery-etno-card:hover .gallery-etno-card__arrow {
+  transform: translateX(4px);
+  color: var(--c-gold);
+}
+
+/* 9. Lightbox Modal Transitions */
+.detail-modal,
+.gallery-modal-overlay {
+  transition: opacity 0.35s var(--ease-out-smooth), visibility 0.35s;
+}
+
+.detail-modal__panel {
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.35s var(--ease-out-smooth);
 }

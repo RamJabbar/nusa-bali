@@ -30,15 +30,12 @@ body {
 }
 
 .aksara-head-text .eyebrow {
-  animation: heroFadeUp 0.6s var(--tr-smooth) 0.08s backwards;
 }
 
 .aksara-head-text h1.section-heading {
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.18s backwards;
 }
 
 .aksara-head-text .section-desc {
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.28s backwards;
 }
 
 .aksara-tags-wrap {
@@ -63,14 +60,6 @@ body {
   text-transform: uppercase;
   color: var(--c-gold);
   white-space: nowrap;
-}
-
-.aksara-tags-wrap .aksara-tag:nth-child(1) {
-  animation: heroFadeUp 0.6s var(--tr-smooth) 0.36s backwards;
-}
-
-.aksara-tags-wrap .aksara-tag:nth-child(2) {
-  animation: heroFadeUp 0.6s var(--tr-smooth) 0.44s backwards;
 }
 
 .aksara-tag-icon {

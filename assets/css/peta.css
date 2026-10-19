@@ -14,7 +14,6 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   margin-bottom: 0.85rem;
-  animation: heroFadeUp 0.6s var(--tr-smooth) 0.08s backwards;
 }
 
 .peta-filters {
@@ -606,26 +605,8 @@
 }
 
 /* ==========================================================================
-   PETA ENTRANCE ANIMATIONS, ACTIVE STATES & REDUCED MOTION
+   PETA ACTIVE STATES & REDUCED MOTION
    ========================================================================== */
-
-#peta .section-head .peta-eyebrow-pill {
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.1s backwards;
-}
-
-#peta .section-head .section-heading {
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.18s backwards;
-}
-
-#peta .section-head .section-desc {
-  animation: heroFadeUp 0.7s var(--tr-smooth) 0.28s backwards;
-}
-
-#petaFilters .peta-chip:nth-child(1) { animation: heroFadeUp 0.55s var(--tr-smooth) 0.34s backwards; }
-#petaFilters .peta-chip:nth-child(2) { animation: heroFadeUp 0.55s var(--tr-smooth) 0.40s backwards; }
-#petaFilters .peta-chip:nth-child(3) { animation: heroFadeUp 0.55s var(--tr-smooth) 0.46s backwards; }
-#petaFilters .peta-chip:nth-child(4) { animation: heroFadeUp 0.55s var(--tr-smooth) 0.52s backwards; }
-#petaFilters .peta-chip:nth-child(5) { animation: heroFadeUp 0.55s var(--tr-smooth) 0.58s backwards; }
 
 .peta-chip:active,
 .peta-panel__reset-btn:active {
@@ -636,6 +617,17 @@
 .peta-item-card:active {
   transform: translateX(1px);
   transition-duration: 0.1s;
+}
+
+.has-reveal .peta-map-frame .peta-compass {
+  transform: rotate(-12deg);
+  opacity: 0.35;
+  transition: transform 1.2s var(--ease-out-expo), opacity 1.0s var(--ease-out-expo);
+}
+
+.has-reveal .peta-map-frame.is-revealed .peta-compass {
+  transform: rotate(0deg);
+  opacity: 0.85;
 }
 
 @media (prefers-reduced-motion: reduce) {

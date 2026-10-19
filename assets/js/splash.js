@@ -10,7 +10,7 @@
 
   var DEFAULT_CONFIG = {
     // Total display duration before fade out begins (ms) ~2.65 seconds
-    duration: 2650,
+    duration: 2850,
     // Fade out transition duration (ms)
     fadeDuration: 550,
     // sessionStorage key to track visits in current browser session
@@ -19,16 +19,9 @@
 
   var config = Object.assign({}, DEFAULT_CONFIG, window.NusaBaliSplashConfig || {});
 
-  // Immediate check: if already seen in this session, hide element synchronously
+  // Clear any legacy suppression key to ensure splash screen plays on reload/visit
   try {
-    if (sessionStorage.getItem(config.storageKey) === 'true') {
-      var immediateSplash = document.getElementById('splashScreen');
-      if (immediateSplash) {
-        immediateSplash.style.display = 'none';
-        immediateSplash.setAttribute('aria-hidden', 'true');
-      }
-      return;
-    }
+    sessionStorage.removeItem(config.storageKey);
   } catch (_) {
     // Graceful fallback if storage is inaccessible (e.g., restricted iframe)
   }
@@ -40,7 +33,7 @@
     if (!splash) {
       try {
         sessionStorage.setItem(config.storageKey, 'true');
-      } catch (_) {}
+      } catch (_) { }
       return;
     }
 
@@ -48,12 +41,12 @@
     var prefersReducedMotion = false;
     try {
       prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (_) {}
+    } catch (_) { }
 
     if (prefersReducedMotion) {
       try {
         sessionStorage.setItem(config.storageKey, 'true');
-      } catch (_) {}
+      } catch (_) { }
       splash.style.display = 'none';
       splash.setAttribute('aria-hidden', 'true');
       return;
@@ -68,14 +61,13 @@
       if (isDismissed) return;
       isDismissed = true;
 
-      // Mark splash as completed for this browser session
-      try {
-        sessionStorage.setItem(config.storageKey, 'true');
-      } catch (_) {}
-
       // Trigger smooth fade out
       splash.classList.add('splash-screen--hiding');
       document.body.classList.remove('splash-active');
+      document.body.classList.add('splash-dismissed');
+      try {
+        window.dispatchEvent(new CustomEvent('nbh-splash-dismissed'));
+      } catch (_) { }
 
       // Final cleanup after CSS transition finishes
       setTimeout(function () {
