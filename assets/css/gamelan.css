@@ -3,10 +3,10 @@
 /* Hero */
 .gamelan-hero {
   position: relative;
-  min-height: 80vh;
+  min-height: auto;
   display: flex;
   align-items: center;
-  padding: 8.5rem 0 5rem;
+  padding: 5.5rem 0 4rem;
   background: #141312;
   background-image:
     radial-gradient(ellipse 70% 60% at 50% 10%, rgba(236, 194, 70, 0.08) 0%, transparent 70%),
@@ -54,14 +54,25 @@
   margin-bottom: 1.25rem;
 }
 
+.eyebrow svg,
+.eyebrow-gamelan svg {
+  width: 14px;
+  height: 14px;
+  max-width: 14px;
+  max-height: 14px;
+  flex-shrink: 0;
+  vertical-align: -2px;
+  display: inline-block;
+}
+
 .gamelan-hero__title {
-  font-family: var(--ff-display);
-  font-size: clamp(2.4rem, 5.5vw, 4.4rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-family: var(--ff-heading);
+  font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
   color: var(--c-cream);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .gamelan-hero__title .accent-italic {
@@ -108,6 +119,8 @@
 .stat-pill__icon {
   width: 22px;
   height: 22px;
+  max-width: 22px;
+  max-height: 22px;
   color: var(--c-gold);
   flex-shrink: 0;
   margin-top: 2px;

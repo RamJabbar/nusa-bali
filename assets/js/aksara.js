@@ -1,4 +1,4 @@
-// Nusa Bali Heritage — modul penelusuran kaligrafi sakral Aksara Bali
+// Nusa Bali Heritage: modul penelusuran kaligrafi tradisi Aksara Bali
 
 (function () {
   'use strict';

@@ -2,7 +2,7 @@
 
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -27,6 +27,16 @@ body {
 
 .aksara-head-text {
   max-width: 660px;
+}
+
+.eyebrow svg {
+  width: 14px;
+  height: 14px;
+  max-width: 14px;
+  max-height: 14px;
+  flex-shrink: 0;
+  vertical-align: -2px;
+  display: inline-block;
 }
 
 .aksara-head-text .eyebrow {
@@ -63,8 +73,11 @@ body {
 }
 
 .aksara-tag-icon {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
+  max-width: 14px;
+  max-height: 14px;
+  flex-shrink: 0;
   color: var(--c-gold);
 }
 
@@ -734,6 +747,16 @@ body {
   white-space: normal;
   text-align: center;
   border-radius: 6px;
+}
+
+.aksara-btn svg {
+  width: 16px;
+  height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -2px;
 }
 
 .aksara-btn--primary {

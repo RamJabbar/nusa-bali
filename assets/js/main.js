@@ -1,4 +1,4 @@
-// Nusa Bali Heritage — interaksi global & modal arsip pusaka
+// Nusa Bali Heritage: interaksi global dan modal arsip pusaka
 
 function initSharedFeatures() {
   setupHeaderScroll();

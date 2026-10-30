@@ -1,4 +1,4 @@
-// Nusa Bali Heritage — modal informasi mendalam tarian & kerajinan
+// Nusa Bali Heritage: modal informasi mendalam tarian dan kerajinan
 
 (function () {
   'use strict';

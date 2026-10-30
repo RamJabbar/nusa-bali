@@ -1,4 +1,4 @@
-// Nusa Bali Heritage — Mesin Akustik & Studio Interaktif Gamelan Bali
+// Nusa Bali Heritage: Mesin Akustik dan Studio Interaktif Gamelan Bali
 // Mengimplementasikan sintesis fisik perunggu krawang (Web Audio API),
 // fenomena ombak (paired-tuning pengumbang-pengisep), simulasi kotekan, dan autoplayer gending.
 
@@ -142,7 +142,7 @@
     }
   ];
 
-  // Reyong Bali — 12 Pot Pencon Berderet Horizontal (Dimainkan 4 Penabuh)
+  // Reyong Bali: 12 Pot Pencon Berderet Horizontal (Dimainkan 4 Penabuh)
   const REYONG_NOTES = [
     { id: 'reyong_1', name: 'Dang (Rendah)', aksara: 'ᬤᬂ', freq: 187, key: 'Z', potIndex: 1 },
     { id: 'reyong_2', name: 'Ding', aksara: 'ᬤᬶᬂ', freq: 224, key: 'X', potIndex: 2 },
@@ -495,7 +495,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // SINTESIS KENDANG BALI (Kendang Lanang & Wadon — Suara Pung, Dug, Tak, Plak)
+    // SINTESIS KENDANG BALI (Kendang Lanang dan Wadon: Suara Pung, Dug, Tak, Plak)
     // -----------------------------------------------------------------------
     playKendang(type = 'dug') {
       this.ensureContext();
@@ -603,7 +603,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // SINTESIS GONG AGENG & KEMPUR (Getaran Sub-Bass Pembawa Taksu Kosmis)
+    // SINTESIS GONG AGENG & KEMPUR (Getaran Sub-Bass Pembawa Taksu Agung)
     // -----------------------------------------------------------------------
     playGong(type = 'ageng') {
       this.ensureContext();
@@ -1786,7 +1786,7 @@
       },
       gong: {
         title: 'Gong Ageng, Kempur & Bende',
-        kicker: 'Penguasa Waktu & Siklus Kosmis Gongan',
+        kicker: 'Penguasa Waktu & Siklus Agung Gongan',
         desc: 'Gong Ageng menggantung di belakang sebagai instrumen paling sakral. Bunyinya menandai akhir dan awal siklus gongan (colotomic cycle), dipercaya sebagai simbol napas semesta Dewa Siwa.',
         aksara: 'ᬕᭀᬂ',
         audioAction: () => audioEngine.playGong('ageng')

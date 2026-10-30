@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klasifikasi Tari Bali AI - ONNX Web</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ONNX Runtime Web -->
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen py-10 px-4">
+  <div class="max-w-3xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-semibold tracking-wide border border-emerald-500/20">
+        EfficientNet-B0 • ONNX Runtime Web
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight text-white">Klasifikasi Tari Bali</h1>
+      <p class="text-slate-400 text-sm max-w-lg mx-auto">
+        Model visi komputer dengan akurasi 98.03% (Blind Test) dan sistem pencegah halusinasi untuk menolak foto di luar tarian Bali.
+      </p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+      
+      <!-- Upload Dropzone -->
+      <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center gap-3">
+        <svg class="w-12 h-12 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <div class="text-sm text-slate-300">
+          <span class="text-emerald-400 font-medium">Klik untuk unggah</span> atau seret foto tarian ke sini
+        </div>
+        <p class="text-xs text-slate-500">Mendukung format JPG, PNG, WEBP (Latar transparan otomatis dikomposisikan)</p>
+        <input type="file" id="fileInput" class="hidden" accept="image/*">
+      </div>
+
+      <!-- Preview & Status Container -->
+      <div id="resultContainer" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <div class="relative w-48 h-48 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shrink-0">
+            <img id="previewImg" class="w-full h-full object-cover" alt="Preview">
+          </div>
+          <div class="space-y-3 flex-1 w-full">
+            <div id="statusBadge"></div>
+            <h2 id="predictionTitle" class="text-2xl font-bold"></h2>
+            <p id="predictionSub" class="text-sm text-slate-400"></p>
+            <div id="antiHallucinationAlert" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+          </div>
+        </div>
+
+        <!-- Probabilities Bar Chart -->
+        <div class="space-y-3 pt-4 border-t border-slate-800">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Distribusi Probabilitas Kelas (9 Tarian)</h3>
+          <div id="barsList" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <div id="loadingIndicator" class="hidden py-8 text-center text-sm text-slate-400">
+        <div class="inline-block animate-spin w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full mb-2"></div>
+        <div>Menjalankan inferensi ONNX di browser...</div>
+      </div>
+
+    </div>
+
+    <!-- Offline & Privacy Footer -->
+    <div class="text-center text-xs text-slate-500 space-y-1">
+      <p>Inference berjalan 100% lokal di browser Anda via WebAssembly / WebGL. Gambar tidak pernah dikirim ke server.</p>
+      <p class="text-slate-600">Model: EfficientNet-B0 (15.3 MB) • Model Opset: 17 • Ambang Batas Halusinasi: 70%</p>
+    </div>
+
+  </div>
+
+  <canvas id="hiddenCanvas" width="224" height="224" class="hidden"></canvas>
+
+  <script>
+    const CLASSES = [
+      "Baris", "Barong", "Condong", "Janger", "Kecak",
+      "Pendet", "Pendet_Penyambutan", "Rejang_Sari", "Truna_jaya"
+    ];
+
+    const CONFIDENCE_THRESHOLD = 0.70; // Anti-hallucination threshold
+    const ENTROPY_THRESHOLD = 1.40;     // Ambiguity threshold
+
+    let session = null;
+
+    // Explicitly configure CDN path for WASM binaries
+    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
+    ort.env.wasm.numThreads = 1; // 1 thread avoids SharedArrayBuffer CORS requirements
+
+    async function initSession() {
+      try {
+        console.log("Memuat model ONNX...");
+        session = await ort.InferenceSession.create('./bali_dance_efficientnet_v2.onnx', {
+          executionProviders: ['wasm']
+        });
+        console.log("Model ONNX berhasil dimuat!");
+      } catch (err) {
+        console.error("Gagal memuat model ONNX:", err);
+      }
+    }
+    initSession();
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    const resultContainer = document.getElementById('resultContainer');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const hiddenCanvas = document.getElementById('hiddenCanvas');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-emerald-500'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-emerald-500');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewImg.onload = () => runInference(previewImg);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function runInference(imgElement) {
+      if (!session) {
+        alert("Model ONNX sedang dimuat, tunggu sebentar lalu coba lagi.");
+        return;
+      }
+
+      resultContainer.classList.add('hidden');
+      loadingIndicator.classList.remove('hidden');
+
+      // 1. Preprocessing on Canvas (224x224, Composite on White to kill black background shortcut)
+      const ctx = hiddenCanvas.getContext('2d');
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, 224, 224);
+      ctx.drawImage(imgElement, 0, 0, 224, 224);
+
+      const imageData = ctx.getImageData(0, 0, 224, 224);
+      const { data } = imageData;
+
+      // 2. Normalize to ImageNet stats: (pixel/255 - mean) / std (NCHW format: 1 x 3 x 224 x 224)
+      const float32Data = new Float32Array(3 * 224 * 224);
+      const mean = [0.485, 0.456, 0.406];
+      const std = [0.229, 0.224, 0.225];
+
+      for (let i = 0; i < 224 * 224; i++) {
+        const r = data[i * 4] / 255.0;
+        const g = data[i * 4 + 1] / 255.0;
+        const b = data[i * 4 + 2] / 255.0;
+
+        float32Data[i] = (r - mean[0]) / std[0]; // Channel R
+        float32Data[224 * 224 + i] = (g - mean[1]) / std[1]; // Channel G
+        float32Data[2 * 224 * 224 + i] = (b - mean[2]) / std[2]; // Channel B
+      }
+
+      const inputTensor = new ort.Tensor('float32', float32Data, [1, 3, 224, 224]);
+
+      // 3. Run Inference
+      const tStart = performance.now();
+      const output = await session.run({ input: inputTensor });
+      const tElapsed = Math.round(performance.now() - tStart);
+
+      const probs = output.probabilities.data; // Float32Array of 9 probabilities (summing to 1)
+
+      // 4. Calculate Max Prob and Shannon Entropy
+      let maxIdx = 0;
+      let maxProb = probs[0];
+      let entropy = 0;
+
+      for (let i = 0; i < probs.length; i++) {
+        if (probs[i] > maxProb) {
+          maxProb = probs[i];
+          maxIdx = i;
+        }
+        if (probs[i] > 1e-7) {
+          entropy -= probs[i] * Math.log(probs[i]);
+        }
+      }
+
+      // 5. Anti-Hallucination Decision Logic
+      const isHallucination = maxProb < CONFIDENCE_THRESHOLD || entropy > ENTROPY_THRESHOLD;
+      const predictedClass = CLASSES[maxIdx];
+
+      displayResults(predictedClass, maxProb, entropy, probs, isHallucination, tElapsed);
+      loadingIndicator.classList.add('hidden');
+      resultContainer.classList.remove('hidden');
+    }
+
+    function displayResults(predClass, maxProb, entropy, probs, isHallucination, latency) {
+      const statusBadge = document.getElementById('statusBadge');
+      const title = document.getElementById('predictionTitle');
+      const sub = document.getElementById('predictionSub');
+      const alertBox = document.getElementById('antiHallucinationAlert');
+      const barsList = document.getElementById('barsList');
+
+      if (isHallucination) {
+        statusBadge.innerHTML = `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md text-xs font-semibold">Tolak Prediksi • Di Luar Domain</span>`;
+        title.className = "text-2xl font-bold text-amber-400";
+        title.textContent = "Bukan Tari Bali / Tidak Dikenali";
+        sub.textContent = `Tingkat keyakinan tertinggi (${(maxProb * 100).toFixed(1)}%) berada di bawah ambang batas aman 70%. Model menolak berhalusinasi.`;
+        
+        alertBox.className = "p-3 rounded-lg text-xs leading-relaxed bg-amber-950/40 border border-amber-800 text-amber-200 block";
+        alertBox.innerHTML = `<strong>Pencegahan Halusinasi Aktif:</strong> Foto ini kemungkinan bukan tarian Bali atau sudut pengambilan gambar terlalu ambigu (Entropi ketidakpastian: ${entropy.toFixed(2)} / maks aman 1.40).`;
+      } else {
+        statusBadge.innerHTML = `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md text-xs font-semibold">Teridentifikasi • ${(maxProb * 100).toFixed(1)}% Keyakinan</span>`;
+        title.className = "text-2xl font-bold text-white";
+        title.textContent = predClass.replace('_', ' ');
+        sub.textContent = `Inferensi selesai dalam ${latency} ms dengan tingkat kepastian tinggi (Entropi: ${entropy.toFixed(2)}).`;
+        alertBox.className = "hidden";
+      }
+
+      // Populate bars
+      barsList.innerHTML = "";
+      CLASSES.forEach((cls, idx) => {
+        const p = probs[idx];
+        const pct = (p * 100).toFixed(1);
+        const isWinner = idx === CLASSES.indexOf(predClass) && !isHallucination;
+        
+        const row = document.createElement('div');
+        row.className = "space-y-1";
+        row.innerHTML = `
+          <div class="flex justify-between text-xs ${isWinner ? 'text-emerald-400 font-semibold' : 'text-slate-400'}">
+            <span>${cls.replace('_', ' ')}</span>
+            <span>${pct}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500 ${isWinner ? 'bg-emerald-500' : 'bg-slate-600'}" style="width: ${pct}%"></div>
+          </div>
+        `;
+        barsList.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
