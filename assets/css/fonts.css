@@ -1,42 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Nusa Bali Heritage — Tipografi Resmi
+   Dipilih pasangan: Literata (600, 700) untuk judul + Libre Franklin (400, 500, 600) untuk teks isi.
+   Seluruh font lama (Cinzel, Cormorant, Playfair, Inter, Plus Jakarta Sans) telah dihapus. */
 
-/* Local fallbacks */
-@font-face {
-  font-family: 'Playfair Display';
-  src: url('../fonts/playfair-display/PlayfairDisplay-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  src: url('../fonts/playfair-display/PlayfairDisplay-Black.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter/Inter-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter/Inter-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter/Inter-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Literata:wght@600;700&display=swap');

@@ -7,101 +7,101 @@
     "tari-kecak": {
       category: "tarian",
       image: "assets/images/tarian/tari-kecak.jpg",
-      badge: "Kategori: Bebali",
-      meta: "Asal: Desa Bona & Bedulu, Gianyar",
-      body: "Kecak berakar dari ritual Sanghyang penolak roh jahat, lalu dibentuk ulang menjadi seni pertunjukan pada era 1930-an. Lakon yang dibawakan mengambil penggalan Ramayana — penculikan Dewi Sita oleh Rahwana hingga pertempuran pasukan kera Hanoman membebaskannya. Puluhan penari duduk melingkar membentuk 'gamelan mulut' tanpa satupun instrumen logam."
+      badge: "Kategori: Bebali (tari pengiring)",
+      meta: "Asal: Desa Bona dan Bedulu, Gianyar",
+      body: "Tari Kecak dikembangkan dari ritual Sanghyang penolak bala pada dekade 1930-an. Lakon yang dibawakan menceritakan kisah Ramayana, saat Dewi Sita diculik Rahwana dan diselamatkan oleh pasukan kera Hanoman. Puluhan pria duduk melingkar dan melantunkan paduan suara cak-cak-cak tanpa alat musik gamelan."
     },
     "tari-legong-keraton": {
       category: "tarian",
       image: "assets/images/tarian/tari-legong.jpg",
-      badge: "Kategori: Balih-balihan",
-      meta: "Asal: Lingkungan puri (istana), Puri Saba & Puri Peliatan",
-      body: "Awalnya tarian persembahan eksklusif di lingkungan puri, dibawakan penari cilik pra-remaja. Legong mengisahkan Raja Lasem yang menculik Putri Rangkesari, dengan bahasa gerak yang sangat halus — terutama 'seledet', lirikan mata tajam yang menjadi ekspresi emosional utama tarian ini."
+      badge: "Kategori: Balih-balihan (tari pertunjukan)",
+      meta: "Asal: Lingkungan puri di Saba dan Peliatan, Gianyar",
+      body: "Tari klasik istana yang dibawakan oleh penari muda. Gerakannya menuntut kelenturan jari tangan dan seledet, yaitu lirikan mata tajam yang menjadi ciri khas tari Bali. Tarian ini diiringi alunan gamelan Semar Pagulingan."
     },
     "barong-rangda": {
       category: "tarian",
       image: "assets/images/tarian/barong-rangda.jpg",
-      badge: "Kategori: Tari Wali Sakral",
-      meta: "Asal: Tersebar di seluruh Bali, versi paling sakral di Pura Dalem",
-      body: "Dipentaskan saat odalan sebagai tarian Wali, bukan sekadar hiburan. Dalam klimaks tertentu, penari yang kerauhan (trance) menusukkan keris ke tubuh sendiri (ngurek) sebagai bukti perlindungan spiritual Barong — praktik yang hanya berlaku dalam konteks upacara, tidak pernah dipentaskan sebagai tontonan biasa."
+      badge: "Kategori: Tari Wali (tari upacara)",
+      meta: "Asal: Dipentaskan di pura seluruh Bali",
+      body: "Tarian sakral yang menampilkan pertemuan Barong (simbol kebajikan) dan Rangda (simbol hawa nafsu). Keduanya dipentaskan saat odalan (upacara peringatan pura) untuk menjaga ketenteraman desa. Dalam kondisi kerauhan (trance), para penari menusukkan keris ke tubuh tanpa terluka."
     },
     "tari-baris-gede": {
       category: "tarian",
       image: "assets/images/tarian/tari-baris-gede.jpg",
-      badge: "Kategori: Tari Wali",
-      meta: "Asal: Desa-desa Bali Aga & pura kuno",
-      body: "Dibawakan berkelompok dalam jumlah ganjil (5, 7, atau 9 penari) membawa senjata pusaka seperti tombak dan keris. Gerakannya tegas dan berulang, menggambarkan kesiagaan prajurit penjaga saat roh leluhur (Bhatara) berstana turun ke pura selama upacara berlangsung."
+      badge: "Kategori: Tari Wali (tari upacara)",
+      meta: "Asal: Desa-desa kuno dan pura kahyangan",
+      body: "Dibawakan oleh kelompok penari pria dalam jumlah ganjil (5, 7, atau 9 penari) yang membawa tombak dan keris. Gerakannya tegap dan serempak, menggambarkan barisan prajurit yang mengawal kehadiran para dewa dan leluhur di pura."
     },
     "tari-sanghyang-dedari": {
       category: "tarian",
       image: "assets/images/tarian/tari-sanghyang-dedari.jpg",
-      badge: "Kategori: Tari Wali Sakral",
-      meta: "Asal: Tradisi pra-Hindu Bali, tersebar di berbagai desa",
-      body: "Salah satu tarian tertua di Bali, mendahului masuknya pengaruh Hindu. Dibawakan dua gadis yang belum akil balig dan tidak pernah belajar menari — dalam kondisi trance dengan mata tertutup, mereka dipercaya dirasuki bidadari kahyangan untuk menolak wabah penyakit dari desa."
+      badge: "Kategori: Tari Wali (tari upacara)",
+      meta: "Asal: Tradisi desa di Gianyar dan Karangasem",
+      body: "Tari sakral penolak wabah penyakit yang dibawakan oleh dua anak perempuan yang belum akil balig. Keduanya menari dalam kondisi trance dengan mata terpejam, mengikuti kidung koor yang dilantunkan warga desa."
     },
     "tari-topeng-sidakarya": {
       category: "tarian",
       image: "assets/images/tarian/tari-topeng-sidakarya.jpg",
-      badge: "Kategori: Tari Wali",
-      meta: "Asal: Pura Mutering Jagat Dalem Sidakarya & seluruh Bali",
-      body: "Berdasarkan legenda seorang pendeta pengembara yang ditolak masuk upacara kerajaan, lalu mengutuk upacara tersebut agar tidak pernah sempurna sampai ia diundang kembali. Kini, topeng ini wajib dipentaskan di penutup upacara besar (piodalan, ngaben) sebagai permohonan restu kesempurnaan yadnya."
+      badge: "Kategori: Tari Wali (tari upacara)",
+      meta: "Asal: Pura Mutering Jagat Dalem Sidakarya, Denpasar",
+      body: "Tarian topeng wajib pada penutup upacara besar seperti piodalan dan ngaben. Tokoh Brahmana Sidakarya dihadirkan untuk memberikan restu suci, agar seluruh rangkaian yadnya dinyatakan tuntas dan sah."
     },
 
     "ukir-kayu": {
       category: "kerajinan",
       image: "assets/images/kerajinan/ukir-kayu.jpg",
-      badge: "Gianyar & Mas",
-      meta: "Bahan utama: Kayu cendana, kayu cempaka, kayu jati",
-      body: "Motif Patra Punggel (sulur daun bergulung) dan relief adegan Ramayana dipahat dengan pahat tradisional tanpa cetakan. Arca kayu cendana yang dihasilkan sering ditakhtakan sebagai pratima (simbol suci) di pura, bukan sekadar hiasan dekoratif."
+      badge: "Gianyar dan Mas",
+      meta: "Bahan: Kayu cendana, cempaka, dan jati",
+      body: "Perajin kayu di Desa Mas memahat motif patra punggel (sulur daun bergulung) dan relief cerita Ramayana. Pahatan dilakukan memakai pahat baja tradisional tanpa cetakan, menghasilkan arca dan ornamen tiang pura."
     },
     "lukisan-kamasan": {
       category: "kerajinan",
       image: "assets/images/kerajinan/lukisan-kamasan.jpg",
       badge: "Kamasan, Klungkung",
-      meta: "Gaya: Wayang klasik, tradisi keraton Klungkung",
-      body: "Gaya lukisan tertua di Bali yang bertahan tak berubah sejak era kerajaan. Pewarna diracik dari bahan alami — batu pere untuk putih, jelaga untuk hitam — direkatkan dengan lem tulang ikan. Ceritanya diambil dari lontar Adiparwa, Bharatayuddha, hingga cerita Panji."
+      meta: "Gaya: Wayang klasik Klungkung",
+      body: "Gaya lukisan wayang tertua di Bali yang bertahan sejak zaman Kerajaan Gelgel. Pewarna dibuat dari bahan alami, seperti batu pere untuk warna oker dan jelaga lampu untuk warna hitam, dengan perekat sari tulang ikan."
     },
     "tenun-gringsing": {
       category: "kerajinan",
       image: "assets/images/kerajinan/tenun-gringsing.jpg",
       badge: "Tenganan, Karangasem",
-      meta: "Teknik: Ikat ganda (double ikat) langka",
-      body: "Satu-satunya kain tenun ikat ganda di Asia Tenggara, hanya diproduksi di Desa Tenganan Pegringsingan. Proses pewarnaan dan penenunan satu lembar kain bisa memakan waktu 2–5 tahun. Dipercaya memiliki kekuatan penolak bala, dipakai dalam upacara potong gigi dan ngaben."
+      meta: "Teknik: Ikat ganda (double ikat)",
+      body: "Satu-satunya kain tenun ikat ganda di Indonesia, ditenun oleh masyarakat Desa Tenganan Pegringsingan. Proses pewarnaan benang kapas memakai akar mengkudu dan minyak kemiri, memerlukan waktu dua hingga lima tahun untuk sehelai kain."
     },
     "perak-celuk": {
       category: "kerajinan",
       image: "assets/images/kerajinan/perak-celuk.jpg",
       badge: "Celuk, Sukawati",
-      meta: "Teknik: Filigri perak & emas suci",
-      body: "Desa pengrajin perak turun-temurun yang memproduksi bokor persembahan, sangku (wadah tirta suci), dan gelungan (hiasan kepala penari/pendeta). Teknik filigrinya membentuk pola sulur sangat halus dari kawat perak yang dipilin dan disolder satu per satu dengan tangan."
+      meta: "Bahan: Perak dan kuningan sepuh emas",
+      body: "Desa perajin perak yang membuat bokor sesaji, sangku (wadah air suci), dan gelungan (mahkota penari). Perajin memilin kawat perak halus menjadi motif sulur dengan teknik filigri."
     },
     "ukiran-batu": {
       category: "kerajinan",
       image: "assets/images/kerajinan/ukiran-batu.jpg",
       badge: "Batubulan, Gianyar",
-      meta: "Bahan: Batu paras padas & batu andesit",
-      body: "Sentra pahat batu terbesar di Bali, memproduksi arca penjaga pura (Dwarapala), relief itihasa untuk dinding candi, hingga gapura candi bentar. Batu paras yang lunak saat digali mengeras seiring waktu terpapar udara, memudahkan detail ukiran presisi tinggi."
+      meta: "Bahan: Batu paras padas dan batu andesit",
+      body: "Sentra seni pahat batu untuk membuat arca penjaga pura Dwarapala, relief dinding candi, dan gapura candi bentar. Batu paras yang lunak saat dipahat akan mengeras alami saat terkena udara terbuka."
     },
     "anyaman-bambu": {
       category: "kerajinan",
       image: "assets/images/kerajinan/anyaman-bambu.jpg",
       badge: "Bona, Gianyar",
-      meta: "Bahan: Bambu pilihan & rotan ata alami",
-      body: "Desa yang juga jadi pusat lahirnya Tari Kecak modern ini dikenal dengan anyaman bambu dan rotan ata untuk bakul persembahan (sok), wadah canang, hingga furnitur. Setiap motif anyaman punya nama dan fungsi upacara yang berbeda-beda."
+      meta: "Bahan: Bambu tali dan rotan ata",
+      body: "Warga Desa Bona menganyam bambu dan rotan ata menjadi wadah canang, bakul sesaji sokasi, dan perabot rumah tangga. Setiap bentuk anyaman disesuaikan dengan kebutuhan upacara."
     },
     "topeng-ritual": {
       category: "kerajinan",
       image: "assets/images/kerajinan/topeng-ritual.jpg",
       badge: "Singapadu, Gianyar",
-      meta: "Bahan: Kayu pule sakral, sepuhan prada emas",
-      body: "Kayu pule dipilih karena dipercaya punya kekuatan spiritual dan ringan dipakai menari. Sebelum dipahat, biasanya diawali ritual permohonan izin. Topeng yang selesai diwarnai prada emas ini digunakan khusus untuk pementasan tari sakral seperti Topeng Sidakarya dan Barong."
+      meta: "Bahan: Kayu pule dan lapisan prada emas",
+      body: "Dipahat dari kayu pule yang ringan dan mudah dibentuk. Sebelum memahat kayu, sangging (perajin) memohon izin secara adat. Topeng yang selesai dilapisi prada emas khusus untuk pementasan tari Topeng Sidakarya dan Barong."
     },
     "gerabah-pejaten": {
       category: "kerajinan",
       image: "assets/images/kerajinan/gerabah-pejaten.jpg",
       badge: "Pejaten, Tabanan",
-      meta: "Bahan: Tanah liat lokal & pembakaran tradisional",
-      body: "Desa gerabah tertua di Bali, memproduksi genteng, kendi, dan perlengkapan upacara dari tanah liat yang dibakar dengan teknik pembakaran terbuka turun-temurun. Kini berkembang juga jadi kerajinan hias, tapi fungsi utamanya tetap perlengkapan ritual harian."
+      meta: "Bahan: Tanah liat lokal",
+      body: "Desa pembuat gerabah tertua di Tabanan. Memproduksi perlengkapan upacara dari tanah liat bakar seperti periuk, kendi air suci, caratan, dan genteng pres tradisional."
     }
   };
 

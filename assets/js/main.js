@@ -156,63 +156,63 @@ function setupCopyrightYear() {
 const galleryArchives = [
   {
     id: 1,
-    title: 'Canang Sari & Porosan Suci',
-    category: '■ YADNYA SEHARIAN',
-    subtitle: 'No. 01 / Hening Fajar',
+    title: 'Canang sari dan porosan suci',
+    category: 'Yadnya harian',
+    subtitle: 'Persembahan pagi hari',
     image: 'assets/images/galeri/canang-sari.jpg',
-    alt: 'Tangan terampil merangkai persembahan syukur setiap fajar mengawali hari',
-    desc: 'Tangan terampil merangkai persembahan syukur setiap fajar mengawali hari, mengikat bunga gumitir, daun pisang, dan canang dengan ketulusan yadnya. Porosan—sirih, kapur, dan pinang—menjadi jantung persembahan yang menyimbolkan keteguhan bhakti dan keharmonisan Trimurti.',
-    location: 'Banjar Taman, Ubud & Griya se-Bali',
-    philosophy: 'Tri Kaya Parisudha & Yadnya Tulus Ikhlas',
-    status: 'Tradisi Harian Hidup (Living Heritage)'
+    alt: 'Tangan terampil merangkai persembahan canang sari di pagi hari',
+    desc: 'Merangkai persembahan bunga gumitir, daun pisang, dan porosan (daun sirih, kapur sirih, dan pinang). Diletakkan setiap fajar di pelataran rumah dan pelinggih sebagai wujud rasa syukur atas kehidupan.',
+    location: 'Banjar Taman, Ubud dan griya di seluruh Bali',
+    philosophy: 'Tri Kaya Parisudha (berpikir, berkata, dan berbuat yang benar) serta ketulusan yadnya',
+    status: 'Tradisi harian yang terus dijalankan warga'
   },
   {
     id: 2,
-    title: 'Petani & Warisan Subak',
-    category: '■ FILOSOFI TRI HITA KARANA • WARISAN UNESCO',
-    subtitle: 'No. 02 / Lanskap Kosmologis',
+    title: 'Petani dan warisan subak',
+    category: 'Warisan Dunia UNESCO',
+    subtitle: 'Lanskap pertanian berundak',
     image: 'assets/images/galeri/petani-subak.jpg',
     alt: 'Petani berjalan memanggul cangkul di terasering sawah subak Jatiluwih',
-    desc: 'Harmoni suci antara manusia, alam pertiwi, dan Sang Hyang Widhi di petak terasering Jatiluwih; keteraturan air yang dialirkan lewat kepemimpinan pekaseh subak berdasarkan siklus upacara Pura Ulun Swi yang telah bertahan ribuan tahun.',
+    desc: 'Petani menggarap sawah berundak Jatiluwih dengan sistem irigasi subak. Aliran air dari mata air pegunungan dialirkan secara musyawarah dan adil di bawah kepemimpinan pekaseh (ketua subak).',
     location: 'Terasering Jatiluwih, Tabanan',
-    philosophy: 'Tri Hita Karana & Tri Mandala Pertanian Kosmologis',
-    status: 'Warisan Budaya Dunia UNESCO (Ditetapkan 2012)'
+    philosophy: 'Tri Hita Karana (tiga keharmonisan hidup manusia dengan Tuhan, sesama, dan alam)',
+    status: 'Warisan Budaya Dunia UNESCO sejak tahun 2012'
   },
   {
     id: 3,
-    title: 'Pura Ulun Danu Beratan & Tirta Kesuburan',
-    category: '■ DEWI DANU KAHYANGAN',
-    subtitle: 'No. 03 / Tirta Danu',
+    title: 'Pura Ulun Danu Beratan',
+    category: 'Pura danau dan sumber air',
+    subtitle: 'Kahyangan danau Bedugul',
     image: 'assets/images/galeri/ulun-danu-beratan.jpg',
-    alt: 'Pura Ulun Danu Beratan di atas danau berkabut Bedugul',
-    desc: 'Kabut hening dan pantulan candi di atas danau sakral sumber mata air kehidupan bagi belahan utara dan tengah pulau Dewata. Bangunan pelinggih bertingkat ini memuliakan Sang Hyang Dewi Danu sebagai penguasa air, kesuburan, dan kesejahteraan alam.',
+    alt: 'Pura Ulun Danu Beratan di tepi danau berkabut di Bedugul',
+    desc: 'Pura yang bertempat di tepi Danau Beratan di kawasan Bedugul. Bangunan pelinggih bertingkat ini dipersembahkan kepada Sang Hyang Dewi Danu sebagai penguasa air dan kesuburan kawasan danau.',
     location: 'Danau Beratan, Candikuning, Tabanan',
-    philosophy: 'Hulu-Teba & Pemuliaan Tirta Amerta',
-    status: 'Kawasan Cagar Budaya Nasional Terlindungi'
+    philosophy: 'Pemuliaan mata air suci untuk pengairan sawah di daerah hilir',
+    status: 'Kawasan cagar budaya nasional terlindungi'
   },
   {
     id: 4,
-    title: 'Anak-anak Belajar Gamelan di Banjar',
-    category: '■ REGENERASI BUDAYA',
-    subtitle: 'No. 04 / Genta Suara',
+    title: 'Anak-anak belajar gamelan di banjar',
+    category: 'Pendidikan tradisi warga',
+    subtitle: 'Latihan tabuh di balai desa',
     image: 'assets/images/galeri/anak-gamelan.jpg',
     alt: 'Anak-anak desa belajar gamelan bersama di balai banjar',
-    desc: 'Pewarisan laras slendro secara organik selepas sekolah di balai desa, menyatukan ritme generasi penerus dengan detak gamelan warisan leluhur. Lewat tradisi maguru panggul, anak-anak menghayati musikalitas, disiplin, dan ikatan sosial banjar.',
-    location: 'Balai Banjar Kawan, Bangli & Gianyar',
-    philosophy: 'Maguru Panggul, Gotong Royong & Rasa Musikal Banjar',
-    status: 'Pelestarian Berbasis Komunitas Desa Adat'
+    desc: 'Pewarisan teknik memukul gamelan secara langsung di balai banjar seusai sekolah. Melalui metode maguru panggul (belajar dengan meniru gerakan guru), anak-anak mengenali ketukan tempo dan rasa kebersamaan.',
+    location: 'Balai Banjar Kawan, Bangli dan Gianyar',
+    philosophy: 'Gotong royong, kebersamaan warga banjar, dan regenerasi musisi tradisi',
+    status: 'Kegiatan rutin berbasis komunitas desa adat'
   },
   {
     id: 5,
-    title: 'Pedagang Banten di Pasar Pagi',
-    category: '■ DENYUT PASAR TRADISIONAL',
-    subtitle: 'No. 05 / Roda Yadnya',
+    title: 'Pedagang banten di pasar pagi',
+    category: 'Pasar tradisional',
+    subtitle: 'Pasar perlengkapan upacara',
     image: 'assets/images/galeri/pedagang-banten.jpg',
-    alt: 'Pedagang banten tersenyum ramah di pasar tradisional Bali',
-    desc: 'Geliat perniagaan dupa, janur, dan bunga marigold segar yang berakar kuat pada laku ritual; ruang bertemunya kebutuhan persembahan harian dengan kerukunan sosial dan denyut ekonomi dharma masyarakat agraris.',
-    location: 'Pasar Tradisional Kumbasari & Kreneng, Denpasar',
-    philosophy: 'Ekonomi Dharma & Mutualisme Ritual Kerakyatan',
-    status: 'Ekosistem Budaya & Tradisi Pasar Rakyat'
+    alt: 'Pedagang banten melayani pembeli di pasar tradisional Bali',
+    desc: 'Aktivitas jual beli janur kelapa, dupa, dan bunga marigold di pasar pagi. Pasar tradisional menjadi tempat perjumpaan antara petani bunga, perajin sesaji, dan warga yang menyiapkan upacara harian.',
+    location: 'Pasar Kumbasari dan Kreneng, Denpasar',
+    philosophy: 'Hubungan timbal balik antara kebutuhan upacara dan ekonomi warga pasar',
+    status: 'Kegiatan pasar tradisional harian'
   }
 ];
 
