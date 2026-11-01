@@ -1,14 +1,10 @@
-// Nusa Bali Heritage — Premium Scroll Animation & Motion System
-// Storytelling museum-grade reveal system, text line clipping masks,
-// nuanced scroll reveal variants, organic easing curves, image scale-settling,
-// subtle scroll parallax, interactive card motions, and numeric count-ups.
+
+
+
 
 (function () {
   'use strict';
 
-  /**
-   * Check if user prefers reduced motion
-   */
   function isReducedMotion() {
     try {
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,9 +13,6 @@
     }
   }
 
-  /* ==========================================================================
-     1. MARQUEE SMOOTH SCROLL & INTERACTIVE SWIPE ENGINE
-     ========================================================================== */
   function setupMarquees() {
     if (isReducedMotion()) return;
 
@@ -31,7 +24,6 @@
     const seedNodes = Array.from(track.children);
     if (!seedNodes.length) return;
 
-    // Duplicate elements for seamless loop
     seedNodes.forEach((node) => {
       const dup = node.cloneNode(true);
       dup.setAttribute('aria-hidden', 'true');
@@ -201,15 +193,12 @@
     requestAnimationFrame(step);
   }
 
-  /* ==========================================================================
-     2. NUMERIC COUNT-UP ENGINE
-     ========================================================================== */
   function animateCounter(element) {
     if (!element || element.dataset.counted === 'true') return;
     if (isReducedMotion()) return;
 
     const text = element.textContent.trim();
-    // Match numbers like 3.000+, 128, 9, 2, 13, 18, 5, 30+, 3
+    
     const match = text.match(/^([^\d]*)(\d[\d\.]*)(.*)$/);
     if (!match) return;
 
@@ -222,7 +211,7 @@
     if (isNaN(targetVal) || targetVal <= 0) return;
 
     element.dataset.counted = 'true';
-    const duration = 1350; // ms
+    const duration = 1350; 
     const startTime = performance.now();
 
     function formatNumber(num) {
@@ -247,16 +236,13 @@
       if (progress < 1) {
         requestAnimationFrame(update);
       } else {
-        element.textContent = text; // Ensure exact final display
+        element.textContent = text; 
       }
     }
 
     requestAnimationFrame(update);
   }
 
-  /* ==========================================================================
-     3. HEADING TEXT REVEAL (CLIPPING MASK WRAPPER)
-     ========================================================================== */
   function prepareHeadingMasks() {
     if (isReducedMotion()) return;
 
@@ -289,9 +275,6 @@
     });
   }
 
-  /* ==========================================================================
-     4. HERO SECTION — CINEMATIC ENTRANCE
-     ========================================================================== */
   function prepareHeroInitialState() {
     const heroEl = document.querySelector('.hero') || document.querySelector('.gamelan-hero');
     if (!heroEl) return;
@@ -314,15 +297,13 @@
     }
 
     heroEl.classList.add('hero-ready');
-    // Ensure paint frame before applying active class for smooth CSS transitions
+    
     requestAnimationFrame(() => {
       heroEl.classList.add('hero-is-active');
 
-      // Trigger text mask reveals on hero heading
       const heroHeadings = heroEl.querySelectorAll('.hero h1, .gamelan-hero__title');
       heroHeadings.forEach((h) => h.classList.add('is-revealed'));
 
-      // Count up numbers in hero stats bar after slight delay
       setTimeout(() => {
         heroEl.querySelectorAll('.stat-card__number, .stat-pill__value').forEach((el) => {
           animateCounter(el);
@@ -331,16 +312,12 @@
     });
   }
 
-  /* ==========================================================================
-     5. SCROLL REVEAL SYSTEM (INTERSECTION OBSERVER)
-     ========================================================================== */
   function setupScrollReveals() {
     if (isReducedMotion()) return;
     if (!('IntersectionObserver' in window)) return;
 
     prepareHeadingMasks();
 
-    // 1. Headings
     const headingTargets = [
       ...document.querySelectorAll('.section-head .section-heading'),
       ...document.querySelectorAll('.gallery-main-title'),
@@ -348,7 +325,6 @@
     ];
     headingTargets.forEach((el) => el.classList.add('reveal-heading'));
 
-    // 2. Eyebrows & Small Labels
     const eyebrowTargets = [
       ...document.querySelectorAll('.eyebrow'),
       ...document.querySelectorAll('.eyebrow-gamelan'),
@@ -357,7 +333,6 @@
     ];
     eyebrowTargets.forEach((el) => el.classList.add('reveal-eyebrow'));
 
-    // 3. Paragraphs & Story Descriptions
     const descTargets = [
       ...document.querySelectorAll('.section-desc'),
       ...document.querySelectorAll('.gallery-main-desc'),
@@ -365,7 +340,6 @@
     ];
     descTargets.forEach((el) => el.classList.add('reveal-desc'));
 
-    // 4. Main Media & Story Images
     const mediaTargets = [
       ...document.querySelectorAll('.teaser-section .teaser-media'),
       ...document.querySelectorAll('.spatial-detail-card .media-frame'),
@@ -373,7 +347,6 @@
     ];
     mediaTargets.forEach((el) => el.classList.add('reveal-media'));
 
-    // 5. Staggered Groups of Cultural Cards
     const groupPillars = Array.from(document.querySelectorAll('.pillars-grid .pillar-card'));
     const groupSitus = Array.from(document.querySelectorAll('#situsGrid .situs-card'));
     const groupGalleryTop = Array.from(document.querySelectorAll('.gallery-etno-row--top .gallery-etno-card'));
@@ -393,8 +366,7 @@
       });
     }
 
-    // Storytelling specific timing:
-    // Tri Hita Karana pillars: Pawongan (0ms), Parhyangan (featured, 140ms), Palemahan (280ms)
+    
     applyStagger(groupPillars, 140);
     applyStagger(groupSitus, 90);
     applyStagger(groupGalleryTop, 130);
@@ -407,7 +379,6 @@
     applyStagger(groupPetaChips, 70, 'reveal-card');
     applyStagger(groupAksaraTags, 80, 'reveal-card');
 
-    // 6. Section Containers & Consoles
     const sectionContainers = [
       ...document.querySelectorAll('.marquee-viewport'),
       ...document.querySelectorAll('.tabuh-console'),
@@ -423,7 +394,6 @@
     ];
     sectionContainers.forEach((el) => el.classList.add('reveal-item'));
 
-    // Consolidate all elements to observe
     const allRevealElements = [
       ...headingTargets,
       ...eyebrowTargets,
@@ -445,7 +415,6 @@
 
     if (!allRevealElements.length) return;
 
-    // Set high-level trigger class
     document.documentElement.classList.add('has-reveal');
 
     const revealObserver = new IntersectionObserver(
@@ -456,13 +425,11 @@
             el.classList.add('is-revealed');
             obs.unobserve(el);
 
-            // Animate any numeric stats located inside this card/section
             const statNumbers = el.querySelectorAll(
               '.stat-card__number, .teaser-stat__value, .stat-pill__value, .peta-stat-num'
             );
             statNumbers.forEach((numEl) => animateCounter(numEl));
 
-            // Clear temporary reveal delay after entrance finishes so hover states are immediate
             const cleanUp = () => {
               el.style.removeProperty('--reveal-delay');
               el.removeEventListener('transitionend', onEnd);
@@ -488,7 +455,7 @@
     const vh = window.innerHeight || document.documentElement.clientHeight;
     allRevealElements.forEach((el) => {
       const rect = el.getBoundingClientRect();
-      // If already in visible viewport at load or above scroll position, reveal immediately
+      
       if (rect.top < vh && rect.bottom > 0) {
         el.classList.add('is-revealed');
         const statNumbers = el.querySelectorAll(
@@ -504,7 +471,6 @@
       }
     });
 
-    // Safety fallback: ensure every element is completely visible even in edge cases
     setTimeout(() => {
       allRevealElements.forEach((el) => {
         if (!el.classList.contains('is-revealed')) {
@@ -518,12 +484,9 @@
     }, 3200);
   }
 
-  /* ==========================================================================
-     6. SUBTLE SCROLL PARALLAX ENGINE (NON-INTRUSIVE & HIGH-PERFORMANCE)
-     ========================================================================== */
   function setupScrollParallax() {
     if (isReducedMotion()) return;
-    if (window.innerWidth <= 768) return; // Keep mobile native and smooth
+    if (window.innerWidth <= 768) return; 
 
     const parallaxTargets = [
       ...document.querySelectorAll('.hero__bg img'),
@@ -553,7 +516,7 @@
         if (!frame) return;
 
         const rect = frame.getBoundingClientRect();
-        // Only compute if within or entering viewport
+        
         if (rect.bottom > 0 && rect.top < vh) {
           const centerOffset = rect.top + rect.height / 2 - vh / 2;
           const speed = frame.classList.contains('hero__bg') || frame.classList.contains('gamelan-hero__bg') ? 0.16 : 0.08;
@@ -567,21 +530,15 @@
     updateParallax();
   }
 
-  /* ==========================================================================
-     INITIALIZATION ORCHESTRATION (SPLASH SCREEN COORDINATION)
-     ========================================================================== */
   function isSplashScreenActive() {
     const splashEl = document.getElementById('splashScreen');
     if (!splashEl) return false;
 
-    // Suppressed or disabled
     if (document.documentElement.classList.contains('splash-screen--disabled')) return false;
     if (splashEl.classList.contains('splash-screen--disabled') || splashEl.classList.contains('splash-screen--hidden')) return false;
 
-    // Inline style suppression
     if (splashEl.style.display === 'none') return false;
 
-    // Computed style check
     try {
       const comp = window.getComputedStyle(splashEl);
       if (comp.display === 'none' || comp.visibility === 'hidden' || parseFloat(comp.opacity) === 0) {
@@ -607,7 +564,7 @@
     }
 
     if (isSplashScreenActive()) {
-      // Hold hero and heading masks in their initial unrevealed states
+      
       prepareHeroInitialState();
       prepareHeadingMasks();
 
@@ -617,7 +574,6 @@
         motionStarted = true;
         window.removeEventListener('nbh-splash-dismissed', onSplashDismissed);
 
-        // Run animations after splash screen starts fading out
         setTimeout(() => {
           startSiteMotion();
         }, 120);
@@ -625,12 +581,11 @@
 
       window.addEventListener('nbh-splash-dismissed', onSplashDismissed);
 
-      // Robust fallback if splash auto-dismiss event is missed
       setTimeout(() => {
         if (!motionStarted) onSplashDismissed();
       }, 3500);
     } else {
-      // Direct start when splash screen is not active
+      
       requestAnimationFrame(() => {
         setTimeout(startSiteMotion, 50);
       });

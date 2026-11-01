@@ -20,7 +20,6 @@
 
 <body>
 
-  <!-- Header -->
   <header class="site-header" id="siteHeader">
     <div class="container">
       <a href="index.html#beranda" class="brand">
@@ -52,7 +51,6 @@
       </div>
     </div>
 
-    <!-- Navigasi mobile -->
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
       <a href="index.html#beranda">Beranda</a>
       <a href="gamelan.html" aria-current="page">Gamelan</a>
@@ -64,7 +62,6 @@
 
   <main>
 
-    <!-- 1. Hero -->
     <section class="gamelan-hero" id="hero">
       <div class="gamelan-hero__bg media-frame" aria-hidden="true">
         <img src="assets/images/gamelan/gong-kebyar-purwa-rancak.jpg" alt="Ansambel gamelan Gong Kebyar"
@@ -107,7 +104,6 @@
       </div>
     </section>
 
-    <!-- 2. Bale tabuh -->
     <section class="bale-tabuh-section" id="bale-tabuh">
       <div class="container">
         <div class="bale-header-grid">
@@ -123,7 +119,7 @@
         </div>
 
         <div class="tabuh-console">
-          <!-- Toolbar Pilihan Instrumen & Akustik -->
+          
           <div class="tabuh-toolbar">
             <div class="inst-tabs" role="tablist" aria-label="Pilihan instrumen gamelan">
               <button type="button" class="inst-tab-btn is-active" role="tab" id="tabGangsa" aria-selected="true"
@@ -145,21 +141,19 @@
             </div>
 
             <div class="tabuh-controls">
-              <!-- Saklar Ombak -->
+              
               <button type="button" class="toggle-pill-btn is-active" id="ombakToggle" aria-pressed="true"
                 title="Simulasi pasangan pengumbang dan pengisep">
                 <span>Ombak</span>
                 <span class="status-dot">Nyala</span>
               </button>
 
-              <!-- Saklar Matedet -->
               <button type="button" class="toggle-pill-btn" id="matedetToggle" aria-pressed="false"
                 title="Teknik meredam bilah">
                 <span>Matedet (redam bilah)</span>
                 <span class="status-dot">Mati</span>
               </button>
 
-              <!-- Volume Slider -->
               <div class="volume-control">
                 <label for="gamelanVolume">Volume:</label>
                 <input type="range" id="gamelanVolume" min="0" max="1" step="0.05" value="0.85"
@@ -168,7 +162,6 @@
             </div>
           </div>
 
-          <!-- Status Nada Aktif -->
           <div class="tabuh-status-bar">
             <div class="note-display-pill" id="currentNoteDisplay">
               <span class="note-pill__aksara">ᬤᬶᬂ</span>
@@ -180,27 +173,24 @@
             </div>
           </div>
 
-          <!-- Panel Gangsa Pemade -->
           <div class="inst-panel" id="panelGangsa" role="tabpanel" aria-labelledby="tabGangsa">
             <div class="rancak-frame">
               <div class="gangsa-keys-container" id="gangsaKeysContainer" aria-label="Bilah gangsa pemade">
-                <!-- Diisi oleh gamelan.js -->
+                
               </div>
             </div>
             <p class="inst-caption">Bilah perunggu di atas bumbung bambu resonator.</p>
           </div>
 
-          <!-- Panel Reyong -->
           <div class="inst-panel" id="panelReyong" role="tabpanel" aria-labelledby="tabReyong" hidden>
             <div class="reyong-frame">
               <div class="reyong-pots-container" id="reyongKeysContainer" aria-label="Pot reyong">
-                <!-- Diisi oleh gamelan.js -->
+                
               </div>
             </div>
             <p class="inst-caption">Dua belas pencon perunggu untuk empat penabuh (tuts Z sampai L).</p>
           </div>
 
-          <!-- Panel Kendang & Ceng-ceng -->
           <div class="inst-panel" id="panelRhythm" role="tabpanel" aria-labelledby="tabRhythm" hidden>
             <div class="rhythm-grid">
               <button type="button" class="rhythm-pad" id="padKendangDug">
@@ -225,7 +215,6 @@
             </div>
           </div>
 
-          <!-- Panel Gong Ageng & Kempur -->
           <div class="inst-panel" id="panelGong" role="tabpanel" aria-labelledby="tabGong" hidden>
             <div class="gong-stage">
               <button type="button" class="gong-ageng-visual" id="padGongAgeng" aria-label="Bunyikan gong ageng (Spasi)">
@@ -248,7 +237,6 @@
       </div>
     </section>
 
-    <!-- 3. Studio kotekan -->
     <section class="kotekan-studio-section" id="studio-kotekan">
       <div class="container">
         <div class="section-head--split">
@@ -296,7 +284,7 @@
 
           <div class="kotekan-matrix-pane">
             <div class="kotekan-matrix" id="kotekanMatrixGrid" aria-label="Matriks 16 langkah kotekan">
-              <!-- Diisi oleh gamelan.js -->
+              
             </div>
             <p class="kotekan-status-feedback" id="kotekanStatusFeedback">
               Pilih pola dan tekan tombol Mulai untuk merasakan jalinan ritme antara polos dan sangsih.
@@ -306,7 +294,6 @@
       </div>
     </section>
 
-    <!-- 4. Laboratorium ombak -->
     <section class="ombak-lab-section" id="lab-ombak">
       <div class="container">
         <div class="section-head--split">
@@ -372,7 +359,6 @@
       </div>
     </section>
 
-    <!-- 5. Autoplayer gending -->
     <section class="gending-section" id="gending-bali">
       <div class="container">
         <div class="section-head--split">
@@ -406,7 +392,6 @@
             </p>
           </div>
 
-          <!-- Progress Bar Gending -->
           <div class="gending-progress-track">
             <div id="gendingProgressFill" class="gending-progress-fill"></div>
           </div>
@@ -418,7 +403,6 @@
       </div>
     </section>
 
-    <!-- 6. Denah sekaha -->
     <section class="spatial-section" id="denah-sekaha">
       <div class="container">
         <div class="section-head--split">
@@ -434,7 +418,7 @@
             <div class="stage-altar-label">Kaja: arah gunung (belakang)</div>
 
             <div class="stage-rows">
-              <!-- Baris Belakang -->
+              
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="gong">
                   <span>Gong ageng dan kempur</span>
@@ -444,7 +428,6 @@
                 </button>
               </div>
 
-              <!-- Baris Tengah -->
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="reyong">
                   <span>Reyong</span>
@@ -457,7 +440,6 @@
                 </button>
               </div>
 
-              <!-- Baris Depan -->
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="trompong">
                   <span>Trompong</span>
@@ -493,10 +475,8 @@
       </div>
     </section>
 
-    <!-- Ornamen pemisah kain poleng CSS -->
     <div class="poleng-divider" aria-hidden="true"></div>
 
-    <!-- 7. Tiga zaman gamelan -->
     <section class="era-section" id="tiga-era">
       <div class="container">
         <div class="section-head--split">
@@ -620,7 +600,6 @@
       </div>
     </section>
 
-    <!-- 8. Filosofi -->
     <section class="filosofi-section" id="filosofi-gamelan">
       <div class="container">
         <div class="section-head--split">
@@ -656,7 +635,6 @@
       </div>
     </section>
 
-    <!-- 9. Glosarium -->
     <section class="glosarium-section" id="glosarium">
       <div class="container">
         <div class="section-head--split">
@@ -752,7 +730,6 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">

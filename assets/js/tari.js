@@ -1,10 +1,5 @@
-/**
- * Nusa Bali Heritage — Mesin Pengenal Ragam Tari Bali
- * Menggunakan ONNX Runtime Web (WebAssembly) untuk inferensi langsung di sisi klien
- * dengan pencegah halusinasi berbasis entropi Shannon dan ambang batas keyakinan.
- */
 
-// Sembilan kelas tari sesuai urutan indeks model
+
 const DAFTAR_KELAS_TARI = [
   "Baris",
   "Barong",
@@ -17,15 +12,12 @@ const DAFTAR_KELAS_TARI = [
   "Truna_jaya"
 ];
 
-// Ambang batas keamanan untuk menolak citra non-tari atau sudut ambigu
 const AMBANG_KEYAKINAN = 0.70;
 const AMBANG_ENTROPI = 1.40;
 
-// Statistik normalisasi ImageNet
 const RERATA_IMAGENET = [0.485, 0.456, 0.406];
 const DEVIASI_IMAGENET = [0.229, 0.224, 0.225];
 
-// Data tari: nama, aksara Bali, kategori, dan info singkat untuk 9 kelas
 const DATA_KURATORIAL_TARI = {
   "Baris": {
     nama: "Tari Baris",
@@ -110,23 +102,19 @@ const DATA_KURATORIAL_TARI = {
   }
 };
 
-// State global studio
 let sesiInferensi = null;
 let sedangMemuatModel = false;
 let aliranKamera = null;
 
-/**
- * Memuat sesi model ONNX Runtime WebAssembly
- */
 async function muatSesiModel() {
   if (sesiInferensi || sedangMemuatModel) return sesiInferensi;
 
   sedangMemuatModel = true;
   try {
-    // Jalur pustaka WASM dari CDN
+    
     if (window.ort) {
       ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
-      ort.env.wasm.numThreads = 1; // 1 thread mencegah isolasi CORS / SharedArrayBuffer
+      ort.env.wasm.numThreads = 1; 
     }
 
     const jalurModel = [
@@ -144,7 +132,7 @@ async function muatSesiModel() {
           return sesiInferensi;
         }
       } catch (errJalur) {
-        // Coba jalur berikutnya
+        
       }
     }
 
@@ -156,10 +144,6 @@ async function muatSesiModel() {
   }
 }
 
-/**
- * Memproses citra ke format tensor NCHW [1, 3, 224, 224]
- * Latar transparan dikomposisikan di atas kanvas putih 224x224
- */
 function praprosesCitraKeTensor(elemenCitra) {
   const kanvas = document.createElement('canvas');
   kanvas.width = 224;
@@ -170,18 +154,15 @@ function praprosesCitraKeTensor(elemenCitra) {
     throw new Error("Gagal memperoleh konteks 2D kanvas.");
   }
 
-  // Isi latar belakang dengan putih bersih
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, 224, 224);
 
-  // Gambar citra ke ukuran 224x224
   ctx.drawImage(elemenCitra, 0, 0, 224, 224);
 
   const dataPiksel = ctx.getImageData(0, 0, 224, 224).data;
   const panjangPiksel = 224 * 224;
   const tensorData = new Float32Array(3 * panjangPiksel);
 
-  // Normalisasi standar ImageNet dalam format planar (NCHW)
   for (let i = 0; i < panjangPiksel; i++) {
     const r = dataPiksel[i * 4] / 255.0;
     const g = dataPiksel[i * 4 + 1] / 255.0;
@@ -195,9 +176,6 @@ function praprosesCitraKeTensor(elemenCitra) {
   return new ort.Tensor('float32', tensorData, [1, 3, 224, 224]);
 }
 
-/**
- * Menghitung entropi Shannon dari distribusi probabilitas
- */
 function hitungEntropiShannon(larikProb) {
   let entropi = 0;
   for (let i = 0; i < larikProb.length; i++) {
@@ -209,9 +187,6 @@ function hitungEntropiShannon(larikProb) {
   return entropi;
 }
 
-/**
- * Menjalankan inferensi dan evaluasi anti-halusinasi
- */
 async function jalankanKlasifikasi(elemenCitra) {
   tampilkanStatusMemuat(true);
 
@@ -238,7 +213,6 @@ async function jalankanKlasifikasi(elemenCitra) {
     const entropi = hitungEntropiShannon(probabilitas);
     const kelasTerpilih = DAFTAR_KELAS_TARI[indeksTertinggi];
 
-    // Logika penolak halusinasi: keyakinan rendah ATAU entropi ketidakpastian tinggi
     const apakahHalusinasi = (probTertinggi < AMBANG_KEYAKINAN) || (entropi > AMBANG_ENTROPI);
 
     tampilkanHasilKlasifikasi({
@@ -257,9 +231,6 @@ async function jalankanKlasifikasi(elemenCitra) {
   }
 }
 
-/**
- * Memperbarui tampilan panel hasil di DOM
- */
 function tampilkanHasilKlasifikasi(hasil) {
   const wadahKosong = document.getElementById('tariPlaceholder');
   const wadahHasil = document.getElementById('tariResultContent');
@@ -277,7 +248,6 @@ function tampilkanHasilKlasifikasi(hasil) {
   const elemenBars = document.getElementById('tariBarsList');
   const elemenCuration = document.getElementById('tariCurationCard');
 
-  // Metrik diagnostik
   if (elemenLatency) elemenLatency.innerHTML = `${hasil.durasiMs} <small>ms</small>`;
   if (elemenEntropy) elemenEntropy.innerHTML = `${hasil.entropi.toFixed(2)} <small>/ 1.40</small>`;
   if (elemenConfidence) elemenConfidence.innerHTML = `${(hasil.keyakinan * 100).toFixed(1)}<small>%</small>`;
@@ -293,7 +263,7 @@ function tampilkanHasilKlasifikasi(hasil) {
   };
 
   if (hasil.apakahHalusinasi) {
-    // Mode Penolakan Halusinasi (Citra ambigu atau non-tari seperti canang sari)
+    
     if (elemenBadge) {
       elemenBadge.className = 'tari-badge tari-badge--warning';
       elemenBadge.textContent = 'Tidak Dikenali';
@@ -321,7 +291,7 @@ function tampilkanHasilKlasifikasi(hasil) {
 
     if (elemenCuration) elemenCuration.hidden = true;
   } else {
-    // Mode Sukses Teridentifikasi
+    
     if (elemenBadge) {
       elemenBadge.className = 'tari-badge tari-badge--success';
       elemenBadge.textContent = `Teridentifikasi (${(hasil.keyakinan * 100).toFixed(0)}%)`;
@@ -349,7 +319,6 @@ function tampilkanHasilKlasifikasi(hasil) {
     }
   }
 
-  // Isi bar probabilitas untuk ke-9 kelas
   if (elemenBars) {
     elemenBars.innerHTML = '';
     DAFTAR_KELAS_TARI.forEach((kelas, i) => {
@@ -373,9 +342,6 @@ function tampilkanHasilKlasifikasi(hasil) {
   }
 }
 
-/**
- * Tampilkan indikator status memuat
- */
 function tampilkanStatusMemuat(apakahMemuat) {
   const loadingEl = document.getElementById('tariLoading');
   const resultEl = document.getElementById('tariResultContent');
@@ -388,9 +354,6 @@ function tampilkanStatusMemuat(apakahMemuat) {
   }
 }
 
-/**
- * Menampilkan pesan galat
- */
 function tampilkanGalat(pesan) {
   const alertEl = document.getElementById('tariAlertBox');
   const resultEl = document.getElementById('tariResultContent');
@@ -404,9 +367,6 @@ function tampilkanGalat(pesan) {
   }
 }
 
-/**
- * Memperbarui citra pratinjau dan menjalankan klasifikasi
- */
 function muatDanKlasifikasikanCitra(sumberUrl) {
   const previewImg = document.getElementById('tariPreviewImg');
   const previewBox = document.getElementById('tariPreviewBox');
@@ -421,9 +381,6 @@ function muatDanKlasifikasikanCitra(sumberUrl) {
   previewImg.src = sumberUrl;
 }
 
-/**
- * Inisialisasi tab pemilih masukan (Contoh / Unggah / Kamera)
- */
 function inisialisasiTabMasukan() {
   const tabButtons = document.querySelectorAll('.tari-tab-btn');
   const viewPresets = document.getElementById('tariPresetsView');
@@ -437,7 +394,6 @@ function inisialisasiTabMasukan() {
 
       const mode = btn.dataset.tab;
 
-      // Hentikan kamera jika berpindah dari tab kamera
       if (mode !== 'kamera' && aliranKamera) {
         hentikanKamera();
       }
@@ -454,9 +410,6 @@ function inisialisasiTabMasukan() {
   });
 }
 
-/**
- * Inisialisasi kartu preset foto contoh
- */
 function inisialisasiPresetContoh() {
   const presetCards = document.querySelectorAll('.tari-preset-card');
 
@@ -473,9 +426,6 @@ function inisialisasiPresetContoh() {
   });
 }
 
-/**
- * Inisialisasi dropzone dan tombol unggah berkas
- */
 function inisialisasiUnggahBerkas() {
   const dropzone = document.getElementById('tariDropzone');
   const fileInput = document.getElementById('tariFileInput');
@@ -518,9 +468,6 @@ function inisialisasiUnggahBerkas() {
   });
 }
 
-/**
- * Membaca berkas citra dari masukan pengguna
- */
 function tanganiBerkasCitra(berkas) {
   if (!berkas || !berkas.type.startsWith('image/')) {
     alert("Silakan pilih berkas citra dalam format JPG, PNG, atau WebP.");
@@ -536,9 +483,6 @@ function tanganiBerkasCitra(berkas) {
   pembaca.readAsDataURL(berkas);
 }
 
-/**
- * Mengaktifkan kamera pengguna (Webcam)
- */
 async function mulaiKamera() {
   const videoEl = document.getElementById('tariCameraVideo');
   const msgEl = document.getElementById('tariCameraMsg');
@@ -567,9 +511,6 @@ async function mulaiKamera() {
   }
 }
 
-/**
- * Menghentikan aliran kamera
- */
 function hentikanKamera() {
   if (aliranKamera) {
     aliranKamera.getTracks().forEach((track) => track.stop());
@@ -581,9 +522,6 @@ function hentikanKamera() {
   }
 }
 
-/**
- * Inisialisasi tombol jepret kamera
- */
 function inisialisasiKontrolKamera() {
   const captureBtn = document.getElementById('tariCaptureBtn');
   const closeBtn = document.getElementById('tariCloseCameraBtn');
@@ -610,16 +548,13 @@ function inisialisasiKontrolKamera() {
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {
       hentikanKamera();
-      // Alihkan kembali ke tab contoh
+      
       const tabContoh = document.querySelector('.tari-tab-btn[data-tab="contoh"]');
       if (tabContoh) tabContoh.click();
     });
   }
 }
 
-/**
- * Filter kategori ensiklopedi 9 ragam tari di bagian bawah
- */
 function inisialisasiFilterKatalog() {
   const chips = document.querySelectorAll('.tari-filter-chip');
   const cards = document.querySelectorAll('.tari-ency-card');
@@ -643,9 +578,6 @@ function inisialisasiFilterKatalog() {
   });
 }
 
-/**
- * Titik masuk utama saat DOM selesai dimuat
- */
 document.addEventListener('DOMContentLoaded', () => {
   inisialisasiTabMasukan();
   inisialisasiPresetContoh();
@@ -653,8 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
   inisialisasiKontrolKamera();
   inisialisasiFilterKatalog();
 
-  // Pra-muat model ONNX di latar belakang tanpa menghambat render UI
   muatSesiModel().catch(() => {
-    // Penanganan galat tenang di latar belakang
+    
   });
 });

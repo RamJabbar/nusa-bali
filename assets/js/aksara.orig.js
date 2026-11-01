@@ -1,9 +1,8 @@
-// Nusa Bali Heritage: modul penelusuran kaligrafi tradisi Aksara Bali
+
 
 (function () {
   'use strict';
 
-  // Pengaturan toleransi dan bobot penilaian presisi
   const hitTolerance = 18;
   const maxDeviation = 32;
   const precisionWeight = 0.50;
@@ -425,7 +424,7 @@
 
     if (!isEvaluated) {
       drawCtx.lineWidth = 7.2;
-      drawCtx.strokeStyle = '#FAF8F5'; // warna krem var(--c-cream)
+      drawCtx.strokeStyle = '#FAF8F5'; 
 
       strokePaths.forEach((path) => {
         if (!path || path.length === 0) return;

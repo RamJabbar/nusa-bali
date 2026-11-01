@@ -959,7 +959,6 @@ body {
   color: #FCA5A5;
 }
 
-/* Responsive */
 @media (max-width: 992px) {
   .aksara-section {
     padding: 3.5rem 0 5rem;
@@ -1326,9 +1325,6 @@ body {
   }
 }
 
-/* ==========================================================================
-   AKSARA INTERACTIVE TACTILE ACTIVE STATES & REDUCED MOTION
-   ========================================================================== */
 
 .aksara-item:active,
 .aksara-btn:active,

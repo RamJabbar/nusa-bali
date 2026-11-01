@@ -1,14 +1,7 @@
 @import url('styles.css');
 
-/* ==========================================================================
-   Studio Pengenal Ragam Tari Bali (Nusa Bali Heritage)
-   Gaya desain: Tipografi Literata, Libre Franklin, & Noto Sans Balinese,
-   palet gelap-terang-merah-emas, radius 4px, nol AI-slop, nol neon gradient.
-   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   Keamanan [hidden]: pastikan elemen tersembunyi tidak bocor ke tampilan
-   -------------------------------------------------------------------------- */
+
 [hidden],
 .tari-camera-view[hidden],
 .tari-upload-view[hidden],
@@ -24,18 +17,12 @@
   display: none;
 }
 
-/* --------------------------------------------------------------------------
-   Tipografi Aksara Bali
-   -------------------------------------------------------------------------- */
 .tari-hero__aksara,
 .tari-result-aksara,
 .tari-ency-card__aksara {
   font-family: 'Noto Sans Balinese', var(--ff-heading), serif;
 }
 
-/* --------------------------------------------------------------------------
-   Hero / Header Halaman
-   -------------------------------------------------------------------------- */
 .tari-hero {
   padding-top: 3.5rem;
   padding-bottom: 2.5rem;
@@ -84,9 +71,6 @@
   opacity: 0.8;
 }
 
-/* --------------------------------------------------------------------------
-   Studio Layout (2 Kolom: Masukan Kiri, Hasil Kanan)
-   -------------------------------------------------------------------------- */
 .tari-section {
   padding-top: 2.75rem;
   padding-bottom: 4.5rem;
@@ -100,9 +84,6 @@
   align-items: start;
 }
 
-/* --------------------------------------------------------------------------
-   Panel Masukan (Kiri)
-   -------------------------------------------------------------------------- */
 .tari-input-panel {
   background-color: #22201C;
   border: 1px solid var(--c-border-dark);
@@ -130,7 +111,6 @@
   color: var(--c-cream);
 }
 
-/* Tab Switcher */
 .tari-input-tabs {
   display: flex;
   gap: 0.4rem;
@@ -161,7 +141,6 @@
   color: #FFFFFF;
 }
 
-/* Mode 1: Contoh Foto */
 .tari-presets-view:not([hidden]) {
   display: flex;
   flex-direction: column;
@@ -236,7 +215,6 @@
   line-height: 1.3;
 }
 
-/* Mode 2: Dropzone Upload */
 .tari-upload-view:not([hidden]) {
   display: block;
 }
@@ -281,7 +259,6 @@
   line-height: 1.45;
 }
 
-/* Mode 3: Kamera Langsung */
 .tari-camera-view:not([hidden]) {
   display: flex;
   flex-direction: column;
@@ -316,7 +293,6 @@
   text-align: center;
 }
 
-/* Frame Pratinjau Citra Aktif */
 .tari-preview-box:not([hidden]) {
   display: block;
   margin-top: 1rem;
@@ -355,9 +331,6 @@
   object-fit: contain;
 }
 
-/* --------------------------------------------------------------------------
-   Panel Hasil (Kanan)
-   -------------------------------------------------------------------------- */
 .tari-result-panel {
   background-color: #22201C;
   border: 1px solid var(--c-border-dark);
@@ -368,7 +341,6 @@
   flex-direction: column;
 }
 
-/* Status: Kosong */
 .tari-placeholder:not([hidden]) {
   display: flex;
   flex-direction: column;
@@ -400,7 +372,6 @@
   line-height: 1.5;
 }
 
-/* Status: Loading */
 .tari-loading:not([hidden]) {
   display: flex;
   flex-direction: column;
@@ -436,14 +407,12 @@
   color: var(--c-muted-dark);
 }
 
-/* Status: Hasil Aktif */
 .tari-result-content:not([hidden]) {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-/* Header Hasil */
 .tari-result-head {
   border-bottom: 1px solid var(--c-border-dark);
   padding-bottom: 1rem;
@@ -494,7 +463,6 @@
   margin-top: 0.35rem;
 }
 
-/* Alert Box (Penolakan / Bukan Tari) */
 .tari-alert-box:not([hidden]) {
   display: block;
   background-color: rgba(179, 38, 30, 0.1);
@@ -523,7 +491,6 @@
   color: var(--c-gold);
 }
 
-/* Kartu Info Budaya (Deskripsi & Ciri) */
 .tari-curation-card:not([hidden]) {
   background-color: #1A1916;
   border: 1px solid var(--c-border-dark);
@@ -576,7 +543,6 @@
   line-height: 1.45;
 }
 
-/* Detail Teknis (Collapsible Accordion) */
 .tari-tech-details {
   border: 1px solid var(--c-border-dark);
   border-radius: var(--radius);
@@ -620,7 +586,6 @@
   gap: 0.95rem;
 }
 
-/* Metrik Diagnostik */
 .tari-metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -656,7 +621,6 @@
   color: var(--c-sand);
 }
 
-/* Distribusi Probabilitas */
 .tari-distrib-wrap {
   display: flex;
   flex-direction: column;
@@ -714,9 +678,6 @@
   background-color: var(--c-red);
 }
 
-/* --------------------------------------------------------------------------
-   Section: Ensiklopedi 9 Ragam Tari Bali
-   -------------------------------------------------------------------------- */
 .tari-catalog-section {
   padding-top: 4.5rem;
   padding-bottom: 4.5rem;
@@ -745,7 +706,6 @@
   line-height: 1.6;
 }
 
-/* Filter Bar */
 .tari-filter-bar {
   display: flex;
   flex-wrap: wrap;
@@ -778,7 +738,6 @@
   font-weight: 600;
 }
 
-/* Grid Kartu Ensiklopedi */
 .tari-catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -863,9 +822,6 @@
   color: var(--c-muted-dark);
 }
 
-/* --------------------------------------------------------------------------
-   Section: Info Teknis & Privasi
-   -------------------------------------------------------------------------- */
 .tari-info-section {
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
@@ -902,9 +858,6 @@
   color: var(--c-muted-dark);
 }
 
-/* --------------------------------------------------------------------------
-   Responsif (Maks 2 Breakpoint: 992px dan 640px)
-   -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
   .tari-studio-grid {
     grid-template-columns: 1fr;

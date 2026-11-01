@@ -1,14 +1,11 @@
-// Nusa Bali Heritage: Mesin Akustik dan Studio Interaktif Gamelan Bali
-// Mengimplementasikan sintesis fisik perunggu krawang (Web Audio API),
-// fenomena ombak (paired-tuning pengumbang-pengisep), simulasi kotekan, dan autoplayer gending.
+
+
 
 (function () {
   'use strict';
 
-  // Laras & data instrumen
 
-  // Laras Pelog Selisir (5-Nada Pentatonik Sakral) 2 Oktaf untuk Gangsa Pemade
-  // Disesuaikan dengan skala frekuensi ansambel Gong Kebyar klasik (pusat A440)
+
   const PELOG_SELISIR_NOTES = [
     {
       id: 'ding1',
@@ -142,7 +139,6 @@
     }
   ];
 
-  // Reyong Bali: 12 Pot Pencon Berderet Horizontal (Dimainkan 4 Penabuh)
   const REYONG_NOTES = [
     { id: 'reyong_1', name: 'Dang (Rendah)', aksara: 'ᬤᬂ', freq: 187, key: 'Z', potIndex: 1 },
     { id: 'reyong_2', name: 'Ding', aksara: 'ᬤᬶᬂ', freq: 224, key: 'X', potIndex: 2 },
@@ -158,7 +154,6 @@
     { id: 'reyong_12', name: 'Ding (Puncak)', aksara: 'ᬤᬶᬂ', freq: 896, key: 'L', potIndex: 12 }
   ];
 
-  // Sintesis audio gamelan Bali (Web Audio API)
 
   class BalineseGamelanAudioEngine {
     constructor() {
@@ -168,14 +163,12 @@
       this.reverbNode = null;
       this.isInitialized = false;
 
-      // Konfigurasi Akustik
       this.ombakEnabled = true;
-      this.ombakDelta = 6.8; // Selisih frekuensi Pengumbang & Pengisep (~6-7 Hz)
-      this.matedetEnabled = false; // Mode redam bilah
+      this.ombakDelta = 6.8; 
+      this.matedetEnabled = false; 
       this.masterVolume = 0.85;
-      this.pitchTranspose = 0; // dalam semitone (-2 s.d +2)
+      this.pitchTranspose = 0; 
 
-      // Pelacak suara aktif untuk teknik Matedet (damping)
       this.activeVoices = new Map();
       this.recentNoteTimestamp = 0;
       this.activeGongVoice = null;
@@ -197,7 +190,6 @@
 
       this.ctx = new AudioCtxClass();
 
-      // Master Compressor untuk mencegah distorsi saat banyak instrumen berdentang bersamaan
       this.compressor = this.ctx.createDynamicsCompressor();
       this.compressor.threshold.setValueAtTime(-14, this.ctx.currentTime);
       this.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
@@ -205,14 +197,11 @@
       this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
       this.compressor.release.setValueAtTime(0.2, this.ctx.currentTime);
 
-      // Master Gain
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.masterVolume, this.ctx.currentTime);
 
-      // Efek Ambiens Suci (Courtyard Reverb / Ambience Hall) menggunakan Convolver sintetis
       this.reverbNode = this.createSyntheticReverb(1.8, 2.2);
 
-      // Routing audio: Voices -> Reverb & Dry -> Compressor -> Master -> Destination
       const dryGain = this.ctx.createGain();
       dryGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
 
@@ -250,7 +239,6 @@
         energy += (l * l + r * r) * 0.5;
       }
 
-      // Normalisasi energi impulse response agar sinyal convolver tidak melonjak ~66x lipat
       const norm = Math.sqrt(energy) || 1;
       for (let i = 0; i < length; i++) {
         left[i] /= norm;
@@ -290,7 +278,6 @@
       this.matedetEnabled = Boolean(enabled);
     }
 
-    // Peredaman bilah (Matedet) dengan fade out cepat 35ms
     dampenKey(noteId) {
       const voiceList = this.activeVoices.get(noteId);
       if (voiceList && voiceList.length && this.ctx) {
@@ -302,7 +289,7 @@
               gainNode.gain.setValueAtTime(gainNode.gain.value, now);
               gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
             } catch (e) {
-              // Abaikan jika node sudah terdisposisi
+              
             }
           }
         });
@@ -318,25 +305,21 @@
       this.activeVoices.clear();
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS GANGSA PEMADE (Metalfon Perunggu Krawang + Resonator Bumbung)
-    // -----------------------------------------------------------------------
+    
+    
     playGangsaNote(noteData, velocity = 0.9) {
       this.ensureContext();
       if (!this.ctx) return;
 
       const now = this.ctx.currentTime;
 
-      // Jika Matedet aktif, redam nada sebelumnya pada bilah yang sama
       if (this.matedetEnabled) {
         this.dampenKey(noteData.id);
       }
 
-      // Hitung frekuensi dasar dengan faktor transposisi
       const baseFreq = noteData.freq * Math.pow(2, this.pitchTranspose / 12);
 
-      // Struktur parsial inharmonis logam perunggu gamelan Bali
-      // Mode getaran bilah bebas: fundamental, f1 * 2.76, f1 * 5.4, f1 * 8.93
+      
       const partials = [
         { mult: 1.0, gain: 0.75, decay: 2.8 },
         { mult: 2.76, gain: 0.38, decay: 0.9 },
@@ -346,7 +329,6 @@
 
       const voicePair = [];
 
-      // Konfigurasi nada tunggal atau sepasang Pengumbang & Pengisep
       const voicesConfig = this.ombakEnabled
         ? [
             { pan: -0.25, freqOffset: -this.ombakDelta / 2, label: 'Pengumbang (Wadon)' },
@@ -366,14 +348,12 @@
           vGain.connect(this.busGain);
         }
 
-        // Resonator bumbung bambu (Acoustic cavity bandpass)
         const bumbungFilter = this.ctx.createBiquadFilter();
         bumbungFilter.type = 'peaking';
         bumbungFilter.frequency.setValueAtTime(baseFreq, now);
         bumbungFilter.Q.setValueAtTime(4.5, now);
         bumbungFilter.gain.setValueAtTime(7.0, now);
 
-        // Parsial osilator perunggu
         partials.forEach((part) => {
           const osc = this.ctx.createOscillator();
           const pGain = this.ctx.createGain();
@@ -384,9 +364,9 @@
 
           const peakGain = part.gain * velocity * (this.ombakEnabled ? 0.65 : 0.9);
           pGain.gain.setValueAtTime(0.0001, now);
-          // Serangan pukulan instan (2ms)
+          
           pGain.gain.exponentialRampToValueAtTime(peakGain, now + 0.002);
-          // Peluruhan alami resonansi bilah perunggu
+          
           pGain.gain.exponentialRampToValueAtTime(0.0001, now + part.decay);
 
           osc.connect(pGain);
@@ -396,7 +376,6 @@
           osc.stop(now + part.decay + 0.1);
         });
 
-        // Transien pukulan panggul kayu/tanduk (Mallet Impact Click)
         const clickOsc = this.ctx.createOscillator();
         const clickGain = this.ctx.createGain();
         clickOsc.type = 'triangle';
@@ -416,13 +395,11 @@
         voicePair.push({ gainNode: vGain, startTime: now });
       });
 
-      // Catat suara untuk pemicu matedet
       if (!this.activeVoices.has(noteData.id)) {
         this.activeVoices.set(noteData.id, []);
       }
       this.activeVoices.get(noteData.id).push(...voicePair);
 
-      // Pembersihan memori otomatis (Garbage Collection) setelah suara reda alami (~3.1 detik)
       setTimeout(() => {
         const list = this.activeVoices.get(noteData.id);
         if (list) {
@@ -436,9 +413,8 @@
       }, 3100);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS REYONG BALI (Pencon / Gong-Chime dengan Nada Punchy Berpencu)
-    // -----------------------------------------------------------------------
+    
+    
     playReyongNote(noteData, velocity = 0.85) {
       this.ensureContext();
       if (!this.ctx) return;
@@ -446,7 +422,6 @@
       const now = this.ctx.currentTime;
       const baseFreq = noteData.freq * Math.pow(2, this.pitchTranspose / 12);
 
-      // Karakter pencon: overtone bulat, ada 'tong' logam yang tegas
       const osc1 = this.ctx.createOscillator();
       const osc2 = this.ctx.createOscillator();
       const osc3 = this.ctx.createOscillator();
@@ -456,10 +431,10 @@
       osc1.frequency.setValueAtTime(baseFreq, now);
 
       osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(baseFreq * 2.08, now); // Overtone pencon
+      osc2.frequency.setValueAtTime(baseFreq * 2.08, now); 
 
       osc3.type = 'triangle';
-      osc3.frequency.setValueAtTime(baseFreq * 3.42, now); // Overtone dentang pencu
+      osc3.frequency.setValueAtTime(baseFreq * 3.42, now); 
 
       const g1 = this.ctx.createGain();
       const g2 = this.ctx.createGain();
@@ -482,7 +457,6 @@
       g2.connect(gainNode);
       g3.connect(gainNode);
 
-      // Serangan panggul panjang reyong
       gainNode.connect(this.busGain);
 
       osc1.start(now);
@@ -494,9 +468,8 @@
       osc3.stop(now + 1.8);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS KENDANG BALI (Kendang Lanang dan Wadon: Suara Pung, Dug, Tak, Plak)
-    // -----------------------------------------------------------------------
+    
+    
     playKendang(type = 'dug') {
       this.ensureContext();
       if (!this.ctx) return;
@@ -504,7 +477,7 @@
       const now = this.ctx.currentTime;
 
       if (type === 'dug' || type === 'pung') {
-        // Suara rendah membran kulit sapi (Dug / Pung)
+        
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         const startPitch = type === 'dug' ? 140 : 175;
@@ -523,7 +496,7 @@
         osc.start(now);
         osc.stop(now + 0.45);
       } else {
-        // Tepukan tebas / plak / tak kering di tepi kendang (Rim slap)
+        
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
@@ -533,7 +506,6 @@
         gain.gain.setValueAtTime(0.8, now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
 
-        // Sentakan noise berfrekuensi tinggi
         const noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.05, this.ctx.sampleRate);
         const data = noiseBuffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) {
@@ -566,9 +538,8 @@
       }
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS CENG-CENG KOPYAK (Simbal Logam Perunggu Khas Aksen Kebyar)
-    // -----------------------------------------------------------------------
+    
+    
     playCengCeng(type = 'crash') {
       this.ensureContext();
       if (!this.ctx) return;
@@ -602,9 +573,8 @@
       gain.connect(this.busGain);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS GONG AGENG & KEMPUR (Getaran Sub-Bass Pembawa Taksu Agung)
-    // -----------------------------------------------------------------------
+    
+    
     playGong(type = 'ageng') {
       this.ensureContext();
       if (!this.ctx) return;
@@ -614,8 +584,7 @@
       const baseFreq = isAgeng ? 54 : 118;
       const decay = isAgeng ? 5.2 : 3.4;
 
-      // Polyphony limiter / choker: Redam suara gong sebelumnya dengan fade-out 80ms
-      // Mencegah akumulasi puluhan osilator sub-bass saat tombol ditekan cepat berulang
+      
       if (this.activeGongVoice && this.activeGongVoice.type === type) {
         try {
           const prevGain = this.activeGongVoice.gainNode;
@@ -623,11 +592,10 @@
           prevGain.gain.setValueAtTime(prevGain.gain.value, now);
           prevGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
         } catch (e) {
-          // Abaikan jika node sudah terdisposisi
+          
         }
       }
 
-      // Pasangan getaran pengumbang-pengisep gong besar (menghasilkan dengung lambat megah 3 Hz)
       const osc1 = this.ctx.createOscillator();
       const osc2 = this.ctx.createOscillator();
       const oscSub = this.ctx.createOscillator();
@@ -650,7 +618,6 @@
       osc2.connect(gMaster);
       oscSub.connect(gMaster);
 
-      // Transien empuk panggul gong berbulu
       const malletOsc = this.ctx.createOscillator();
       const malletGain = this.ctx.createGain();
       malletOsc.type = 'sine';
@@ -665,7 +632,6 @@
 
       gMaster.connect(this.busGain);
 
-      // Catat voice gong aktif
       this.activeGongVoice = { type, gainNode: gMaster, startTime: now };
       setTimeout(() => {
         if (this.activeGongVoice && this.activeGongVoice.startTime === now) {
@@ -685,10 +651,8 @@
     }
   }
 
-  // Inisialisasi Instance Audio Engine Global
   const audioEngine = new BalineseGamelanAudioEngine();
 
-  // Bale Tabuh (instrumen virtual interaktif)
 
   function setupBaleTabuh() {
     const keysContainer = document.getElementById('gangsaKeysContainer');
@@ -702,7 +666,6 @@
 
     if (!keysContainer) return;
 
-    // Render 10 Bilah Perunggu Gangsa Pemade (2 Oktaf)
     keysContainer.innerHTML = '';
     PELOG_SELISIR_NOTES.forEach((note, index) => {
       const keyElem = document.createElement('button');
@@ -712,7 +675,6 @@
       keyElem.setAttribute('aria-label', `Bilah Gangsa ${note.name} (${note.aksara}), Nada ${note.solfege}, Tombol ${note.keyChar}`);
       keyElem.tabIndex = 0;
 
-      // Variasi panjang bilah perunggu (nada rendah lebih panjang, nada tinggi lebih pendek)
       const heightPercent = 100 - index * 4.2;
 
       keyElem.innerHTML = `
@@ -729,7 +691,6 @@
         <div class="gangsa-key__tube" aria-hidden="true" title="Bumbung Bambu Resonator"></div>
       `;
 
-      // Event Click & Touch
       const triggerNote = (e) => {
         if (e) e.preventDefault();
         audioEngine.playGangsaNote(note);
@@ -749,7 +710,6 @@
       keysContainer.appendChild(keyElem);
     });
 
-    // Render 12 Pot Pencon Reyong Bali
     if (reyongContainer) {
       reyongContainer.innerHTML = '';
       REYONG_NOTES.forEach((note) => {
@@ -780,7 +740,6 @@
       });
     }
 
-    // Trigger Animasi Bilah Dipukul
     function animateKeyStrike(elem, note) {
       elem.classList.add('is-struck');
       setTimeout(() => elem.classList.remove('is-struck'), 160);
@@ -812,7 +771,6 @@
       }
     }
 
-    // Setup Ritme Section (Kendang & Ceng-ceng Pad)
     const kendangDugBtn = document.getElementById('padKendangDug');
     const kendangPlakBtn = document.getElementById('padKendangPlak');
     const cengCrashBtn = document.getElementById('padCengCrash');
@@ -836,7 +794,6 @@
     bindPadStrike(gongAgengBtn, () => audioEngine.playGong('ageng'), 300);
     bindPadStrike(gongKempurBtn, () => audioEngine.playGong('kempur'), 240);
 
-    // Dukungan Multi-Touch Glissando (sapuan jari pada bilah Gangsa)
     let activeTouchedGangsaId = null;
     keysContainer.addEventListener('touchmove', (e) => {
       for (let i = 0; i < e.touches.length; i++) {
@@ -881,7 +838,6 @@
       reyongContainer.addEventListener('touchcancel', resetTouchReyong, { passive: true });
     }
 
-    // Tab Switcher Instrumen (Gangsa, Reyong, Kendang, Gong)
     instrumentTabs.forEach((btn) => {
       btn.addEventListener('click', () => {
         instrumentTabs.forEach((b) => {
@@ -898,7 +854,6 @@
       });
     });
 
-    // Toggle Mode Ombak
     if (ombakToggle) {
       ombakToggle.addEventListener('click', () => {
         const active = !audioEngine.ombakEnabled;
@@ -910,7 +865,6 @@
       });
     }
 
-    // Toggle Teknik Matedet (Redam Bilah)
     if (matedetToggle) {
       matedetToggle.addEventListener('click', () => {
         const active = !audioEngine.matedetEnabled;
@@ -922,7 +876,6 @@
       });
     }
 
-    // Volume Slider
     if (volumeSlider) {
       volumeSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
@@ -930,18 +883,15 @@
       });
     }
 
-    // Keyboard Shortcuts (1-0 untuk Gangsa, Z-M untuk Reyong, Spasi untuk Gong)
     window.addEventListener('keydown', (e) => {
-      // 1. Jangan ganggu shortcut sistem / browser (Ctrl+C, Cmd+C, Ctrl+Z, Ctrl+V, Alt+Tab, dll)
+      
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-      // 2. Jangan ganggu input teks formulir atau elemen yang sedang diedit
       const activeEl = document.activeElement;
       if (activeEl && (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.isContentEditable)) {
         return;
       }
 
-      // 3. Spasi: Hanya trigger Gong jika fokus BUKAN pada tombol/link/interaktif
       if (e.code === 'Space') {
         const isInteractive = activeEl && (['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT', 'SUMMARY'].includes(activeEl.tagName));
         if (!isInteractive) {
@@ -957,7 +907,6 @@
 
       const keyChar = e.key.toUpperCase();
 
-      // Gangsa Pemade Keys (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
       const gangsaMatch = PELOG_SELISIR_NOTES.find((n) => n.keyChar === e.key);
       if (gangsaMatch) {
         e.preventDefault();
@@ -967,7 +916,6 @@
         return;
       }
 
-      // Reyong Keys (Z, X, C, V, B, N, M, dll)
       const reyongMatch = REYONG_NOTES.find((n) => n.key === keyChar || n.key === e.key);
       if (reyongMatch && reyongContainer) {
         e.preventDefault();
@@ -989,7 +937,6 @@
     });
   }
 
-  // Koordinator pemutaran audio global
   let stopKotekanFn = null;
   let stopGendingFn = null;
   let stopOmbakLabFn = null;
@@ -1000,7 +947,6 @@
     if (except !== 'ombak' && typeof stopOmbakLabFn === 'function') stopOmbakLabFn();
   }
 
-  // Studio Kotekan (duet Polos & Sangsih)
 
   function setupKotekanStudio() {
     const playDuetBtn = document.getElementById('playKotekanBtn');
@@ -1013,9 +959,8 @@
 
     if (!matrixGrid || !playDuetBtn) return;
 
-    // Pola Kotekan Tradisional Bali (Siklus 16 Langkah)
-    // Angka merujuk pada indeks not di PELOG_SELISIR_NOTES:
-    // 0: Ding1, 1: Dong1, 2: Deng1, 3: Dung1, 4: Dang1, 5: Ding2, 6: Dong2, dst. (-1 = senyap/istirahat)
+    
+    
     const PATTERNS = {
       norot: {
         name: 'Kotekan Norot (Saling Mengikuti)',
@@ -1042,17 +987,14 @@
     let currentStep = 0;
     let bpm = 140;
 
-    // Render Matrix Grid (16 Steps Polos & Sangsih)
     function renderGrid(patternKey) {
       const pat = PATTERNS[patternKey] || PATTERNS.norot;
       matrixGrid.innerHTML = '';
 
-      // Baris Polos
       const rowPolos = document.createElement('div');
       rowPolos.className = 'kotekan-row kotekan-row--polos';
       rowPolos.innerHTML = `<div class="kotekan-row__label"><span>POLOS</span><small>(On-beat)</small></div>`;
 
-      // Baris Sangsih
       const rowSangsih = document.createElement('div');
       rowSangsih.className = 'kotekan-row kotekan-row--sangsih';
       rowSangsih.innerHTML = `<div class="kotekan-row__label"><span>SANGSIH</span><small>(Off-beat)</small></div>`;
@@ -1104,23 +1046,22 @@
       tempoSlider.addEventListener('input', (e) => {
         bpm = parseInt(e.target.value, 10);
         tempoValue.textContent = `${bpm} BPM`;
-        // Tempo diterapkan pada langkah berikutnya tanpa membatalkan/membekukan timer yang sedang berjalan!
+        
       });
     }
 
     function scheduleStep() {
       if (!isPlaying) return;
       onStepTick();
-      const stepDurationMs = (60000 / bpm) / 4; // 16th notes
+      const stepDurationMs = (60000 / bpm) / 4; 
       timerId = setTimeout(scheduleStep, stepDurationMs);
     }
 
     function onStepTick() {
       const selectedPatternKey = patternSelect ? patternSelect.value : 'norot';
       const pat = PATTERNS[selectedPatternKey] || PATTERNS.norot;
-      const role = roleSelect ? roleSelect.value : 'duet'; // 'duet', 'user_polos', 'user_sangsih'
+      const role = roleSelect ? roleSelect.value : 'duet'; 
 
-      // Visual active cell
       const allCells = matrixGrid.querySelectorAll('.kotekan-cell');
       allCells.forEach((c) => {
         if (parseInt(c.dataset.step, 10) === currentStep) {
@@ -1133,7 +1074,6 @@
       const pNoteIdx = pat.polos[currentStep];
       const sNoteIdx = pat.sangsih[currentStep];
 
-      // Audio Trigger sesuai peran yang dipilih
       if (role === 'duet') {
         if (pNoteIdx !== -1 && PELOG_SELISIR_NOTES[pNoteIdx]) {
           audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[pNoteIdx], 0.85);
@@ -1142,18 +1082,17 @@
           audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[sNoteIdx], 0.85);
         }
       } else if (role === 'user_polos') {
-        // User memainkan Polos, sistem otomatis memainkan Sangsih
+        
         if (sNoteIdx !== -1 && PELOG_SELISIR_NOTES[sNoteIdx]) {
           audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[sNoteIdx], 0.85);
         }
       } else if (role === 'user_sangsih') {
-        // User memainkan Sangsih, sistem otomatis memainkan Polos
+        
         if (pNoteIdx !== -1 && PELOG_SELISIR_NOTES[pNoteIdx]) {
           audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[pNoteIdx], 0.85);
         }
       }
 
-      // Setiap ketukan ke-16, bunyikan gong kempur halus
       if (currentStep === 15) {
         audioEngine.playGong('kempur');
       }
@@ -1179,7 +1118,7 @@
         kotekanStatus.textContent = 'Kotekan sedang berjalan. Rasakan jalinan interlocking antar ketukan!';
       }
       if (timerId) clearTimeout(timerId);
-      // Mainkan ketukan pertama langsung tanpa delay!
+      
       scheduleStep();
     }
 
@@ -1213,7 +1152,6 @@
     });
   }
 
-  // Laboratorium akustik: fenomena ombak & pengumbang-pengisep
 
   function setupOmbakLab() {
     const canvas = document.getElementById('ombakWaveCanvas');
@@ -1232,19 +1170,18 @@
     if (!canvas) return;
 
     const ctx2d = canvas.getContext('2d');
-    let baseFreq = 260; // Hz
-    let delta = 6.8; // Hz
+    let baseFreq = 260; 
+    let delta = 6.8; 
     let isWaveActive = true;
     let animFrame = null;
     let phase = 0;
 
-    // Node audio persisten untuk lab ombak
     let labOsc1 = null;
     let labOsc2 = null;
     let labGain1 = null;
     let labGain2 = null;
     let labMasterGain = null;
-    let activeLabSound = null; // 'pengumbang', 'pengisep', 'both', null
+    let activeLabSound = null; 
 
     function updateCalculations() {
       const fPengumbang = +(baseFreq - delta / 2).toFixed(1);
@@ -1259,7 +1196,6 @@
         beatRateDisplay.textContent = `${delta} Getaran / Detik • Karakter: ${rateDesc}`;
       }
 
-      // Perbarui frekuensi osilator jika sedang berbunyi
       if (labOsc1 && audioEngine.ctx) {
         labOsc1.frequency.setTargetAtTime(fPengumbang, audioEngine.ctx.currentTime, 0.05);
       }
@@ -1283,7 +1219,6 @@
       });
     }
 
-    // Generator Nada Sintetis Khusus Lab Ombak
     function ensureLabAudioNodes() {
       audioEngine.ensureContext();
       if (!audioEngine.ctx) return;
@@ -1373,7 +1308,6 @@
       btnPlayDuetOmbak.addEventListener('click', () => playLabSound('both'));
     }
 
-    // Penyesuaian Resolusi Retina/HiDPI Layar
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -1389,7 +1323,6 @@
     window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
 
-    // Gambar Gelombang Real-Time pada Canvas
     function drawWaveforms() {
       const dpr = window.devicePixelRatio || 1;
       const width = canvas.width / dpr;
@@ -1399,7 +1332,6 @@
       ctx2d.scale(dpr, dpr);
       ctx2d.clearRect(0, 0, width, height);
 
-      // Garis grid tengah
       ctx2d.strokeStyle = 'rgba(236, 194, 70, 0.12)';
       ctx2d.lineWidth = 1;
       ctx2d.beginPath();
@@ -1409,15 +1341,13 @@
 
       const beatFreq = delta;
 
-      // Gambar Gelombang Amplop Ombak (Envelope Beating) di Gold
       ctx2d.strokeStyle = '#ECC246';
       ctx2d.lineWidth = 2.4;
       ctx2d.beginPath();
 
       for (let x = 0; x < width; x++) {
         const t = (x / width) * 0.75 + phase;
-        // Rumus superposisi akustik dua frekuensi berdekatan:
-        // y = 2 * cos(pi * delta * t) * sin(2 * pi * f_avg * t)
+
         const envelope = Math.cos(Math.PI * beatFreq * t);
         const carrier = Math.sin(2 * Math.PI * (baseFreq * 0.08) * t);
         const y = (height / 2) + envelope * carrier * (height * 0.38);
@@ -1427,7 +1357,6 @@
       }
       ctx2d.stroke();
 
-      // Gambar Garis Batas Amplop Atas & Bawah
       ctx2d.strokeStyle = 'rgba(236, 194, 70, 0.35)';
       ctx2d.setLineDash([4, 4]);
       ctx2d.lineWidth = 1.2;
@@ -1463,7 +1392,6 @@
     drawWaveforms();
   }
 
-  // Autoplayer gending klasik Bali
 
   function setupGendingAutoplayer() {
     const playGendingBtn = document.getElementById('playGendingBtn');
@@ -1475,8 +1403,7 @@
 
     if (!playGendingBtn) return;
 
-    // Komposisi Notasi Ansambel Gamelan Terprogram
-    // Struktur: tempo BPM, array event { time (dalam beat), type ('gangsa', 'kendang', 'ceng', 'gong'), noteIdx / noteType }
+    
     const REPERTOIRE = {
       gilak: {
         title: 'Tabuh Gilak Sakral (8-Ketukan Matriks)',
@@ -1484,13 +1411,12 @@
         bpm: 110,
         totalBeats: 32,
         events: [
-          // Gong Ageng pada ketukan 0 dan 16
+          
           { beat: 0, type: 'gong', val: 'ageng' },
           { beat: 16, type: 'gong', val: 'ageng' },
           { beat: 8, type: 'gong', val: 'kempur' },
           { beat: 24, type: 'gong', val: 'kempur' },
 
-          // Kendang berirama khas Gilak
           { beat: 0, type: 'kendang', val: 'dug' },
           { beat: 1, type: 'kendang', val: 'plak' },
           { beat: 2, type: 'kendang', val: 'dug' },
@@ -1504,7 +1430,6 @@
           { beat: 14, type: 'kendang', val: 'dug' },
           { beat: 15.5, type: 'kendang', val: 'plak' },
 
-          // Ceng-ceng kopyak aksen
           { beat: 2, type: 'ceng', val: 'choke' },
           { beat: 4, type: 'ceng', val: 'crash' },
           { beat: 6, type: 'ceng', val: 'choke' },
@@ -1513,7 +1438,6 @@
           { beat: 12, type: 'ceng', val: 'crash' },
           { beat: 14, type: 'ceng', val: 'choke' },
 
-          // Pokok melodi Gangsa (Ding, Dong, Deng, Dung, Dang)
           { beat: 0, type: 'gangsa', idx: 0 },
           { beat: 1, type: 'gangsa', idx: 1 },
           { beat: 2, type: 'gangsa', idx: 2 },
@@ -1531,7 +1455,6 @@
           { beat: 14, type: 'gangsa', idx: 2 },
           { beat: 15, type: 'gangsa', idx: 0 },
 
-          // Pengulangan siklus kedua (variasi oktaf)
           { beat: 16, type: 'gangsa', idx: 5 },
           { beat: 17, type: 'gangsa', idx: 6 },
           { beat: 18, type: 'gangsa', idx: 7 },
@@ -1566,7 +1489,7 @@
           { beat: 2.5, type: 'gangsa', idx: 9 },
           { beat: 3.0, type: 'ceng', val: 'choke' },
           { beat: 4.0, type: 'ceng', val: 'crash' },
-          // Angsel serentak
+          
           { beat: 4.5, type: 'kendang', val: 'plak' },
           { beat: 5.0, type: 'gangsa', idx: 8 },
           { beat: 5.5, type: 'gangsa', idx: 7 },
@@ -1640,13 +1563,12 @@
       const g = REPERTOIRE[selectedKey];
       if (!g) return;
 
-      // Filter event yang jatuh pada ketukan saat ini (dengan toleransi 0.25 beat)
       const matchingEvents = g.events.filter((ev) => Math.abs(ev.beat - currentBeat) < 0.25);
 
       matchingEvents.forEach((ev) => {
         if (ev.type === 'gangsa' && PELOG_SELISIR_NOTES[ev.idx]) {
           audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[ev.idx], 0.85);
-          // Highlight bilah jika terlihat
+          
           const keyElem = document.querySelector(`[data-note-id="${PELOG_SELISIR_NOTES[ev.idx].id}"]`);
           if (keyElem) {
             keyElem.classList.add('is-struck');
@@ -1661,7 +1583,6 @@
         }
       });
 
-      // Update progress bar
       if (progressBar) {
         const pct = (currentBeat / g.totalBeats) * 100;
         progressBar.style.width = `${pct}%`;
@@ -1672,7 +1593,7 @@
 
       currentBeat = Math.round((currentBeat + 0.5) * 10) / 10;
       if (currentBeat >= g.totalBeats) {
-        currentBeat = 0; // Looping siklus gongan
+        currentBeat = 0; 
       }
     }
 
@@ -1680,7 +1601,7 @@
       if (!isPlayingGending) return;
       onGendingTick();
       const g = REPERTOIRE[selectedKey];
-      const intervalMs = (60000 / g.bpm) / 2; // Tick per setengah ketukan
+      const intervalMs = (60000 / g.bpm) / 2; 
       gendingTimer = setTimeout(scheduleGendingTick, intervalMs);
     }
 
@@ -1700,7 +1621,7 @@
       `;
 
       if (gendingTimer) clearTimeout(gendingTimer);
-      // Mainkan ketukan pertama langsung tanpa delay!
+      
       scheduleGendingTick();
     }
 
@@ -1732,7 +1653,6 @@
     updateGendingMeta();
   }
 
-  // Denah spatial sekaha (Spatial Sekaha Explorer)
 
   function setupSpatialExplorer() {
     const spots = document.querySelectorAll('.stage-spot');
@@ -1827,7 +1747,7 @@
     spots.forEach((spot) => {
       spot.addEventListener('click', () => {
         setSpot(spot.dataset.role);
-        // Bunyikan langsung suara sampel instrumen
+        
         const data = ROLES_DATA[spot.dataset.role];
         if (data && typeof data.audioAction === 'function') {
           data.audioAction();
@@ -1847,7 +1767,6 @@
     setSpot('kendang');
   }
 
-  // Filter tiga era gamelan Bali
 
   function setupEraFilter() {
     const filterBtns = document.querySelectorAll('.era-chip');
@@ -1873,7 +1792,6 @@
     });
   }
 
-  // Pencarian glosarium karawitan Bali
 
   function setupGlosarium() {
     const searchInput = document.getElementById('glosariumSearch');
@@ -1899,7 +1817,6 @@
     });
   }
 
-  // Inisialisasi
   function initGamelan() {
     setupBaleTabuh();
     setupKotekanStudio();

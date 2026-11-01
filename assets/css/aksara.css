@@ -1,12 +1,5 @@
-/* Nusa Bali Heritage: Stylesheet Latihan Menulis Aksara Bali
-   Desain humanis berbasis tradisi naskah lontar dan arsitektur Bali:
-   - Tipografi: Literata (heading) + Libre Franklin (body) + Noto Sans Balinese (glif)
-   - Palet: Gelap #1C1A17, Terang #F5F3EE (bidang lontar), Aksi Merah #B3261E, Aksen Emas #C9A227
-   - Nol gradient tombol/bar, nol glow, nol kartu bersarang, nol font mono */
 
-/* ==========================================================================
-   1. STRUKTUR UTAMA SECTION & KEPALA HALAMAN
-   ========================================================================== */
+
 
 .aksara-section {
   position: relative;
@@ -90,9 +83,6 @@
   border-top: 1px solid var(--c-border-dark);
 }
 
-/* ==========================================================================
-   2. TATA LETAK UTAMA: SIDEBAR & RUANG KERJA
-   ========================================================================== */
 
 .aksara-layout {
   display: grid;
@@ -101,14 +91,12 @@
   align-items: start;
 }
 
-/* Sidebar */
 .aksara-sidebar {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* Bilah Progres Latihan */
 .aksara-progress-bar-wrap {
   display: flex;
   flex-direction: column;
@@ -152,7 +140,6 @@
   transition: width 0.3s var(--tr-smooth);
 }
 
-/* Daftar Aksara (Tabel Hanacaraka) */
 .aksara-list-card {
   display: flex;
   flex-direction: column;
@@ -187,7 +174,6 @@
   gap: 2px;
 }
 
-/* Baris Item Aksara */
 .aksara-item {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) auto;
@@ -305,9 +291,6 @@
   height: 14px;
 }
 
-/* ==========================================================================
-   3. RUANG KERJA (WORKSPACE & KANVAS LONTAR)
-   ========================================================================== */
 
 .aksara-workspace {
   display: flex;
@@ -316,7 +299,6 @@
   max-width: 580px;
 }
 
-/* Header Aksara Aktif */
 .aksara-workspace__header {
   display: flex;
   justify-content: space-between;
@@ -379,7 +361,6 @@
   white-space: nowrap;
 }
 
-/* Kanvas Lontar */
 .aksara-canvas-wrap {
   position: relative;
   width: 100%;
@@ -402,7 +383,6 @@
   cursor: crosshair;
 }
 
-/* Titik Mulai DOM */
 .aksara-start-dot {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -438,7 +418,6 @@
   margin: -0.5rem 0 0.25rem;
 }
 
-/* Baris Alat Kontrol */
 .aksara-controls {
   display: flex;
   justify-content: space-between;
@@ -509,7 +488,6 @@
   vertical-align: -1px;
 }
 
-/* Petunjuk Kaligrafi */
 .aksara-hint-text {
   font-size: 0.88rem;
   line-height: 1.55;
@@ -518,9 +496,6 @@
   max-width: 520px;
 }
 
-/* ==========================================================================
-   4. PANEL HASIL PENILAIAN (LEMBAR NILAI)
-   ========================================================================== */
 
 .aksara-result-panel {
   display: flex;
@@ -665,7 +640,6 @@
   border-top: 1px dashed var(--c-border-dark);
 }
 
-/* Pesan Status Hasil */
 .aksara-alert {
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
@@ -692,11 +666,8 @@
   color: var(--c-sand);
 }
 
-/* ==========================================================================
-   5. RESPONSIF (MAKSIMAL 3 BREAKPOINT: 992px, 640px)
-   ========================================================================== */
 
-/* Breakpoint 992px: Tata letak bertumpuk & daftar aksara menjadi strip horizontal */
+
 @media (max-width: 992px) {
   .aksara-head {
     grid-template-columns: 1fr;
@@ -749,7 +720,7 @@
   }
 
   .aksara-item__meaning {
-    display: none; /* Disembunyikan di strip sempit karena sudah tampil jelas di header ruang kerja */
+    display: none; 
   }
 
   .aksara-item__status {
@@ -778,7 +749,6 @@
   }
 }
 
-/* Breakpoint 640px: Ponsel kecil */
 @media (max-width: 640px) {
   .aksara-section {
     padding: 3rem 0 4.5rem;
@@ -820,9 +790,6 @@
   }
 }
 
-/* ==========================================================================
-   6. AKSESIBILITAS: PREFERS-REDUCED-MOTION
-   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .aksara-progress-fill,

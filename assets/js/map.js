@@ -1,4 +1,3 @@
-// Nusa Bali Heritage — visualisasi peta sakral sembilan kabupaten/kota Bali
 
 
 const baliRegencyData = {

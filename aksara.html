@@ -21,7 +21,6 @@
 
 <body>
 
-  <!-- Header -->
   <header class="site-header" id="siteHeader">
     <div class="container">
       <a href="index.html#beranda" class="brand">
@@ -53,7 +52,6 @@
       </div>
     </div>
 
-    <!-- mobile nav panel -->
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
       <a href="index.html#beranda">Beranda</a>
       <a href="gamelan.html">Gamelan</a>
@@ -64,13 +62,12 @@
   </header>
 
   <main>
-    <!-- Garis Poleng Tradisi -->
+    
     <hr class="poleng-divider" aria-hidden="true">
 
-    <!-- Latihan Menulis Aksara -->
     <section class="section aksara-section" id="bahasa">
       <div class="container">
-        <!-- Kepala Halaman: Komposisi Dua Kolom Rata Kiri -->
+        
         <div class="aksara-head">
           <div class="aksara-head__main">
             <p class="eyebrow">Tradisi aksara Bali: naskah lontar</p>
@@ -93,9 +90,9 @@
         </div>
 
         <div class="aksara-layout">
-          <!-- Sidebar: Daftar Aksara & Progres Belajar -->
+          
           <aside class="aksara-sidebar">
-            <!-- Ringkasan Progres -->
+            
             <div class="aksara-progress-bar-wrap">
               <div class="aksara-progress-row">
                 <span class="aksara-progress-status">
@@ -109,22 +106,19 @@
               </div>
             </div>
 
-            <!-- Daftar Baris Hanacaraka -->
             <div class="aksara-list-card">
               <div class="aksara-list-head">
                 <h2 class="aksara-list-title">Urutan aksara wianjana</h2>
                 <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 tuntas</span>
               </div>
 
-              <!-- Baris aksara disusun dinamis oleh aksara.js -->
               <div class="aksara-list" id="aksaraList" role="tablist" aria-label="Daftar Aksara Wianjana">
               </div>
             </div>
           </aside>
 
-          <!-- Ruang Kerja Latihan Gambar -->
           <div class="aksara-workspace">
-            <!-- Header Aksara Aktif -->
+            
             <div class="aksara-workspace__header">
               <div class="aksara-workspace__titles">
                 <div class="aksara-workspace__title-row">
@@ -144,11 +138,9 @@
               </div>
             </div>
 
-            <!-- Kanvas Gambar Lontar (Permukaan Terang 300x300 Logis) -->
             <div class="aksara-canvas-wrap" id="aksaraCanvasWrap">
               <canvas id="aksaraCanvas" class="aksara-canvas" aria-label="Kanvas penelusuran aksara"></canvas>
 
-              <!-- Penanda Titik Awal Tarikan -->
               <div class="aksara-start-dot" id="aksaraStartDot" aria-hidden="true">
                 <span class="aksara-start-dot__pip"></span>
                 <span class="aksara-start-dot__tag">Mulai</span>
@@ -157,7 +149,6 @@
 
             <p class="aksara-canvas-note">Tarik goresan mengikuti garis putus-putus</p>
 
-            <!-- Baris Alat Kontrol -->
             <div class="aksara-controls">
               <div class="aksara-controls__secondary">
                 <button type="button" class="btn btn--outline aksara-btn aksara-btn--secondary" id="aksaraDemoBtn"
@@ -184,12 +175,10 @@
               </div>
             </div>
 
-            <!-- Petunjuk Kaligrafi -->
             <p class="aksara-hint-text">
               Mulai dari titik merah dan ikuti garis putus-putus. Tiap aksara terdiri dari beberapa bagian, jadi kamu boleh mengangkat jari di antaranya.
             </p>
 
-            <!-- Panel Lembar Nilai -->
             <div class="aksara-result-panel" id="aksaraResultPanel" hidden>
               <div class="aksara-result-head">
                 <div class="aksara-result-score-block">
@@ -204,7 +193,6 @@
                   aria-label="Tutup hasil penilaian">Tutup</button>
               </div>
 
-              <!-- Rincian Metrik -->
               <div class="aksara-result-metrics">
                 <div class="aksara-metric-card">
                   <div class="aksara-metric-header">
@@ -231,7 +219,6 @@
                 Hijau: dekat dengan garis. Kuning: agak jauh. Merah: jauh dari garis.
               </p>
 
-              <!-- Pesan Status Akhir -->
               <div class="aksara-result-status" id="aksaraResultStatus"></div>
             </div>
           </div>
@@ -240,7 +227,6 @@
     </section>
   </main>
 
-  <!-- Footer Bersama -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">

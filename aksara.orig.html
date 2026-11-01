@@ -20,7 +20,6 @@
 
 <body>
 
-  <!-- Header -->
   <header class="site-header" id="siteHeader">
     <div class="container">
       <a href="index.html#beranda" class="brand">
@@ -52,7 +51,6 @@
       </div>
     </div>
 
-    <!-- mobile nav panel -->
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
       <a href="index.html#beranda">Beranda</a>
       <a href="gamelan.html">Gamelan</a>
@@ -63,7 +61,7 @@
   </header>
 
   <main>
-    <!-- Jejak aksara -->
+    
     <section class="section aksara-section" id="bahasa">
       <div class="container">
         <div class="section-head aksara-section-head">
@@ -100,9 +98,9 @@
         </div>
 
         <div class="aksara-layout">
-          <!-- Sidebar -->
+          
           <aside class="aksara-sidebar">
-            <!-- Progress -->
+            
             <div class="aksara-progress-card">
               <div class="aksara-progress-header">
                 <div class="aksara-progress-label">
@@ -147,7 +145,6 @@
                 <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 Pratama</span>
               </div>
 
-              <!-- Rows rendered by aksara.js -->
               <div class="aksara-list" id="aksaraList" role="tablist" aria-label="Daftar Aksara Wianjana">
               </div>
             </div>
@@ -167,7 +164,6 @@
             </div>
           </aside>
 
-          <!-- Workspace -->
           <div class="aksara-workspace">
             <div class="aksara-workspace__header">
               <div class="aksara-workspace__meta">
@@ -200,18 +196,16 @@
             </div>
 
             <div class="aksara-canvas-wrap" id="aksaraCanvasWrap">
-              <!-- Guide lines -->
+              
               <div class="aksara-canvas-guides" aria-hidden="true">
                 <div class="aksara-guide-line aksara-guide-line--h"></div>
                 <div class="aksara-guide-line aksara-guide-line--v"></div>
                 <div class="aksara-guide-circle"></div>
               </div>
 
-              <!-- Canvas (300x300 internal, scaled for HiDPI) -->
               <canvas id="aksaraCanvas" class="aksara-canvas" touch-action="none"
                 aria-label="Kanvas penelusuran aksara"></canvas>
 
-              <!-- Start point dot -->
               <div class="aksara-start-dot" id="aksaraStartDot" aria-hidden="true">
                 <span class="aksara-start-dot__pulse"></span>
                 <span class="aksara-start-dot__pip"></span>
@@ -227,7 +221,6 @@
               </div>
             </div>
 
-            <!-- Controls -->
             <div class="aksara-controls">
               <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnReset">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -262,7 +255,6 @@
               </button>
             </div>
 
-            <!-- Result panel -->
             <div class="aksara-result-panel" id="aksaraResultPanel" hidden>
               <div class="aksara-result-head">
                 <div class="aksara-result-score-block">
@@ -277,7 +269,6 @@
                   aria-label="Tutup hasil penilaian">✕</button>
               </div>
 
-              <!-- Breakdown -->
               <div class="aksara-result-metrics">
                 <div class="aksara-metric-card">
                   <div class="aksara-metric-header">
@@ -308,7 +299,6 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">

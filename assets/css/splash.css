@@ -1,25 +1,15 @@
-/* ==========================================================================
-   NUSA BALI HERITAGE — ANIMATED SPLASH SCREEN STYLES
-   Visual Identity:
-   - Charcoal Black: #1A1A1A
-   - Cream: #F2F0EA
-   - Bali Red Accent: #B3261E
-   - Bali Gold Detail: #C9A227 / #ECC246
-   ========================================================================== */
 
-/* 1. Instant suppression when already visited in this session */
+
 html.splash-screen--disabled .splash-screen,
 html.splash-screen--disabled #splashScreen {
   display: none !important;
 }
 
-/* 2. Body scroll prevention during splash */
 body.splash-active {
   overflow: hidden !important;
   touch-action: none !important;
 }
 
-/* 3. Root Splash Overlay */
 .splash-screen {
   position: fixed;
   top: 0;
@@ -43,11 +33,10 @@ body.splash-active {
   visibility: visible;
   transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
               visibility 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  /* Pure CSS emergency fallback dismissal (3.4s) ensuring site is never blocked if JS fails */
+  
   animation: splashFadeOutFallback 0.55s cubic-bezier(0.4, 0, 0.2, 1) 3.4s forwards;
 }
 
-/* Dismissing & Hidden Classes */
 .splash-screen.splash-screen--hiding {
   opacity: 0 !important;
   pointer-events: none !important;
@@ -59,7 +48,6 @@ body.splash-active {
   visibility: hidden !important;
 }
 
-/* 4. Ambient Background Layer */
 .splash-screen__backdrop {
   position: absolute;
   inset: 0;
@@ -74,7 +62,6 @@ body.splash-active {
   to { opacity: 1; }
 }
 
-/* 5. Balinese Architectural Corner Ornaments */
 .splash-screen__corners {
   position: absolute;
   inset: 28px;
@@ -127,7 +114,6 @@ body.splash-active {
   to { transform: scale(1); }
 }
 
-/* 6. Central Composition Container */
 .splash-screen__content {
   position: relative;
   z-index: 2;
@@ -140,7 +126,6 @@ body.splash-active {
   max-width: 90vw;
 }
 
-/* 7. Logo & Balinese Sacred Mandala Container */
 .splash-screen__logo-container {
   position: relative;
   width: 96px;
@@ -151,7 +136,6 @@ body.splash-active {
   justify-content: center;
 }
 
-/* Balinese Sacred Mandala Halo (Patra Sari / Asta Dala) */
 .splash-screen__ornament {
   position: absolute;
   top: 50%;
@@ -181,7 +165,6 @@ body.splash-active {
   }
 }
 
-/* Center Emblem Logo */
 .splash-screen__logo-frame {
   position: relative;
   z-index: 2;
@@ -213,7 +196,6 @@ body.splash-active {
   }
 }
 
-/* 8. Header Typography */
 .splash-screen__header {
   position: relative;
   display: flex;
@@ -247,7 +229,6 @@ body.splash-active {
   }
 }
 
-/* Delicate Balinese Ornate Divider */
 .splash-screen__divider {
   display: flex;
   align-items: center;
@@ -288,7 +269,6 @@ body.splash-active {
   }
 }
 
-/* Tagline */
 .splash-screen__tagline {
   font-family: var(--ff-sans, 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif);
   font-size: 0.88rem;
@@ -313,7 +293,6 @@ body.splash-active {
   }
 }
 
-/* 9. Smooth Gold Progress Bar */
 .splash-screen__progress {
   width: 180px;
   margin: 0 auto;
@@ -356,7 +335,6 @@ body.splash-active {
   }
 }
 
-/* 10. CSS Keyframe Fallback Dismissal (Safety Guarantee) */
 @keyframes splashFadeOutFallback {
   0% {
     opacity: 1;
@@ -375,7 +353,6 @@ body.splash-active {
   }
 }
 
-/* 11. Responsive Breakpoints */
 @media (max-width: 768px) {
   .splash-screen__corners {
     inset: 18px;
@@ -462,7 +439,6 @@ body.splash-active {
   }
 }
 
-/* 12. Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   .splash-screen,
   #splashScreen {

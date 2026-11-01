@@ -1,11 +1,9 @@
-// Nusa Bali Heritage: Suara dan studio interaktif Gamelan Bali
-// Mengolah nada perunggu krawang langsung di peramban, efek ombak berpasangan,
-// pola kotekan, dan putaran melodi gending.
+
+
 
 (function () {
   'use strict';
 
-  // Laras pelog selisir (5 nada) 2 oktaf untuk gangsa pemade
   const NADA_PELOG_SELISIR = [
     {
       id: 'ding1',
@@ -139,7 +137,6 @@
     }
   ];
 
-  // Reyong Bali: 12 pencon berderet mendatar untuk 4 penabuh
   const NADA_REYONG = [
     { id: 'reyong_1', name: 'Dang (rendah)', aksara: 'ᬤᬂ', freq: 187, key: 'Z', potIndex: 1 },
     { id: 'reyong_2', name: 'Ding', aksara: 'ᬤᬶᬂ', freq: 224, key: 'X', potIndex: 2 },
@@ -155,7 +152,6 @@
     { id: 'reyong_12', name: 'Ding (puncak)', aksara: 'ᬤᬶᬂ', freq: 896, key: 'L', potIndex: 12 }
   ];
 
-  // Mesin penghasil suara gamelan di browser
   class MesinAudioGamelan {
     constructor() {
       this.konteks = null;
@@ -164,14 +160,12 @@
       this.nodeGema = null;
       this.sudahSiap = false;
 
-      // Setelan getaran
       this.ombakAktif = true;
       this.selisihOmbak = 6.8;
       this.matedetAktif = false;
       this.volumeUtama = 0.85;
       this.transposisiNada = 0;
 
-      // Pelacak suara yang sedang berbunyi untuk teknik matedet
       this.suaraAktif = new Map();
       this.waktuNadaTerakhir = 0;
       this.suaraGongAktif = null;
@@ -193,7 +187,6 @@
 
       this.konteks = new KelasKonteksAudio();
 
-      // Kompresor agar suara tidak pecah saat banyak bilah berdentang bersamaan
       this.kompresor = this.konteks.createDynamicsCompressor();
       this.kompresor.threshold.setValueAtTime(-14, this.konteks.currentTime);
       this.kompresor.knee.setValueAtTime(8, this.konteks.currentTime);
@@ -201,14 +194,11 @@
       this.kompresor.attack.setValueAtTime(0.003, this.konteks.currentTime);
       this.kompresor.release.setValueAtTime(0.2, this.konteks.currentTime);
 
-      // Pengatur volume keseluruhan
       this.penguatUtama = this.konteks.createGain();
       this.penguatUtama.gain.setValueAtTime(this.volumeUtama, this.konteks.currentTime);
 
-      // Ruang gema sederhana menyerupai bale wantilan
       this.nodeGema = this.buatGemaSintetis(1.8, 2.2);
 
-      // Rute audio: Sumber -> Suara langsung & Gema -> Kompresor -> Volume utama -> Pengeras suara
       const penguatKering = this.konteks.createGain();
       penguatKering.gain.setValueAtTime(0.85, this.konteks.currentTime);
 
@@ -246,7 +236,6 @@
         energy += (l * l + r * r) * 0.5;
       }
 
-      // Normalisasi agar volume gema seimbang
       const faktorNormal = Math.sqrt(energy) || 1;
       for (let i = 0; i < length; i++) {
         left[i] /= faktorNormal;
@@ -286,7 +275,6 @@
       this.matedetAktif = Boolean(diaktifkan);
     }
 
-    // Redam getaran bilah dalam 40 milidetik saat tangan menutup bilah
     redamBilah(idNada) {
       const daftarSuara = this.suaraAktif.get(idNada);
       if (daftarSuara && daftarSuara.length && this.konteks) {
@@ -298,7 +286,7 @@
               gainNode.gain.setValueAtTime(gainNode.gain.value, waktuSekarang);
               gainNode.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.04);
             } catch (e) {
-              // Node mungkin sudah selesai diputar
+              
             }
           }
         });
@@ -314,21 +302,18 @@
       this.suaraAktif.clear();
     }
 
-    // Nada bilah gangsa pemade
     mainkanNadaGangsa(dataNada, kecepatanPukul = 0.9) {
       this.pastikanKonteks();
       if (!this.konteks) return;
 
       const waktuSekarang = this.konteks.currentTime;
 
-      // Jika matedet aktif, redam nada sebelumnya pada bilah yang sama
       if (this.matedetAktif) {
         this.redamBilah(dataNada.id);
       }
 
       const frekuensiDasar = dataNada.freq * Math.pow(2, this.transposisiNada / 12);
 
-      // Nada tambahan khas getaran perunggu
       const parsialPerunggu = [
         { mult: 1.0, gain: 0.75, decay: 2.8 },
         { mult: 2.76, gain: 0.38, decay: 0.9 },
@@ -338,7 +323,6 @@
 
       const pasanganSuara = [];
 
-      // Bunyi tunggal atau sepasang pengumbang dan pengisep
       const konfigurasiSuara = this.ombakAktif
         ? [
             { pan: -0.25, freqOffset: -this.selisihOmbak / 2, label: 'Pengumbang' },
@@ -358,14 +342,12 @@
           penguatSuara.connect(this.jalurPenguat);
         }
 
-        // Bumbung bambu resonator di bawah bilah
         const penyaringBumbung = this.konteks.createBiquadFilter();
         penyaringBumbung.type = 'peaking';
         penyaringBumbung.frequency.setValueAtTime(frekuensiDasar, waktuSekarang);
         penyaringBumbung.Q.setValueAtTime(4.5, waktuSekarang);
         penyaringBumbung.gain.setValueAtTime(7.0, waktuSekarang);
 
-        // Osilator untuk setiap tingkatan getar perunggu
         parsialPerunggu.forEach((bagianParsial) => {
           const osilator = this.konteks.createOscillator();
           const penguatParsial = this.konteks.createGain();
@@ -386,7 +368,6 @@
           osilator.stop(waktuSekarang + bagianParsial.decay + 0.1);
         });
 
-        // Bunyi ketukan awal dari panggul kayu
         const osilatorKetukan = this.konteks.createOscillator();
         const penguatKetukan = this.konteks.createGain();
         osilatorKetukan.type = 'triangle';
@@ -424,7 +405,6 @@
       }, 3100);
     }
 
-    // Bunyi pot reyong
     mainkanNadaReyong(dataNada, kecepatanPukul = 0.85) {
       this.pastikanKonteks();
       if (!this.konteks) return;
@@ -478,7 +458,6 @@
       osilator3.stop(waktuSekarang + 1.8);
     }
 
-    // Pukulan kendang
     mainkanKendang(tipe = 'dug') {
       this.pastikanKonteks();
       if (!this.konteks) return;
@@ -545,7 +524,6 @@
       }
     }
 
-    // Dentang ceng-ceng kopyak
     mainkanCengCeng(tipe = 'crash') {
       this.pastikanKonteks();
       if (!this.konteks) return;
@@ -579,7 +557,6 @@
       penguat.connect(this.jalurPenguat);
     }
 
-    // Dentang gong ageng dan kempur
     mainkanGong(tipe = 'ageng') {
       this.pastikanKonteks();
       if (!this.konteks) return;
@@ -596,7 +573,7 @@
           penguatSebelumnya.gain.setValueAtTime(penguatSebelumnya.gain.value, waktuSekarang);
           penguatSebelumnya.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.08);
         } catch (e) {
-          // Node mungkin sudah selesai
+          
         }
       }
 
@@ -654,7 +631,6 @@
       osilatorPanggul.stop(waktuSekarang + 0.1);
     }
 
-    // Alias metode untuk kompatibilitas panggilan
     init() { return this.inisialisasi(); }
     ensureContext() { return this.pastikanKonteks(); }
     setVolume(val) { return this.aturVolume(val); }
@@ -670,10 +646,8 @@
     playGong(type) { return this.mainkanGong(type); }
   }
 
-  // Buat contoh mesin audio global
   const mesinAudio = new MesinAudioGamelan();
 
-  // Bagian 1: Bale tabuh interaktif
   function siapkanBaleTabuh() {
     const wadahBilah = document.getElementById('gangsaKeysContainer');
     const wadahReyong = document.getElementById('reyongKeysContainer');
@@ -686,7 +660,6 @@
 
     if (!wadahBilah) return;
 
-    // Tampilkan 10 bilah gangsa pemade
     wadahBilah.innerHTML = '';
     NADA_PELOG_SELISIR.forEach((dataNada, index) => {
       const elemenBilah = document.createElement('button');
@@ -731,7 +704,6 @@
       wadahBilah.appendChild(elemenBilah);
     });
 
-    // Tampilkan 12 pot reyong
     if (wadahReyong) {
       wadahReyong.innerHTML = '';
       NADA_REYONG.forEach((dataNada) => {
@@ -762,7 +734,6 @@
       });
     }
 
-    // Respon visual saat bilah dipukul
     function animasikanPukulanBilah(elemen, dataNada) {
       elemen.classList.add('is-struck');
       setTimeout(() => elemen.classList.remove('is-struck'), 160);
@@ -794,7 +765,6 @@
       }
     }
 
-    // Tombol ritme kendang, ceng-ceng, dan gong
     const tombolKendangDug = document.getElementById('padKendangDug');
     const tombolKendangPlak = document.getElementById('padKendangPlak');
     const tombolCengCrash = document.getElementById('padCengCrash');
@@ -818,7 +788,6 @@
     pasangPukulanBantalan(tombolGongAgeng, () => mesinAudio.mainkanGong('ageng'), 300);
     pasangPukulanBantalan(tombolGongKempur, () => mesinAudio.mainkanGong('kempur'), 240);
 
-    // Sapuan jari pada bilah gangsa di layar sentuh
     let idGangsaSentuhAktif = null;
     wadahBilah.addEventListener('touchmove', (e) => {
       for (let i = 0; i < e.touches.length; i++) {
@@ -863,7 +832,6 @@
       wadahReyong.addEventListener('touchcancel', aturUlangSentuhReyong, { passive: true });
     }
 
-    // Perpindahan tab instrumen
     tabInstrumen.forEach((tombol) => {
       tombol.addEventListener('click', () => {
         tabInstrumen.forEach((t) => {
@@ -880,7 +848,6 @@
       });
     });
 
-    // Saklar ombak
     if (saklarOmbak) {
       saklarOmbak.addEventListener('click', () => {
         const aktif = !mesinAudio.ombakAktif;
@@ -892,7 +859,6 @@
       });
     }
 
-    // Saklar matedet (redam bilah)
     if (saklarMatedet) {
       saklarMatedet.addEventListener('click', () => {
         const aktif = !mesinAudio.matedetAktif;
@@ -904,7 +870,6 @@
       });
     }
 
-    // Penggeser volume
     if (penggeserVolume) {
       penggeserVolume.addEventListener('input', (e) => {
         const nilai = parseFloat(e.target.value);
@@ -912,7 +877,6 @@
       });
     }
 
-    // Tombol keyboard (1-0 untuk gangsa, Z-M untuk reyong, Spasi untuk gong)
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
@@ -966,7 +930,6 @@
     });
   }
 
-  // Pengendali pemutaran audio global agar tidak bertumpukan
   let fungsiHentikanKotekan = null;
   let fungsiHentikanGending = null;
   let fungsiHentikanLabOmbak = null;
@@ -977,7 +940,6 @@
     if (kecuali !== 'ombak' && typeof fungsiHentikanLabOmbak === 'function') fungsiHentikanLabOmbak();
   }
 
-  // Bagian 2: Studio kotekan
   function siapkanStudioKotekan() {
     const tombolMainKotekan = document.getElementById('playKotekanBtn');
     const pilihanPeran = document.getElementById('kotekanRoleSelect');
@@ -989,7 +951,6 @@
 
     if (!kisiMatriks || !tombolMainKotekan) return;
 
-    // Pola 16 ketukan: angka adalah indeks di NADA_PELOG_SELISIR, -1 berarti istirahat
     const POLA_KOTEKAN = {
       norot: {
         name: 'Kotekan norot',
@@ -1166,7 +1127,6 @@
     });
   }
 
-  // Bagian 3: Laboratorium akustik ombak
   function siapkanLabOmbak() {
     const kanvas = document.getElementById('ombakWaveCanvas');
     const penggeserFrekuensiDasar = document.getElementById('ombakBaseFreq');
@@ -1337,7 +1297,6 @@
     window.addEventListener('resize', sesuaikanUkuranKanvas, { passive: true });
     sesuaikanUkuranKanvas();
 
-    // Gambar getaran ombak pada kanvas
     function gambarBentukGelombang() {
       const rasioPikselPerangkat = window.devicePixelRatio || 1;
       const lebar = kanvas.width / rasioPikselPerangkat;
@@ -1347,7 +1306,6 @@
       konteks2d.scale(rasioPikselPerangkat, rasioPikselPerangkat);
       konteks2d.clearRect(0, 0, lebar, tinggi);
 
-      // Garis tengah
       konteks2d.strokeStyle = 'rgba(201, 162, 39, 0.15)';
       konteks2d.lineWidth = 1;
       konteks2d.beginPath();
@@ -1357,7 +1315,6 @@
 
       const frekuensiLayangan = selisih;
 
-      // Gelombang hasil superposisi (warna emas kuratorial #C9A227)
       konteks2d.strokeStyle = '#C9A227';
       konteks2d.lineWidth = 2;
       konteks2d.beginPath();
@@ -1373,7 +1330,6 @@
       }
       konteks2d.stroke();
 
-      // Garis batas luar gelombang
       konteks2d.strokeStyle = 'rgba(201, 162, 39, 0.3)';
       konteks2d.setLineDash([4, 4]);
       konteks2d.lineWidth = 1;
@@ -1409,7 +1365,6 @@
     gambarBentukGelombang();
   }
 
-  // Bagian 4: Pemutar gending otomatis
   function siapkanPemutarGending() {
     const tombolMainGending = document.getElementById('playGendingBtn');
     const pemilihGending = document.getElementById('gendingSelect');
@@ -1420,7 +1375,6 @@
 
     if (!tombolMainGending) return;
 
-    // Tiga contoh komposisi tabuh
     const REPERTOAR = {
       gilak: {
         title: 'Tabuh gilak (8 ketukan)',
@@ -1655,7 +1609,6 @@
     perbaruiKeteranganGending();
   }
 
-  // Bagian 5: Denah sekaha di panggung
   function siapkanPenjelajahDenah() {
     const titikPanggung = document.querySelectorAll('.stage-spot');
     const kartuInformasi = document.getElementById('spatialDetailCard');
@@ -1768,7 +1721,6 @@
     aturTitik('kendang');
   }
 
-  // Bagian 6: Penyaring tiga zaman gamelan
   function siapkanPenyaringEra() {
     const tombolPenyaring = document.querySelectorAll('.era-chip');
     const kartuEra = document.querySelectorAll('.era-card');
@@ -1793,7 +1745,6 @@
     });
   }
 
-  // Bagian 7: Pencarian glosarium karawitan
   function siapkanGlosarium() {
     const masukanPencarian = document.getElementById('glosariumSearch');
     const daftarIstilah = document.querySelectorAll('.glosarium-item');
@@ -1818,7 +1769,6 @@
     });
   }
 
-  // Inisialisasi utama saat halaman dimuat
   function inisialisasiGamelan() {
     siapkanBaleTabuh();
     siapkanStudioKotekan();

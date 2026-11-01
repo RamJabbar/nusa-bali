@@ -1,9 +1,8 @@
-// Nusa Bali Heritage: modul latihan menulis aksara wianjana Bali
+
 
 (function () {
   'use strict';
 
-  // Ambang toleransi jarak piksel dan bobot perhitungan nilai ketepatan
   const TOLERANSI_KENA = 18;
   const SIMPANGAN_MAKS = 32;
   const BOBOT_PRESISI = 0.50;
@@ -11,7 +10,6 @@
   const SKOR_LULUS = 75;
   const KUNCI_PENYIMPANAN = 'nusabali_aksara_mastered';
 
-  // Metadata aksara: makna filosofis, urutan hanacaraka, dan karakter Unicode Bali
   const metaAksara = {
     ha: {
       meaningShort: 'Prana, napas awal kehidupan',
@@ -93,7 +91,6 @@
   let papanHasil = null;
   let tombolPeragaan = null;
 
-  // Mengambil daftar aksara yang sudah berhasil dikuasai dari penyimpanan lokal
   function muatAksaraTuntas() {
     try {
       const tersimpan = localStorage.getItem(KUNCI_PENYIMPANAN);
@@ -103,7 +100,6 @@
     }
   }
 
-  // Menyimpan aksara baru yang berhasil lulus ke penyimpanan lokal
   function tandaiAksaraTuntas(kunci) {
     const daftar = muatAksaraTuntas();
     if (!daftar.includes(kunci)) {
@@ -115,7 +111,6 @@
     segarkanStatistikPenguasaan(daftar, kunci);
   }
 
-  // Memperbarui hitungan, persentase, bilah progres, dan status centang baris
   function segarkanStatistikPenguasaan(daftar, kunciBaruLulus = null) {
     const jumlahTuntas = daftar.length;
     const persentaseProgres = Math.round((jumlahTuntas / 10) * 100);
@@ -152,7 +147,6 @@
         elemenStatus.innerHTML = `<span class="aksara-order-num">${dataMeta.order}</span>`;
       }
 
-      // Animasi perayaan singkat saat baru saja lulus
       if (kunciBaruLulus && kunci === kunciBaruLulus) {
         elemenBaris.classList.remove('is-celebrating');
         void elemenBaris.offsetWidth;
@@ -162,7 +156,6 @@
     });
   }
 
-  // Inisialisasi utama ruang latihan aksara
   function siapkanStudioAksara() {
     const bagian = document.getElementById('bahasa');
     if (!bagian) return;
@@ -180,14 +173,12 @@
     gantiAksara('ha');
   }
 
-  // Pastikan hoisting fungsi declaration tetap berfungsi normal saat DOM siap
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', siapkanStudioAksara);
   } else {
     siapkanStudioAksara();
   }
 
-  // Menyimpan referensi elemen-elemen DOM yang sering diakses
   function simpanReferensiDOM() {
     kanvasLatihan = document.getElementById('aksaraCanvas');
     konteksGambar = kanvasLatihan ? kanvasLatihan.getContext('2d') : null;
@@ -197,7 +188,6 @@
     tombolPeragaan = document.getElementById('aksaraDemoBtn');
   }
 
-  // Menyusun baris daftar sepuluh aksara wianjana
   function susunDaftarAksara() {
     const wadahDaftar = document.getElementById('aksaraList');
     if (!wadahDaftar) return;
@@ -251,7 +241,6 @@
     });
   }
 
-  // Menyiapkan interaksi pointer mouse, sentuhan, atau stylus pada permukaan kanvas
   function siapkanBidangGambar() {
     if (!kanvasLatihan || !konteksGambar) return;
 
@@ -264,7 +253,6 @@
     kanvasLatihan.addEventListener('pointercancel', tanganiPointerLepas);
   }
 
-  // Menyesuaikan resolusi kanvas dengan rasio piksel layar (HiDPI / Retina)
   function sesuaikanKanvasDenganDPR() {
     if (!kanvasLatihan || !konteksGambar) return;
 
@@ -279,7 +267,6 @@
     posisikanPenandaMulai();
   }
 
-  // Mengubah posisi piksel pointer ke kotak koordinat logis 300x300
   function petakanKoordinatLogis(e) {
     const kotakUkur = kanvasLatihan.getBoundingClientRect();
     const posisiX = ((e.clientX - kotakUkur.left) / kotakUkur.width) * 300;
@@ -320,7 +307,6 @@
     const titikKoordinat = petakanKoordinatLogis(e);
     const titikTerakhir = jalurAktif[jalurAktif.length - 1];
 
-    // Hindari mencatat titik yang terlalu berimpitan
     const jarakLangkah = Math.hypot(titikKoordinat.x - titikTerakhir.x, titikKoordinat.y - titikTerakhir.y);
     if (jarakLangkah < 2.5) return;
 
@@ -342,7 +328,6 @@
     gambarUlangKanvas();
   }
 
-  // Menggambar ulang seluruh lapisan: kisi, pola panduan, titik mulai, dan tinta pengguna
   function gambarUlangKanvas() {
     if (!kanvasLatihan || !konteksGambar) return;
 
@@ -358,7 +343,6 @@
 
     gambarGarisKisi();
 
-    // Pola panduan garis putus-putus netral di atas permukaan lontar terang
     if (tampilkanPanduan && aksaraAktif?.pathD) {
       konteksGambar.save();
       const bentukJalur = new Path2D(aksaraAktif.pathD);
@@ -369,7 +353,6 @@
       konteksGambar.restore();
     }
 
-    // Titik awal goresan pertama
     if (aksaraAktif?.contours?.length && aksaraAktif.contours[0].length) {
       const titikAwal = aksaraAktif.contours[0][0];
       gambarTitikAwalGlif(titikAwal[0], titikAwal[1]);
@@ -380,7 +363,6 @@
     }
   }
 
-  // Garis kisi dan penanda sudut bidang penulisan lontar
   function gambarGarisKisi() {
     konteksGambar.save();
     konteksGambar.strokeStyle = 'rgba(28, 26, 23, 0.08)';
@@ -417,7 +399,6 @@
     konteksGambar.restore();
   }
 
-  // Lingkaran penanda titik awal tarikan pertama
   function gambarTitikAwalGlif(titikX, titikY) {
     konteksGambar.save();
     konteksGambar.fillStyle = 'rgba(179, 38, 30, 0.20)';
@@ -437,7 +418,6 @@
     konteksGambar.restore();
   }
 
-  // Menggambar goresan tinta pengguna (tinta gelap saat menggambar, berwarna saat dinilai)
   function gambarTintaPengguna() {
     konteksGambar.save();
     konteksGambar.lineCap = 'round';
@@ -445,7 +425,7 @@
 
     if (!sudahDinilai) {
       konteksGambar.lineWidth = 7.2;
-      konteksGambar.strokeStyle = '#1C1A17'; // Warna arang tradisi di atas lontar terang
+      konteksGambar.strokeStyle = '#1C1A17'; 
 
       jalurGoresan.forEach((jalur) => {
         if (!jalur || jalur.length === 0) return;
@@ -470,7 +450,7 @@
         konteksGambar.stroke();
       });
     } else {
-      // Penilaian visual: hijau (dekat), kuning/kuning tua (sedang), merah tua (jauh)
+      
       konteksGambar.lineWidth = 7.2;
 
       jalurGoresan.forEach((jalur) => {
@@ -510,7 +490,6 @@
     konteksGambar.restore();
   }
 
-  // Menentukan posisi titik mulai DOM agar tepat berimpit dengan titik di kanvas
   function posisikanPenandaMulai() {
     if (!penandaMulai) return;
     const dataAksara = ambilDataAksaraAktif();
@@ -535,7 +514,6 @@
     }
   }
 
-  // Memutar simulasi tarikan goresan aksara tahap demi tahap
   function mulaiPeragaanGoresan() {
     const dataAksara = ambilDataAksaraAktif();
     if (!dataAksara?.contours?.length) return;
@@ -570,7 +548,6 @@
       konteksGambar.lineCap = 'round';
       konteksGambar.lineJoin = 'round';
 
-      // Gambar kontur yang sudah selesai digores sebelumnya
       for (let c = 0; c < indeksKontur; c++) {
         const garisKontur = daftarKontur[c];
         if (garisKontur.length < 2) continue;
@@ -584,7 +561,6 @@
         konteksGambar.stroke();
       }
 
-      // Gambar kontur aktif yang sedang berjalan
       const konturAktif = daftarKontur[indeksKontur];
       if (konturAktif && konturAktif.length > 1) {
         konteksGambar.strokeStyle = '#B3261E';
@@ -597,7 +573,6 @@
         }
         konteksGambar.stroke();
 
-        // Titik pena aktif
         const ujungPena = konturAktif[batasTitik];
         konteksGambar.fillStyle = '#FFFFFF';
         konteksGambar.beginPath();
@@ -648,7 +623,6 @@
     gambarUlangKanvas();
   }
 
-  // Menilai presisi dan kelengkapan bentuk goresan terhadap titik kontur acuan
   function nilaiKetepatanGoresan() {
     const dataAksara = ambilDataAksaraAktif();
     if (!dataAksara?.contours?.length) return;

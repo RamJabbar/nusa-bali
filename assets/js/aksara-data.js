@@ -1,5 +1,4 @@
-// Nusa Bali Heritage: data kontur aksara wianjana Bali
-// Setiap aksara memuat jalur SVG dan daftar titik kontur koordinat logis untuk acuan latihan menulis.
+
 
 const dataAksara = {
   ha: {

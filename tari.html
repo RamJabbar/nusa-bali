@@ -18,7 +18,6 @@
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/tari.css">
 
-  <!-- ONNX Runtime WebAssembly -->
   <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 </head>
 
@@ -66,7 +65,6 @@
 
   <main>
 
-    <!-- Hero Header -->
     <section class="tari-hero">
       <div class="container">
         <div class="tari-hero__layout">
@@ -88,12 +86,10 @@
 
     <div class="poleng-divider" role="separator" aria-hidden="true"></div>
 
-    <!-- Studio -->
     <section class="tari-section" id="studio">
       <div class="container">
         <div class="tari-studio-grid">
 
-          <!-- Kolom Kiri: Masukan Foto -->
           <div class="tari-input-panel">
             <div class="tari-panel-header">
               <div class="tari-panel-kicker">Masukan Foto</div>
@@ -112,7 +108,6 @@
               </button>
             </div>
 
-            <!-- Mode 1: Contoh Foto -->
             <div class="tari-presets-view" id="tariPresetsView">
               <p class="tari-presets-note">
                 Klik salah satu foto di bawah. Foto Canang Sari sengaja bukan tari untuk menguji ketelitian model.
@@ -152,7 +147,6 @@
               </div>
             </div>
 
-            <!-- Mode 2: Upload -->
             <div class="tari-upload-view" id="tariUploadView" hidden>
               <div class="tari-dropzone" id="tariDropzone" tabindex="0" role="button" aria-label="Seret foto ke sini atau klik untuk pilih berkas">
                 <svg class="tari-dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
@@ -165,7 +159,6 @@
               </div>
             </div>
 
-            <!-- Mode 3: Kamera -->
             <div class="tari-camera-view" id="tariCameraView" hidden>
               <div class="tari-camera-frame">
                 <video id="tariCameraVideo" class="tari-camera-video" playsinline autoplay muted></video>
@@ -177,7 +170,6 @@
               <p class="tari-camera-msg" id="tariCameraMsg">Arahkan kamera ke penari, lalu klik Ambil Foto.</p>
             </div>
 
-            <!-- Preview foto aktif -->
             <div class="tari-preview-box" id="tariPreviewBox" hidden>
               <div class="tari-preview-header">
                 <span class="tari-preview-kicker">Foto yang sedang dianalisis</span>
@@ -189,10 +181,8 @@
 
           </div>
 
-          <!-- Kolom Kanan: Hasil Deteksi -->
           <div class="tari-result-panel" aria-live="polite">
 
-            <!-- Placeholder awal -->
             <div class="tari-placeholder" id="tariPlaceholder">
               <svg class="tari-placeholder__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -204,14 +194,12 @@
               </p>
             </div>
 
-            <!-- Loading -->
             <div class="tari-loading" id="tariLoading" hidden>
               <div class="tari-spinner" aria-hidden="true"></div>
               <div class="tari-loading__text">Menganalisis foto...</div>
               <div class="tari-loading__sub">Proses berlangsung lokal di browsermu</div>
             </div>
 
-            <!-- Hasil -->
             <div class="tari-result-content" id="tariResultContent" hidden>
 
               <div class="tari-result-head">
@@ -223,7 +211,6 @@
 
               <div id="tariAlertBox" class="tari-alert-box" hidden></div>
 
-              <!-- Kartu Info Budaya -->
               <div class="tari-curation-card" id="tariCurationCard" hidden>
                 <div class="tari-curation-head">Tentang tarian ini</div>
                 <p id="tariCurationDesc" class="tari-curation-desc"></p>
@@ -243,7 +230,6 @@
                 </div>
               </div>
 
-              <!-- Detail Teknis Model (Bisa dibuka-tutup) -->
               <details class="tari-tech-details">
                 <summary class="tari-tech-summary">
                   <span>Lihat rincian probabilitas model</span>
@@ -284,7 +270,6 @@
 
     <div class="poleng-divider" role="separator" aria-hidden="true"></div>
 
-    <!-- Daftar 9 Tarian -->
     <section class="tari-catalog-section" id="ensiklopedi">
       <div class="container">
         <div class="tari-catalog-head">
@@ -498,7 +483,6 @@
 
     <div class="poleng-divider" role="separator" aria-hidden="true"></div>
 
-    <!-- Info Teknis -->
     <section class="tari-info-section">
       <div class="container">
         <div class="tari-info-grid">

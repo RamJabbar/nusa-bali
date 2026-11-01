@@ -1,10 +1,4 @@
-/* Nusa Bali Heritage: Stylesheet Resmi
-   Desain kuratorial humanis berbasis tradisi arsitektur dan budaya Bali:
-   - Tipografi: Literata (heading) + Libre Franklin (body)
-   - Palet: Gelap #1C1A17, Terang #F5F3EE, Aksi Merah #B3261E, Aksen Emas #C9A227 (<3%)
-   - Border-radius tunggal konsisten: 4px
-   - Ornamen pembatas: Kain poleng murni CSS (6px) di 2 titik strategis
-   - Nol gradient tombol/teks, nol glow, nol efek kaca blur */
+
 
 :root {
   --c-dark: #1C1A17;
@@ -21,7 +15,6 @@
   --ff-heading: 'Literata', Georgia, 'Times New Roman', serif;
   --ff-body: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Aliases untuk kompatibilitas script */
   --ff-display: var(--ff-heading);
   --ff-serif: var(--ff-heading);
   --ff-sans: var(--ff-body);
@@ -31,7 +24,6 @@
   --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Reset & Global */
 *,
 *::before,
 *::after {
@@ -106,7 +98,6 @@ p {
   margin: 0;
 }
 
-/* Aksesibilitas: Indikator fokus terlihat */
 :focus-visible {
   outline: 2px solid var(--c-gold);
   outline-offset: 3px;
@@ -119,7 +110,6 @@ p {
   padding-inline: 1.5rem;
 }
 
-/* Ornamen Tradisi: Strip Kain Poleng murni CSS (6px) */
 .poleng-divider {
   display: block;
   width: 100%;
@@ -139,7 +129,6 @@ p {
   margin: 0;
 }
 
-/* Media Frame */
 .media-frame {
   position: relative;
   background: #252320;
@@ -153,7 +142,6 @@ p {
   object-fit: cover;
 }
 
-/* Tombol Standar */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -193,7 +181,6 @@ p {
   color: #FFFFFF;
 }
 
-/* Header & Navigasi */
 .site-header {
   position: sticky;
   top: 0;
@@ -229,7 +216,6 @@ p {
   object-fit: contain;
 }
 
-/* Menu navigasi: satu-satunya area yang memakai uppercase dan tracking lebar */
 .nav-links {
   display: flex;
   align-items: center;
@@ -330,7 +316,6 @@ p {
   border: 0;
 }
 
-/* Hero */
 .hero {
   position: relative;
   overflow: hidden;
@@ -350,7 +335,6 @@ p {
   object-position: center 38%;
 }
 
-/* Overlay satu gradasi tipis di sisi teks untuk kontras terbaca */
 .hero__bg::after {
   content: '';
   position: absolute;
@@ -441,7 +425,6 @@ p {
   text-decoration-thickness: 2px;
 }
 
-/* Stats: Satu baris tenang di bawah hero tanpa kartu, tanpa ikon */
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -472,7 +455,6 @@ p {
   color: var(--c-muted-dark);
 }
 
-/* Section Shared */
 .section {
   padding: 5rem 0;
 }
@@ -488,7 +470,6 @@ p {
   align-items: end;
 }
 
-/* Eyebrow: huruf biasa (sentence case) tanpa tracking lebar */
 .eyebrow {
   font-size: 0.82rem;
   font-weight: 500;
@@ -510,7 +491,6 @@ p {
   color: var(--c-muted-dark);
 }
 
-/* Section Terang (Filosofi & Situs) */
 .section--light {
   background: var(--c-cream);
   color: var(--c-dark);
@@ -529,7 +509,6 @@ p {
   color: #555149;
 }
 
-/* Tiga Pilar Tri Hita Karana: 3 kolom dipisah garis tipis vertikal */
 .pillars-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -571,7 +550,6 @@ p {
   color: #555149;
 }
 
-/* Tiga Teaser: Komposisi Berbeda */
 .teaser-section--gamelan {
   background: #171614;
   padding: 5.5rem 0;
@@ -593,17 +571,14 @@ p {
   align-items: center;
 }
 
-/* Gamelan: 7 kolom foto kiri, 5 kolom teks kanan */
 .teaser-grid--gamelan {
   grid-template-columns: 7fr 5fr;
 }
 
-/* Peta: 5 kolom teks kiri, 7 kolom foto kanan */
 .teaser-grid--peta {
   grid-template-columns: 5fr 7fr;
 }
 
-/* Aksara: 4 kolom foto potret sempit kiri, 8 kolom teks lebar kanan */
 .teaser-grid--aksara {
   grid-template-columns: 4fr 8fr;
 }
@@ -663,7 +638,6 @@ p {
   color: #FFFFFF;
 }
 
-/* Tarian & Kerajinan: Marquee Datar Tanpa Border */
 #tarian {
   padding: 4.25rem 0 4.75rem;
 }
@@ -751,7 +725,6 @@ p {
   color: var(--c-muted-dark);
 }
 
-/* Situs Budaya: Grid Asimetris 12 Kolom (Besakih Lebih Besar) */
 .section--situs {
   background: var(--c-cream);
   color: var(--c-dark);
@@ -885,7 +858,6 @@ p {
   font-size: 0.78rem;
 }
 
-/* Galeri Etnografi: 1 Foto Besar + 4 Lebih Kecil Ukuran Tidak Seragam */
 .section--gallery {
   padding: 5.5rem 0 6rem;
   background: #141312;
@@ -925,7 +897,6 @@ p {
   outline-offset: 2px;
 }
 
-/* Susunan asimetris: 8+4 / 5+3+4 (tidak ada 3 kartu kembar berjejer) */
 .gallery-etno-card--card1 {
   grid-column: span 8;
 }
@@ -989,7 +960,6 @@ p {
   margin-top: 0.45rem;
 }
 
-/* Modals (Gallery & Detail) */
 .gallery-modal,
 .detail-modal {
   position: fixed;
@@ -1158,7 +1128,6 @@ p {
   border-color: #FFFFFF;
 }
 
-/* Detail Modal */
 .detail-modal__panel {
   max-width: 540px;
   padding: 1.5rem;
@@ -1213,7 +1182,6 @@ p {
   color: var(--c-sand);
 }
 
-/* Footer */
 .site-footer {
   background: #141312;
   padding: 4.5rem 0 0;
@@ -1346,7 +1314,6 @@ p {
   color: #FFFFFF;
 }
 
-/* Dukungan sistem animasi scroll (animate.js) */
 .heading-line-mask {
   display: inline-block;
   overflow: hidden;
@@ -1381,7 +1348,6 @@ p {
   transform: none;
 }
 
-/* Responsif: Layar Tablet (maksimal 960px) */
 @media (max-width: 960px) {
   .nav-links {
     display: none;
@@ -1516,7 +1482,6 @@ p {
   }
 }
 
-/* Responsif: Layar Mobile (maksimal 640px) */
 @media (max-width: 640px) {
   .section {
     padding: 3.5rem 0;
@@ -1617,7 +1582,6 @@ p {
   }
 }
 
-/* Responsif: Layar Sangat Sempit (maksimal 380px) */
 @media (max-width: 380px) {
   .container {
     padding-inline: 1rem;
@@ -1637,7 +1601,6 @@ p {
   }
 }
 
-/* Aksesibilitas: Menghormati prefers-reduced-motion secara murni */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
