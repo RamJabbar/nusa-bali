@@ -118,6 +118,7 @@ async function muatSesiModel() {
     }
 
     const jalurModel = [
+      'https://huggingface.co/Daffaadityp/nusa-bali-models/resolve/main/bali_dance_efficientnet_v2.onnx',
       'assets/models/bali_dance_efficientnet_v2.onnx',
       'bali_dance_model/bali_dance_efficientnet_v2.onnx'
     ];
