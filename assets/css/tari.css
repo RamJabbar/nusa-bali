@@ -1,0 +1,953 @@
+@import url('styles.css');
+
+/* ==========================================================================
+   Studio Pengenal Ragam Tari Bali (Nusa Bali Heritage)
+   Gaya desain: Tipografi Literata, Libre Franklin, & Noto Sans Balinese,
+   palet gelap-terang-merah-emas, radius 4px, nol AI-slop, nol neon gradient.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Keamanan [hidden]: pastikan elemen tersembunyi tidak bocor ke tampilan
+   -------------------------------------------------------------------------- */
+[hidden],
+.tari-camera-view[hidden],
+.tari-upload-view[hidden],
+.tari-presets-view[hidden],
+.tari-preview-box[hidden],
+.tari-placeholder[hidden],
+.tari-loading[hidden],
+.tari-result-content[hidden],
+.tari-alert-box[hidden],
+.tari-curation-card[hidden],
+.tari-result-aksara[hidden],
+.mobile-nav[hidden] {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Tipografi Aksara Bali
+   -------------------------------------------------------------------------- */
+.tari-hero__aksara,
+.tari-result-aksara,
+.tari-ency-card__aksara {
+  font-family: 'Noto Sans Balinese', var(--ff-heading), serif;
+}
+
+/* --------------------------------------------------------------------------
+   Hero / Header Halaman
+   -------------------------------------------------------------------------- */
+.tari-hero {
+  padding-top: 3.5rem;
+  padding-bottom: 2.5rem;
+  background-color: var(--c-dark);
+}
+
+.tari-hero__layout {
+  max-width: 740px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.tari-hero__title {
+  font-family: var(--ff-heading);
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--c-cream);
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tari-hero__desc {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--c-muted-dark);
+  margin-bottom: 1.25rem;
+}
+
+.tari-hero__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--c-sand);
+}
+
+.tari-hero__tag {
+  font-weight: 500;
+}
+
+.tari-hero__sep {
+  color: var(--c-gold);
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Studio Layout (2 Kolom: Masukan Kiri, Hasil Kanan)
+   -------------------------------------------------------------------------- */
+.tari-section {
+  padding-top: 2.75rem;
+  padding-bottom: 4.5rem;
+  background-color: var(--c-dark);
+}
+
+.tari-studio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   Panel Masukan (Kiri)
+   -------------------------------------------------------------------------- */
+.tari-input-panel {
+  background-color: #22201C;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.tari-panel-header {
+  margin-bottom: 1rem;
+}
+
+.tari-panel-kicker {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-gold);
+  margin-bottom: 0.2rem;
+}
+
+.tari-panel-title {
+  font-family: var(--ff-heading);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+/* Tab Switcher */
+.tari-input-tabs {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--c-border-dark);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.tari-tab-btn {
+  background: transparent;
+  color: var(--c-muted-dark);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.tari-tab-btn:hover {
+  color: var(--c-cream);
+  background-color: rgba(245, 243, 238, 0.05);
+}
+
+.tari-tab-btn.is-active {
+  background-color: var(--c-red);
+  color: #FFFFFF;
+}
+
+/* Mode 1: Contoh Foto */
+.tari-presets-view:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tari-presets-note {
+  font-size: 0.82rem;
+  color: var(--c-muted-dark);
+  line-height: 1.5;
+}
+
+.tari-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.tari-preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  background-color: #1A1916;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 0.55rem;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: border-color 0.2s var(--tr-smooth), transform 0.2s var(--tr-smooth), background-color 0.2s var(--tr-smooth);
+}
+
+.tari-preset-card:hover {
+  border-color: var(--c-sand);
+  transform: translateY(-2px);
+}
+
+.tari-preset-card.is-selected {
+  border-color: var(--c-red);
+  background-color: #27231F;
+}
+
+.tari-preset-card__thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: #151412;
+}
+
+.tari-preset-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s var(--tr-smooth);
+}
+
+.tari-preset-card:hover .tari-preset-card__thumb img {
+  transform: scale(1.03);
+}
+
+.tari-preset-card__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--c-cream);
+  line-height: 1.25;
+}
+
+.tari-preset-card__meta {
+  font-size: 0.72rem;
+  color: var(--c-muted-dark);
+  line-height: 1.3;
+}
+
+/* Mode 2: Dropzone Upload */
+.tari-upload-view:not([hidden]) {
+  display: block;
+}
+
+.tari-dropzone {
+  border: 1.5px dashed rgba(245, 243, 238, 0.22);
+  border-radius: var(--radius);
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  background-color: #1A1916;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  transition: border-color 0.2s var(--tr-smooth), background-color 0.2s var(--tr-smooth);
+}
+
+.tari-dropzone:hover,
+.tari-dropzone.is-dragover {
+  border-color: var(--c-gold);
+  background-color: rgba(201, 162, 39, 0.04);
+}
+
+.tari-dropzone__icon {
+  width: 38px;
+  height: 38px;
+  color: var(--c-sand);
+  opacity: 0.75;
+}
+
+.tari-dropzone__prompt {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.tari-dropzone__sub {
+  font-size: 0.78rem;
+  color: var(--c-muted-dark);
+  max-width: 340px;
+  line-height: 1.45;
+}
+
+/* Mode 3: Kamera Langsung */
+.tari-camera-view:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tari-camera-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #151412;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--c-border-dark);
+}
+
+.tari-camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tari-camera-controls {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.tari-camera-msg {
+  font-size: 0.82rem;
+  color: var(--c-muted-dark);
+  text-align: center;
+}
+
+/* Frame Pratinjau Citra Aktif */
+.tari-preview-box:not([hidden]) {
+  display: block;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-border-dark);
+}
+
+.tari-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.tari-preview-kicker {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--c-sand);
+}
+
+.tari-preview-frame {
+  width: 100%;
+  max-height: 200px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: #151412;
+  border: 1px solid var(--c-border-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tari-preview-frame img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+/* --------------------------------------------------------------------------
+   Panel Hasil (Kanan)
+   -------------------------------------------------------------------------- */
+.tari-result-panel {
+  background-color: #22201C;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status: Kosong */
+.tari-placeholder:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  gap: 0.85rem;
+  color: var(--c-muted-dark);
+  margin-block: auto;
+}
+
+.tari-placeholder__icon {
+  width: 44px;
+  height: 44px;
+  color: var(--c-muted-dark);
+  opacity: 0.7;
+}
+
+.tari-placeholder__title {
+  font-family: var(--ff-heading);
+  font-size: 1.15rem;
+  color: var(--c-sand);
+}
+
+.tari-placeholder__text {
+  font-size: 0.86rem;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+/* Status: Loading */
+.tari-loading:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  gap: 0.85rem;
+  margin-block: auto;
+}
+
+.tari-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(245, 243, 238, 0.15);
+  border-top-color: var(--c-red);
+  border-radius: 50%;
+  animation: tariSpin 0.8s linear infinite;
+}
+
+@keyframes tariSpin {
+  to { transform: rotate(360deg); }
+}
+
+.tari-loading__text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--c-sand);
+}
+
+.tari-loading__sub {
+  font-size: 0.78rem;
+  color: var(--c-muted-dark);
+}
+
+/* Status: Hasil Aktif */
+.tari-result-content:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Header Hasil */
+.tari-result-head {
+  border-bottom: 1px solid var(--c-border-dark);
+  padding-bottom: 1rem;
+}
+
+.tari-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.65rem;
+}
+
+.tari-badge--success {
+  background-color: rgba(84, 130, 89, 0.18);
+  color: #9ECBA3;
+  border: 1px solid rgba(158, 203, 163, 0.35);
+}
+
+.tari-badge--warning {
+  background-color: rgba(179, 38, 30, 0.15);
+  color: #F09B93;
+  border: 1px solid rgba(240, 155, 147, 0.35);
+}
+
+.tari-result-name {
+  font-family: var(--ff-heading);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--c-cream);
+  line-height: 1.2;
+}
+
+.tari-result-aksara {
+  font-size: 1.15rem;
+  color: var(--c-gold);
+  margin-top: 0.2rem;
+}
+
+.tari-result-category {
+  font-size: 0.82rem;
+  color: var(--c-sand);
+  margin-top: 0.35rem;
+}
+
+/* Alert Box (Penolakan / Bukan Tari) */
+.tari-alert-box:not([hidden]) {
+  display: block;
+  background-color: rgba(179, 38, 30, 0.1);
+  border: 1px solid rgba(240, 155, 147, 0.3);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+}
+
+.tari-alert-text {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #F7D4D0;
+  margin-bottom: 0.45rem;
+}
+
+.tari-alert-tip {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--c-sand);
+  border-top: 1px solid rgba(240, 155, 147, 0.18);
+  padding-top: 0.45rem;
+  margin-top: 0.45rem;
+}
+
+.tari-alert-tip strong {
+  color: var(--c-gold);
+}
+
+/* Kartu Info Budaya (Deskripsi & Ciri) */
+.tari-curation-card:not([hidden]) {
+  background-color: #1A1916;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tari-curation-head {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-gold);
+}
+
+.tari-curation-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--c-sand);
+}
+
+.tari-curation-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  border-top: 1px solid var(--c-border-dark);
+  padding-top: 0.75rem;
+}
+
+.tari-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.tari-detail-key {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-gold);
+}
+
+.tari-detail-val {
+  font-size: 0.84rem;
+  color: var(--c-cream);
+  line-height: 1.45;
+}
+
+/* Detail Teknis (Collapsible Accordion) */
+.tari-tech-details {
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  background-color: #1A1916;
+  overflow: hidden;
+}
+
+.tari-tech-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--c-sand);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s var(--tr-smooth), color 0.2s var(--tr-smooth);
+}
+
+.tari-tech-summary:hover {
+  background-color: rgba(245, 243, 238, 0.04);
+  color: var(--c-cream);
+}
+
+.tari-tech-arrow {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s var(--tr-smooth);
+}
+
+.tari-tech-details[open] .tari-tech-arrow {
+  transform: rotate(180deg);
+}
+
+.tari-tech-body {
+  padding: 0.95rem;
+  border-top: 1px solid var(--c-border-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Metrik Diagnostik */
+.tari-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  background-color: #22201C;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.85rem;
+}
+
+.tari-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tari-metric-label {
+  font-size: 0.7rem;
+  color: var(--c-muted-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tari-metric-val {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.tari-metric-val small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--c-sand);
+}
+
+/* Distribusi Probabilitas */
+.tari-distrib-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.tari-distrib-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-sand);
+}
+
+.tari-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tari-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.tari-bar-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--c-muted-dark);
+}
+
+.tari-bar-row.is-winner .tari-bar-meta {
+  color: var(--c-cream);
+  font-weight: 600;
+}
+
+.tari-bar-track {
+  width: 100%;
+  height: 6px;
+  background-color: rgba(245, 243, 238, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tari-bar-fill {
+  height: 100%;
+  background-color: rgba(245, 243, 238, 0.22);
+  border-radius: 2px;
+  transition: width 0.4s var(--tr-smooth);
+}
+
+.tari-bar-row.is-winner .tari-bar-fill {
+  background-color: var(--c-red);
+}
+
+/* --------------------------------------------------------------------------
+   Section: Ensiklopedi 9 Ragam Tari Bali
+   -------------------------------------------------------------------------- */
+.tari-catalog-section {
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+  background-color: #171513;
+}
+
+.tari-catalog-head {
+  text-align: center;
+  max-width: 720px;
+  margin-inline: auto;
+  margin-bottom: 2.25rem;
+}
+
+.tari-catalog-title {
+  font-family: var(--ff-heading);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 600;
+  color: var(--c-cream);
+  margin-top: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.tari-catalog-desc {
+  font-size: 0.95rem;
+  color: var(--c-muted-dark);
+  line-height: 1.6;
+}
+
+/* Filter Bar */
+.tari-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.tari-filter-chip {
+  background-color: #22201C;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  color: var(--c-sand);
+  padding: 0.4rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--tr-smooth);
+}
+
+.tari-filter-chip:hover {
+  border-color: var(--c-sand);
+  color: var(--c-cream);
+}
+
+.tari-filter-chip.is-active {
+  background-color: var(--c-red);
+  border-color: var(--c-red);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* Grid Kartu Ensiklopedi */
+.tari-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.tari-ency-card {
+  background-color: #201E1A;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s var(--tr-smooth), transform 0.2s var(--tr-smooth);
+}
+
+.tari-ency-card:hover {
+  border-color: rgba(201, 162, 39, 0.45);
+  transform: translateY(-2px);
+}
+
+.tari-ency-card__body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.tari-ency-card__category {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-gold);
+}
+
+.tari-ency-card__title {
+  font-family: var(--ff-heading);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--c-cream);
+  line-height: 1.25;
+}
+
+.tari-ency-card__aksara {
+  font-size: 0.95rem;
+  color: var(--c-sand);
+  opacity: 0.85;
+}
+
+.tari-ency-card__desc {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--c-muted-dark);
+  flex: 1;
+}
+
+.tari-ency-card__meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  border-top: 1px solid var(--c-border-dark);
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.tari-ency-card__meta-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tari-ency-card__meta-label {
+  font-weight: 600;
+  color: var(--c-sand);
+  min-width: 65px;
+}
+
+.tari-ency-card__meta-value {
+  color: var(--c-muted-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Section: Info Teknis & Privasi
+   -------------------------------------------------------------------------- */
+.tari-info-section {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  background-color: var(--c-dark);
+  border-top: 1px solid var(--c-border-dark);
+}
+
+.tari-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.tari-info-block {
+  background-color: #22201C;
+  border: 1px solid var(--c-border-dark);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.tari-info-block__title {
+  font-family: var(--ff-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.tari-info-block__text {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--c-muted-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Responsif (Maks 2 Breakpoint: 992px dan 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .tari-studio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tari-catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tari-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .tari-hero {
+    padding-top: 2.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .tari-input-panel,
+  .tari-result-panel {
+    padding: 1.25rem;
+  }
+
+  .tari-presets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tari-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tari-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tari-input-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tari-tab-btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}

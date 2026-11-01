@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tari Bali — Nusa Bali Heritage</title>
+  <meta name="description"
+    content="Kenali ragam tari tradisional Bali dari foto. Dijalankan langsung di browser, tanpa upload ke server.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;1,7..72,400&family=Noto+Sans+Balinese:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/tari.css">
+
+  <!-- ONNX Runtime WebAssembly -->
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+</head>
+
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <a href="index.html#beranda" class="brand">
+        <img class="brand__logo-img" src="assets/images/logo/logo-tulisan.png"
+          alt="Nusa Bali Heritage">
+      </a>
+
+      <nav class="nav-links" aria-label="Navigasi utama">
+        <a href="index.html#beranda">Beranda</a>
+        <a href="gamelan.html">Gamelan</a>
+        <a href="tari.html" aria-current="page">Tari</a>
+        <a href="aksara.html">Aksara</a>
+        <a href="#kontak">Kontak</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="nav-account-btn" type="button" id="userAccountBtn" aria-label="Akun pengguna">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.6" />
+            <path d="M5.5 19.5c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke-linecap="round" />
+          </svg>
+        </button>
+        <button class="nav-toggle" type="button" aria-label="Buka menu" id="navToggle" aria-expanded="false"
+          aria-controls="mobileNav">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
+      <a href="index.html#beranda">Beranda</a>
+      <a href="gamelan.html">Gamelan</a>
+      <a href="tari.html" aria-current="page">Tari</a>
+      <a href="aksara.html">Aksara</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero Header -->
+    <section class="tari-hero">
+      <div class="container">
+        <div class="tari-hero__layout">
+          <p class="eyebrow">Pengenal Ragam Tari Bali</p>
+          <h1 class="tari-hero__title">Kenali Tari Bali dari Foto</h1>
+          <p class="tari-hero__desc">
+            Pilih contoh foto penari di bawah, upload fotomu sendiri, atau gunakan kamera. Model akan mendeteksi tarian dan menampilkan info busana, gerakan khas, serta iringan gamelannya.
+          </p>
+          <div class="tari-hero__tags">
+            <span class="tari-hero__tag">9 ragam tari</span>
+            <span class="tari-hero__sep">·</span>
+            <span class="tari-hero__tag">Akurasi 98%</span>
+            <span class="tari-hero__sep">·</span>
+            <span class="tari-hero__tag">Privasi aman di browser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="poleng-divider" role="separator" aria-hidden="true"></div>
+
+    <!-- Studio -->
+    <section class="tari-section" id="studio">
+      <div class="container">
+        <div class="tari-studio-grid">
+
+          <!-- Kolom Kiri: Masukan Foto -->
+          <div class="tari-input-panel">
+            <div class="tari-panel-header">
+              <div class="tari-panel-kicker">Masukan Foto</div>
+              <h2 class="tari-panel-title">Pilih atau upload foto</h2>
+            </div>
+
+            <div class="tari-input-tabs" role="tablist" aria-label="Pilihan sumber foto">
+              <button class="tari-tab-btn is-active" type="button" role="tab" aria-selected="true" data-tab="contoh">
+                Contoh Foto
+              </button>
+              <button class="tari-tab-btn" type="button" role="tab" aria-selected="false" data-tab="unggah">
+                Upload
+              </button>
+              <button class="tari-tab-btn" type="button" role="tab" aria-selected="false" data-tab="kamera">
+                Kamera
+              </button>
+            </div>
+
+            <!-- Mode 1: Contoh Foto -->
+            <div class="tari-presets-view" id="tariPresetsView">
+              <p class="tari-presets-note">
+                Klik salah satu foto di bawah. Foto Canang Sari sengaja bukan tari untuk menguji ketelitian model.
+              </p>
+              <div class="tari-presets-grid">
+                <button type="button" class="tari-preset-card" data-src="assets/images/tarian/tari-legong.jpg">
+                  <div class="tari-preset-card__thumb">
+                    <img src="assets/images/tarian/tari-legong.jpg" alt="Tari Legong Condong" loading="lazy">
+                  </div>
+                  <span class="tari-preset-card__label">Tari Legong</span>
+                  <span class="tari-preset-card__meta">Condong · Tari istana</span>
+                </button>
+
+                <button type="button" class="tari-preset-card" data-src="assets/images/tarian/tari-kecak.jpg">
+                  <div class="tari-preset-card__thumb">
+                    <img src="assets/images/tarian/tari-kecak.jpg" alt="Tari Kecak" loading="lazy">
+                  </div>
+                  <span class="tari-preset-card__label">Tari Kecak</span>
+                  <span class="tari-preset-card__meta">Sendratari Ramayana</span>
+                </button>
+
+                <button type="button" class="tari-preset-card" data-src="assets/images/tarian/barong-rangda.jpg">
+                  <div class="tari-preset-card__thumb">
+                    <img src="assets/images/tarian/barong-rangda.jpg" alt="Barong dan Rangda" loading="lazy">
+                  </div>
+                  <span class="tari-preset-card__label">Barong &amp; Rangda</span>
+                  <span class="tari-preset-card__meta">Dharma vs Adharma</span>
+                </button>
+
+                <button type="button" class="tari-preset-card" data-src="assets/images/galeri/canang-sari.jpg">
+                  <div class="tari-preset-card__thumb">
+                    <img src="assets/images/galeri/canang-sari.jpg" alt="Canang Sari" loading="lazy">
+                  </div>
+                  <span class="tari-preset-card__label">Canang Sari</span>
+                  <span class="tari-preset-card__meta">Bukan tari · Uji ketelitian</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Mode 2: Upload -->
+            <div class="tari-upload-view" id="tariUploadView" hidden>
+              <div class="tari-dropzone" id="tariDropzone" tabindex="0" role="button" aria-label="Seret foto ke sini atau klik untuk pilih berkas">
+                <svg class="tari-dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                  <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <div class="tari-dropzone__prompt">Seret foto ke sini</div>
+                <button type="button" class="btn btn--outline" id="tariUploadBtn">Pilih dari perangkat</button>
+                <p class="tari-dropzone__sub">Format JPG, PNG, atau WebP. Foto langsung diproses di browser tanpa dikirim ke server.</p>
+                <input type="file" id="tariFileInput" class="visually-hidden" accept="image/*">
+              </div>
+            </div>
+
+            <!-- Mode 3: Kamera -->
+            <div class="tari-camera-view" id="tariCameraView" hidden>
+              <div class="tari-camera-frame">
+                <video id="tariCameraVideo" class="tari-camera-video" playsinline autoplay muted></video>
+              </div>
+              <div class="tari-camera-controls">
+                <button type="button" class="btn btn--fill" id="tariCaptureBtn">Ambil Foto</button>
+                <button type="button" class="btn btn--outline" id="tariCloseCameraBtn">Tutup</button>
+              </div>
+              <p class="tari-camera-msg" id="tariCameraMsg">Arahkan kamera ke penari, lalu klik Ambil Foto.</p>
+            </div>
+
+            <!-- Preview foto aktif -->
+            <div class="tari-preview-box" id="tariPreviewBox" hidden>
+              <div class="tari-preview-header">
+                <span class="tari-preview-kicker">Foto yang sedang dianalisis</span>
+              </div>
+              <div class="tari-preview-frame">
+                <img id="tariPreviewImg" alt="Foto yang sedang diproses">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Kolom Kanan: Hasil Deteksi -->
+          <div class="tari-result-panel" aria-live="polite">
+
+            <!-- Placeholder awal -->
+            <div class="tari-placeholder" id="tariPlaceholder">
+              <svg class="tari-placeholder__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 3" />
+              </svg>
+              <h3 class="tari-placeholder__title">Belum ada foto yang dipilih</h3>
+              <p class="tari-placeholder__text">
+                Pilih salah satu contoh foto di sebelah kiri, upload foto dari galerimu, atau nyalakan kamera untuk mengenali tarian.
+              </p>
+            </div>
+
+            <!-- Loading -->
+            <div class="tari-loading" id="tariLoading" hidden>
+              <div class="tari-spinner" aria-hidden="true"></div>
+              <div class="tari-loading__text">Menganalisis foto...</div>
+              <div class="tari-loading__sub">Proses berlangsung lokal di browsermu</div>
+            </div>
+
+            <!-- Hasil -->
+            <div class="tari-result-content" id="tariResultContent" hidden>
+
+              <div class="tari-result-head">
+                <div id="tariStatusBadge" class="tari-badge"></div>
+                <h2 id="tariResultName" class="tari-result-name"></h2>
+                <div id="tariResultAksara" class="tari-result-aksara" aria-hidden="true"></div>
+                <div id="tariResultCategory" class="tari-result-category"></div>
+              </div>
+
+              <div id="tariAlertBox" class="tari-alert-box" hidden></div>
+
+              <!-- Kartu Info Budaya -->
+              <div class="tari-curation-card" id="tariCurationCard" hidden>
+                <div class="tari-curation-head">Tentang tarian ini</div>
+                <p id="tariCurationDesc" class="tari-curation-desc"></p>
+                <div class="tari-curation-details">
+                  <div class="tari-detail-item">
+                    <span class="tari-detail-key">Busana</span>
+                    <span id="tariCurationBusana" class="tari-detail-val"></span>
+                  </div>
+                  <div class="tari-detail-item">
+                    <span class="tari-detail-key">Gamelan</span>
+                    <span id="tariCurationGamelan" class="tari-detail-val"></span>
+                  </div>
+                  <div class="tari-detail-item">
+                    <span class="tari-detail-key">Ciri gerak</span>
+                    <span id="tariCurationGerak" class="tari-detail-val"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Detail Teknis Model (Bisa dibuka-tutup) -->
+              <details class="tari-tech-details">
+                <summary class="tari-tech-summary">
+                  <span>Lihat rincian probabilitas model</span>
+                  <svg class="tari-tech-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </summary>
+                <div class="tari-tech-body">
+                  <div class="tari-metrics-grid">
+                    <div class="tari-metric-cell">
+                      <span class="tari-metric-label">Waktu analisis</span>
+                      <span id="tariLatencyVal" class="tari-metric-val">0 <small>ms</small></span>
+                    </div>
+                    <div class="tari-metric-cell">
+                      <span class="tari-metric-label">Keyakinan</span>
+                      <span id="tariConfidenceVal" class="tari-metric-val">0.0<small>%</small></span>
+                    </div>
+                    <div class="tari-metric-cell">
+                      <span class="tari-metric-label">Entropi</span>
+                      <span id="tariEntropyVal" class="tari-metric-val">0.00 <small>/ 1.40</small></span>
+                    </div>
+                  </div>
+
+                  <div class="tari-distrib-wrap">
+                    <h3 class="tari-distrib-title">Skor per jenis tari</h3>
+                    <div class="tari-bars-list" id="tariBarsList"></div>
+                  </div>
+                </div>
+              </details>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="poleng-divider" role="separator" aria-hidden="true"></div>
+
+    <!-- Daftar 9 Tarian -->
+    <section class="tari-catalog-section" id="ensiklopedi">
+      <div class="container">
+        <div class="tari-catalog-head">
+          <div class="tari-eyebrow">9 jenis tari dalam model AI ini</div>
+          <h2 class="tari-catalog-title">Ragam Tari Bali</h2>
+          <p class="tari-catalog-desc">
+            Tari Bali dibagi tiga kelompok: Wali (dipertunjukkan di pura untuk keperluan ibadah), Bebali (pengiring upacara), dan Balih-balihan (hiburan dan seni panggung). Semua 9 tarian di bawah ini bisa dikenali model.
+          </p>
+          <div class="tari-filter-bar" role="group" aria-label="Filter jenis tari">
+            <button class="tari-filter-chip is-active" type="button" data-filter="semua">Semua</button>
+            <button class="tari-filter-chip" type="button" data-filter="wali">Wali</button>
+            <button class="tari-filter-chip" type="button" data-filter="bebali">Bebali</button>
+            <button class="tari-filter-chip" type="button" data-filter="balih-balihan">Balih-balihan</button>
+          </div>
+        </div>
+
+        <div class="tari-catalog-grid">
+
+          <article class="tari-ency-card" data-category="wali bebali">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Wali &amp; Bebali</span>
+              <h3 class="tari-ency-card__title">Tari Baris</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬩᬭᬶᬲ᭄</span>
+              <p class="tari-ency-card__desc">
+                Tari keprajuritan. Gerakannya tegas dan gagah — tatapan mata tajam (seledet), langkah kaki kokoh. Biasanya ditarikan untuk mengiringi upacara keagamaan di pura.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Gelungan kerucut, badong, keris di punggung</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Gong Gede atau Gong Beri, bertempo mars</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="wali bebali">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Wali &amp; Bebali</span>
+              <h3 class="tari-ency-card__title">Tari Barong</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬩᬭᭀᬂ</span>
+              <p class="tari-ency-card__desc">
+                Barong adalah makhluk mitos pelindung kebaikan (Dharma) yang bertarung melawan Rangda (Adharma). Dimainkan dua orang — satu di kepala, satu di ekor.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Topeng kayu pule, badan berbulu ijuk atau ketepeng</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Batel Barong, tempo cepat dan dinamis</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="balih-balihan">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Balih-balihan</span>
+              <h3 class="tari-ency-card__title">Tari Condong</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬘᭀᬦ᭄ᬤᭀᬂ</span>
+              <p class="tari-ency-card__desc">
+                Penari dayang yang membuka pertunjukan Legong Keraton. Gerakannya halus tapi lincah, memegang sepasang kipas. Dianggap dasar dari teknik tari putri Bali.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Gelungan bunga sedap malam, kemben prada, kipas sutra</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Semar Pegulingan atau Pelegongan</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="balih-balihan">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Balih-balihan</span>
+              <h3 class="tari-ency-card__title">Tari Janger</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬚᬗᬃ</span>
+              <p class="tari-ency-card__desc">
+                Tari pergaulan anak muda dari pesisir Bali utara. Grup penari perempuan (janger) dan laki-laki (kecak) saling bersahutan — gerakannya riang, tembangnya koor.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Mahkota rumbai warna-warni, selendang prada</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Batel Janger, dipadukan koor vokal rakyat</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="balih-balihan wali">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Balih-balihan &amp; Ritual</span>
+              <h3 class="tari-ency-card__title">Tari Kecak</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬓᭂᬘᬓ᭄</span>
+              <p class="tari-ency-card__desc">
+                Ratusan pria duduk melingkar di sekitar api, bertelanjang dada, menyerukan "cak-cak-cak" berirama — tidak pakai gamelan, suara merekalah musiknya. Menceritakan kisah Ramayana.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Kain poleng hitam-putih, selendang merah, kamboja</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Koor vokal manusia murni — tidak ada instrumen</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="wali">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Wali</span>
+              <h3 class="tari-ency-card__title">Tari Pendet</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬧᭂᬦ᭄ᬤᭂᬢ᭄</span>
+              <p class="tari-ency-card__desc">
+                Tari persembahan para ibu dan wanita desa di halaman pura saat hari raya piodalan. Mereka membawa bokor berisi bunga dan air suci — gerakannya tenang, penuh rasa hormat.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Tapih kuning-putih, sanggul cempaka, bokor perak</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Gong Gede, tempo lambat dan khidmat</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="balih-balihan">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Balih-balihan</span>
+              <h3 class="tari-ency-card__title">Pendet Penyambutan</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬧᭂᬦ᭄ᬤᭂᬢ᭄</span>
+              <p class="tari-ency-card__desc">
+                Versi panggung dari Pendet, dibuat oleh I Wayan Beratha khusus untuk menyambut tamu. Di akhir tari, penari menaburkan bunga ke arah penonton.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Gelungan emas, kemben merah prada, bokor bunga</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Gong Kebyar, ceria dan cepat</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="wali">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Wali</span>
+              <h3 class="tari-ency-card__title">Tari Rejang Sari</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬭᭂᬚᬗ᭄ᬲᬭᬶ</span>
+              <p class="tari-ency-card__desc">
+                Barisan perempuan desa berjalan melingkar pelan-pelan mengitari pura, berbusana putih-kuning gading. Terasa meditatif dan sunyi — menggambarkan bidadari dari Kahyangan.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Putih dan kuning gading, bunga kamboja di sanggul</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Gong Gede atau Semar Pegulingan, syahdu</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tari-ency-card" data-category="balih-balihan">
+            <div class="tari-ency-card__body">
+              <span class="tari-ency-card__category">Balih-balihan</span>
+              <h3 class="tari-ency-card__title">Tari Truna Jaya</h3>
+              <span class="tari-ency-card__aksara" aria-hidden="true">ᬢᬭᬶᬢ᭄ᬭᬸᬡᬚᬬ</span>
+              <p class="tari-ency-card__desc">
+                Tari tunggal dari Buleleng, karya Pan Wandres. Menggambarkan gejolak anak muda — gerakannya bisa tiba-tiba keras, tiba-tiba lembut. Eksplosif dan penuh ekspresi.
+              </p>
+              <div class="tari-ency-card__meta-list">
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Busana</span>
+                  <span class="tari-ency-card__meta-value">Destar ungu atau merah, badong prada, kain kampuh</span>
+                </div>
+                <div class="tari-ency-card__meta-row">
+                  <span class="tari-ency-card__meta-label">Gamelan</span>
+                  <span class="tari-ency-card__meta-value">Gong Kebyar, sangat dinamis dengan angsel tiba-tiba</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="poleng-divider" role="separator" aria-hidden="true"></div>
+
+    <!-- Info Teknis -->
+    <section class="tari-info-section">
+      <div class="container">
+        <div class="tari-info-grid">
+          <div class="tari-info-block">
+            <h3 class="tari-info-block__title">Model AI: EfficientNet-V2</h3>
+            <p class="tari-info-block__text">
+              Model dikonversi ke format ONNX (15.3 MB) dan dijalankan via WebAssembly. Memproses gambar 224×224 piksel dengan normalisasi standar ImageNet. Akurasi di data uji buta mencapai 98%.
+            </p>
+          </div>
+
+          <div class="tari-info-block">
+            <h3 class="tari-info-block__title">Foto kamu tidak kemana-mana</h3>
+            <p class="tari-info-block__text">
+              Semua proses terjadi di browser kamu — model diunduh sekali, lalu berjalan lokal. Tidak ada foto yang dikirim atau disimpan di server.
+            </p>
+          </div>
+
+          <div class="tari-info-block">
+            <h3 class="tari-info-block__title">Kalau tidak yakin, model diam</h3>
+            <p class="tari-info-block__text">
+              Model tidak menebak sembarangan. Kalau foto bukan tari Bali atau sudut fotonya terlalu kabur, model akan bilang tidak tahu — bukan memaksakan prediksi yang salah.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" id="kontak">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-col--brand">
+          <a href="index.html#beranda" class="footer-brand">
+            <img class="footer-brand__img" src="assets/images/logo/logo-tulisan.png"
+              alt="Nusa Bali Heritage">
+          </a>
+          <p class="footer-desc">
+            Arsip digital budaya Bali — gamelan, aksara lontar, dan tari tradisional dalam satu platform.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Jelajahi</h4>
+          <ul>
+            <li><a href="index.html#beranda">Beranda</a></li>
+            <li><a href="gamelan.html">Studio Gamelan</a></li>
+            <li><a href="tari.html">Tari Bali</a></li>
+            <li><a href="aksara.html">Aksara Bali</a></li>
+            <li><a href="index.html#galeri">Galeri</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>9 Tari dalam Model</h4>
+          <ul>
+            <li><a href="tari.html#studio">Tari Legong Condong</a></li>
+            <li><a href="tari.html#studio">Tari Kecak</a></li>
+            <li><a href="tari.html#studio">Tari Baris</a></li>
+            <li><a href="tari.html#studio">Tari Barong</a></li>
+            <li><a href="tari.html#studio">Tari Truna Jaya</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Buletin</h4>
+          <p class="newsletter-text">Daftar untuk dapat kabar terbaru soal gamelan, aksara, dan tari Bali.</p>
+          <form class="newsletter-form" id="newsletterForm">
+            <label for="newsletterEmail" class="visually-hidden">Alamat email</label>
+            <input type="email" id="newsletterEmail" name="email" placeholder="email@kamu.com" required>
+            <button type="submit">Kirim</button>
+          </form>
+          <p class="newsletter-note" id="newsletterNote"></p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span id="footerYear">2026</span> Bali Heritage Archive.</p>
+        <nav aria-label="Tautan legal">
+          <a href="#">Etika Kuratorial</a>
+          <a href="#">Lisensi</a>
+          <a href="#">Kontak</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/animate.js" defer></script>
+  <script src="assets/js/tari.js"></script>
+</body>
+
+</html>

@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jejak Aksara Bali: Warisan Kaligrafi Tradisi | Nusa Bali Heritage</title>
+  <title>Latihan menulis aksara Bali | Nusa Bali Heritage</title>
   <meta name="description"
-    content="Kaligrafi tradisi Aksara Bali interaktif: latih jemari menelusuri kelokan aksara wianjana di atas lontar digital dengan panduan cermat dan penilaian presisi.">
+    content="Latihan menulis 10 aksara wianjana Bali dengan jari atau mouse. Ikuti garis panduan, lalu lihat skor ketepatannya.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,7 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/aksara.css">
 </head>
 
@@ -31,7 +32,7 @@
       <nav class="nav-links" aria-label="Navigasi utama">
         <a href="index.html#beranda">Beranda</a>
         <a href="gamelan.html">Gamelan</a>
-        <a href="peta.html">Peta</a>
+        <a href="tari.html">Tari</a>
         <a href="aksara.html" aria-current="page">Aksara</a>
         <a href="#kontak">Kontak</a>
       </nav>
@@ -45,7 +46,7 @@
         </button>
         <button class="nav-toggle" type="button" aria-label="Buka menu" id="navToggle" aria-expanded="false"
           aria-controls="mobileNav">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
             <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
         </button>
@@ -56,250 +57,181 @@
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
       <a href="index.html#beranda">Beranda</a>
       <a href="gamelan.html">Gamelan</a>
-      <a href="peta.html">Peta</a>
+      <a href="tari.html">Tari</a>
       <a href="aksara.html" aria-current="page">Aksara</a>
       <a href="#kontak">Kontak</a>
     </nav>
   </header>
 
   <main>
-    <!-- Jejak aksara -->
+    <!-- Garis Poleng Tradisi -->
+    <hr class="poleng-divider" aria-hidden="true">
+
+    <!-- Latihan Menulis Aksara -->
     <section class="section aksara-section" id="bahasa">
       <div class="container">
-        <div class="section-head aksara-section-head">
-          <div class="aksara-head-text">
-            <p class="eyebrow">
-              <svg width="14" height="14"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <polygon points="12 2 22 12 12 22 2 12 12 2" />
-              </svg>
-              Tradisi dan Aksara Bali • Pelestarian Naskah Lontar
+        <!-- Kepala Halaman: Komposisi Dua Kolom Rata Kiri -->
+        <div class="aksara-head">
+          <div class="aksara-head__main">
+            <p class="eyebrow">Tradisi aksara Bali: naskah lontar</p>
+            <h1 class="aksara-head__title">Menulis aksara Bali</h1>
+            <p class="aksara-head__desc">
+              Telusuri 10 aksara wianjana (huruf konsonan) dengan jari, mouse, atau stylus. Garis putus-putus jadi panduan, lalu kamu bisa lihat seberapa dekat goresanmu.
             </p>
-            <h1 class="section-heading">
-              <span>Jejak <i class="accent-italic">Aksara</i></span>
-            </h1>
-            <p class="section-desc">
-              Latihlah jemari Anda menelusuri keagungan Aksara Bali: menggoreskan kelokan tradisi di atas lontar digital untuk meresapi ritme, harmoni, dan filosofi luhur aksara wianjana.
-            </p>
+            <div class="aksara-head__meta">
+              <span class="aksara-head__tag">10 aksara wianjana</span>
+              <span class="aksara-head__sep">·</span>
+              <span class="aksara-head__tag">Pengrupak dan lontar</span>
+              <span class="aksara-head__sep">·</span>
+              <span class="aksara-head__tag">Skor kelulusan 75%</span>
+            </div>
           </div>
-          <div class="aksara-tags-wrap" aria-label="Kategori Pelestarian">
-            <span class="aksara-tag">
-              <svg width="14" height="14"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="aksara-tag-icon">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-              </svg>
-              Aksara Wianjana : 10 Dasar
-            </span>
-            <span class="aksara-tag">
-              <svg width="14" height="14"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="aksara-tag-icon">
-                <path d="M12 19l7-7 3 3-7 7-3-3z" />
-                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
-              </svg>
-              Pengrupak &amp; Lontar
-            </span>
-          </div>
+          <figure class="aksara-head__photo media-frame">
+            <img src="assets/images/aksara/lontar-kerti.jpg" alt="Naskah lontar dan pengrupak di Museum Gedong Kirtya">
+            <figcaption class="aksara-head__caption">Naskah lontar dan pengrupak di Gedong Kirtya, Singaraja</figcaption>
+          </figure>
         </div>
 
         <div class="aksara-layout">
-          <!-- Sidebar -->
+          <!-- Sidebar: Daftar Aksara & Progres Belajar -->
           <aside class="aksara-sidebar">
-            <!-- Progress -->
-            <div class="aksara-progress-card">
-              <div class="aksara-progress-header">
-                <div class="aksara-progress-label">
-                  <svg width="15" height="15"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    class="aksara-icon-target">
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="12" r="6" />
-                    <circle cx="12" cy="12" r="2" />
-                  </svg>
-                  <span>Progres Kemahiran</span>
-                </div>
-                <span class="aksara-rank-badge">Tingkat: Madya Pratama</span>
+            <!-- Ringkasan Progres -->
+            <div class="aksara-progress-bar-wrap">
+              <div class="aksara-progress-row">
+                <span class="aksara-progress-status">
+                  <strong class="aksara-stat-num" id="aksaraMasteredCount">0</strong> dari 10 aksara dikuasai
+                </span>
+                <span class="aksara-progress-percent" id="aksaraProgressPercent">0%</span>
               </div>
-
-              <div class="aksara-stat-row">
-                <div class="aksara-stat-main">
-                  <span class="aksara-stat-num" id="aksaraMasteredCount">0</span>
-                  <span class="aksara-stat-denom">/ 10</span>
-                  <span class="aksara-stat-label">Aksara Dikuasai</span>
-                </div>
-                <div class="aksara-stat-percent" id="aksaraProgressPercent">0%</div>
-              </div>
-
-              <div class="aksara-progress-bar-wrap">
-                <div class="aksara-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                  aria-valuemax="100">
-                  <div class="aksara-progress-fill" id="aksaraProgressFill" style="width: 0%;"></div>
-                </div>
-              </div>
-
-              <div class="aksara-progress-sub">
-                <span class="aksara-threshold">Penilaian Kemahiran: 75%</span>
+              <div class="aksara-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="aksara-progress-fill" id="aksaraProgressFill"></div>
               </div>
             </div>
 
+            <!-- Daftar Baris Hanacaraka -->
             <div class="aksara-list-card">
               <div class="aksara-list-head">
-                <div class="aksara-list-title">
-                  <span class="aksara-square-bullet">■</span>
-                  Daftar Aksara Wianjana
-                </div>
-                <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 Pratama</span>
+                <h2 class="aksara-list-title">Urutan aksara wianjana</h2>
+                <span class="aksara-list-kicker" id="aksaraHeaderProgress">0 / 10 tuntas</span>
               </div>
 
-              <!-- Rows rendered by aksara.js -->
+              <!-- Baris aksara disusun dinamis oleh aksara.js -->
               <div class="aksara-list" id="aksaraList" role="tablist" aria-label="Daftar Aksara Wianjana">
               </div>
             </div>
-
-            <div class="aksara-hint-card">
-              <div class="aksara-hint-icon-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 19l7-7 3 3-7 7-3-3z" />
-                  <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
-                  <circle cx="11" cy="11" r="2" />
-                </svg>
-              </div>
-              <p class="aksara-hint-text">
-                <strong>Petunjuk Kaligrafi:</strong> Tarik goresan aksara dari simpul awal melengkung searah jarum jam
-                tanpa mengangkat pengrupak untuk menjaga aliran energi sakral (<em>"prana"</em>).
-              </p>
-            </div>
           </aside>
 
-          <!-- Workspace -->
+          <!-- Ruang Kerja Latihan Gambar -->
           <div class="aksara-workspace">
+            <!-- Header Aksara Aktif -->
             <div class="aksara-workspace__header">
-              <div class="aksara-workspace__meta">
-                <div class="aksara-workspace__bar" aria-hidden="true"></div>
-                <div class="aksara-workspace__titles">
-                  <div class="aksara-workspace__title-row">
-                    <h2 class="aksara-workspace__name" id="aksaraActiveName">Aksara Ha</h2>
-                    <span class="aksara-workspace__glyph" id="aksaraActiveGlyph" aria-label="Aksara Bali">ᬳ</span>
-                    <span class="aksara-workspace__unicode" id="aksaraActiveUnicode">U+1B33</span>
-                  </div>
-                  <p class="aksara-workspace__meaning" id="aksaraActiveMeaning">
-                    Simbol Prana • Nafas Mula Kehidupan &amp; Hyang Widhi
-                  </p>
+              <div class="aksara-workspace__titles">
+                <div class="aksara-workspace__title-row">
+                  <h2 class="aksara-workspace__name" id="aksaraActiveName">Aksara Ha</h2>
+                  <span class="aksara-workspace__glyph" id="aksaraActiveGlyph" aria-label="Aksara Bali">ᬳ</span>
+                  <span class="aksara-workspace__unicode" id="aksaraActiveUnicode">U+1B33</span>
                 </div>
+                <p class="aksara-workspace__meaning" id="aksaraActiveMeaning">
+                  Prana, napas awal kehidupan dan ketuhanan
+                </p>
               </div>
 
               <div class="aksara-workspace__actions">
-                <span class="aksara-badge-curatorial">
-                  <span class="aksara-badge-dot"></span>
-                  Presisi Kuratorial
-                </span>
-                <button type="button" class="aksara-demo-btn" id="aksaraDemoBtn"
-                  aria-label="Peragakan goresan pola aksara">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="6 4 18 12 6 20 6 4" />
-                  </svg>
-                  PERAGAKAN GORESAN
+                <button type="button" class="btn btn--outline aksara-btn-next" id="aksaraBtnNext">
+                  Aksara berikutnya
                 </button>
               </div>
             </div>
 
+            <!-- Kanvas Gambar Lontar (Permukaan Terang 300x300 Logis) -->
             <div class="aksara-canvas-wrap" id="aksaraCanvasWrap">
-              <!-- Guide lines -->
-              <div class="aksara-canvas-guides" aria-hidden="true">
-                <div class="aksara-guide-line aksara-guide-line--h"></div>
-                <div class="aksara-guide-line aksara-guide-line--v"></div>
-                <div class="aksara-guide-circle"></div>
-              </div>
+              <canvas id="aksaraCanvas" class="aksara-canvas" aria-label="Kanvas penelusuran aksara"></canvas>
 
-              <!-- Canvas (300x300 internal, scaled for HiDPI) -->
-              <canvas id="aksaraCanvas" class="aksara-canvas" touch-action="none"
-                aria-label="Kanvas penelusuran aksara"></canvas>
-
-              <!-- Start point dot -->
+              <!-- Penanda Titik Awal Tarikan -->
               <div class="aksara-start-dot" id="aksaraStartDot" aria-hidden="true">
-                <span class="aksara-start-dot__pulse"></span>
                 <span class="aksara-start-dot__pip"></span>
                 <span class="aksara-start-dot__tag">Mulai</span>
               </div>
+            </div>
 
-              <div class="aksara-canvas-pill" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9" />
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                </svg>
-                <span>TARIK GORESAN MENGIKUTI POLA EMAS DI ATAS</span>
+            <p class="aksara-canvas-note">Tarik goresan mengikuti garis putus-putus</p>
+
+            <!-- Baris Alat Kontrol -->
+            <div class="aksara-controls">
+              <div class="aksara-controls__secondary">
+                <button type="button" class="btn btn--outline aksara-btn aksara-btn--secondary" id="aksaraDemoBtn"
+                  aria-label="Peragakan goresan pola aksara">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <polygon points="6 4 18 12 6 20 6 4" />
+                  </svg>
+                  Peragakan goresan
+                </button>
+
+                <button type="button" class="btn btn--outline aksara-btn aksara-btn--secondary" id="aksaraBtnGuide">
+                  Garis panduan
+                </button>
+
+                <button type="button" class="btn btn--outline aksara-btn aksara-btn--secondary" id="aksaraBtnReset">
+                  Hapus dan ulangi
+                </button>
+              </div>
+
+              <div class="aksara-controls__primary">
+                <button type="button" class="btn btn--fill aksara-btn aksara-btn--primary" id="aksaraBtnScore">
+                  Lihat penilaian
+                </button>
               </div>
             </div>
 
-            <!-- Controls -->
-            <div class="aksara-controls">
-              <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnReset">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                  <path d="M3 3v5h5" />
-                </svg>
-                Hapus &amp; Ulangi
-              </button>
+            <!-- Petunjuk Kaligrafi -->
+            <p class="aksara-hint-text">
+              Mulai dari titik merah dan ikuti garis putus-putus. Tiap aksara terdiri dari beberapa bagian, jadi kamu boleh mengangkat jari di antaranya.
+            </p>
 
-              <button type="button" class="btn btn--outline aksara-btn" id="aksaraBtnGuide">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                Pola Panduan
-              </button>
-
-              <button type="button" class="btn btn--fill aksara-btn aksara-btn--primary" id="aksaraBtnScore">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 11 12 14 22 4" />
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                </svg>
-                Lihat Penilaian Presisi
-              </button>
-
-              <button type="button" class="btn btn--gold aksara-btn" id="aksaraBtnNext">
-                Aksara Berikutnya
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Result panel -->
+            <!-- Panel Lembar Nilai -->
             <div class="aksara-result-panel" id="aksaraResultPanel" hidden>
               <div class="aksara-result-head">
                 <div class="aksara-result-score-block">
-                  <span class="aksara-result-score" id="aksaraResultScore">--%</span>
-                  <span class="aksara-result-kicker">Skor Presisi Goresan</span>
+                  <span class="aksara-result-score" id="aksaraResultScore">0%</span>
+                  <span class="aksara-result-kicker">Nilai ketepatan</span>
                 </div>
                 <div class="aksara-result-feedback">
                   <div class="aksara-result-label" id="aksaraResultLabel">Menghitung...</div>
                   <p class="aksara-result-desc" id="aksaraResultDesc">Analisis presisi tarikan garis aksara Bali.</p>
                 </div>
                 <button type="button" class="aksara-result-close" id="aksaraResultClose"
-                  aria-label="Tutup hasil penilaian">✕</button>
+                  aria-label="Tutup hasil penilaian">Tutup</button>
               </div>
 
-              <!-- Breakdown -->
+              <!-- Rincian Metrik -->
               <div class="aksara-result-metrics">
                 <div class="aksara-metric-card">
                   <div class="aksara-metric-header">
-                    <span class="aksara-metric-name">Presisi Kelurusan Garis</span>
+                    <span class="aksara-metric-name">Kedekatan dengan garis</span>
                     <strong class="aksara-metric-val" id="aksaraPrecisionVal">0%</strong>
                   </div>
                   <div class="aksara-metric-bar">
-                    <div class="aksara-metric-fill" id="aksaraPrecisionBar" style="width: 0%;"></div>
+                    <div class="aksara-metric-fill" id="aksaraPrecisionBar"></div>
                   </div>
                 </div>
 
                 <div class="aksara-metric-card">
                   <div class="aksara-metric-header">
-                    <span class="aksara-metric-name">Kelengkapan Kontur (Coverage)</span>
+                    <span class="aksara-metric-name">Kelengkapan bentuk</span>
                     <strong class="aksara-metric-val" id="aksaraCoverageVal">0%</strong>
                   </div>
                   <div class="aksara-metric-bar">
-                    <div class="aksara-metric-fill" id="aksaraCoverageBar" style="width: 0%;"></div>
+                    <div class="aksara-metric-fill" id="aksaraCoverageBar"></div>
                   </div>
                 </div>
               </div>
 
+              <p class="aksara-legend-text">
+                Hijau: dekat dengan garis. Kuning: agak jauh. Merah: jauh dari garis.
+              </p>
+
+              <!-- Pesan Status Akhir -->
               <div class="aksara-result-status" id="aksaraResultStatus"></div>
             </div>
           </div>
@@ -308,7 +240,7 @@
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer Bersama -->
   <footer class="site-footer" id="kontak">
     <div class="container">
       <div class="footer-top">

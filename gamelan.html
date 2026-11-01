@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gema Gamelan Bali: Orkestra Sakral dan Dinamika Tradisi | Nusa Bali Heritage</title>
+  <title>Gamelan Bali: mainkan dan pelajari | Nusa Bali Heritage</title>
   <meta name="description"
-    content="Arsip kuratorial dan studio interaktif Gamelan Bali: mainkan bilah perunggu Gangsa Pemade laras Pelog Selisir, eksplorasi fenomena akustik Ombak Pengumbang-Pengisep, dan pelajari seni interlocking Kotekan.">
+    content="Mainkan bilah gangsa, coba teknik interlocking kotekan, dengarkan efek akustik ombak, dan pelajari sejarah serta filosofi gamelan Bali.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
       <nav class="nav-links" aria-label="Navigasi utama">
         <a href="index.html#beranda">Beranda</a>
         <a href="gamelan.html" aria-current="page">Gamelan</a>
-        <a href="peta.html">Peta</a>
+        <a href="tari.html">Tari</a>
         <a href="aksara.html">Aksara</a>
         <a href="#kontak">Kontak</a>
       </nav>
@@ -52,11 +52,11 @@
       </div>
     </div>
 
-    <!-- mobile nav panel -->
+    <!-- Navigasi mobile -->
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigasi mobile" hidden>
       <a href="index.html#beranda">Beranda</a>
       <a href="gamelan.html" aria-current="page">Gamelan</a>
-      <a href="peta.html">Peta</a>
+      <a href="tari.html">Tari</a>
       <a href="aksara.html">Aksara</a>
       <a href="#kontak">Kontak</a>
     </nav>
@@ -64,268 +64,181 @@
 
   <main>
 
-    <!-- Hero -->
+    <!-- 1. Hero -->
     <section class="gamelan-hero" id="hero">
       <div class="gamelan-hero__bg media-frame" aria-hidden="true">
-        <img src="assets/images/gamelan/gong-kebyar-purwa-rancak.jpg" alt="Ansambel Gong Kebyar Purwa Rancak"
+        <img src="assets/images/gamelan/gong-kebyar-purwa-rancak.jpg" alt="Ansambel gamelan Gong Kebyar"
           onerror="this.style.display='none'">
       </div>
+      <div class="gamelan-hero__overlay" aria-hidden="true"></div>
 
       <div class="container">
         <div class="gamelan-hero__content">
-          <p class="eyebrow-gamelan">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"
-              aria-hidden="true">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            Orkestra Sakral dan Harmoni Suara Dewata
-          </p>
-          <h1 class="gamelan-hero__title">
-            Gema Gamelan Bali
-            <span class="accent-italic">Harmoni Nada Rwa Bhineda</span>
-          </h1>
+          <span class="hero-kicker">Ansambel musik tradisional Bali</span>
+          <h1 class="gamelan-hero__title">Gamelan Bali</h1>
           <p class="gamelan-hero__desc">
-            Gamelan Bali menghadirkan ansambel musik tradisi tempat puluhan penabuh menyatukan rasa dan ketukan. Melalui getaran berpasangan <em>Pengumbang-Pengisep</em> yang melahirkan <strong>Ombak</strong>, serta jalinan rapat <strong>Kotekan</strong> yang presisi, dengung perunggu krawang mengiringi upacara dan seni pertunjukan Bali.
+            Gamelan adalah musik ansambel yang dimainkan bersama-sama, biasanya oleh puluhan penabuh. Di halaman ini kamu bisa memainkan bilah gangsa, mencoba kotekan, dan mendengar sendiri efek ombak.
           </p>
 
           <div class="gamelan-hero__actions">
-            <a href="#bale-tabuh" class="btn btn--gold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"
-                aria-hidden="true">
-                <circle cx="12" cy="12" r="10" />
-                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
-              </svg>
-              <span>Mainkan Bilah Gangsa (Virtual Tabuh)</span>
-            </a>
-            <a href="#studio-kotekan" class="btn btn--outline">
-              <span>Eksplorasi Jalinan Kotekan</span>
-            </a>
+            <a href="#bale-tabuh" class="btn btn--fill">Mainkan gangsa</a>
+            <a href="#studio-kotekan" class="hero-link">Coba kotekan</a>
           </div>
 
-          <div class="stats-bar--gamelan">
-            <div class="stat-pill">
-              <svg class="stat-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"
-                aria-hidden="true">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
-              <div>
-                <div class="stat-pill__value">5 Nada Sakral</div>
-                <div class="stat-pill__label">Pelog Selisir Pentatonik</div>
-              </div>
+          <div class="hero-facts" role="list">
+            <div class="hero-fact-item" role="listitem">
+              <span class="stat-pill__value stat-card__number">5</span>
+              <span class="hero-fact-label">nada pelog selisir</span>
             </div>
-            <div class="stat-pill">
-              <svg class="stat-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"
-                aria-hidden="true">
-                <path d="M2 12h20M6 8v8M10 5v14M14 9v6M18 6v12" stroke-linecap="round" />
-              </svg>
-              <div>
-                <div class="stat-pill__value">6–8 Hz Ombak</div>
-                <div class="stat-pill__label">Ombak Akustik Paired Tuning</div>
-              </div>
+            <div class="hero-fact-item" role="listitem">
+              <span class="stat-pill__value stat-card__number">6 sampai 8 Hz</span>
+              <span class="hero-fact-label">selisih nada ombak</span>
             </div>
-            <div class="stat-pill">
-              <svg class="stat-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"
-                aria-hidden="true">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              <div>
-                <div class="stat-pill__value">30+ Penabuh</div>
-                <div class="stat-pill__label">Satu Nafas Komunal Sekaha</div>
-              </div>
+            <div class="hero-fact-item" role="listitem">
+              <span class="stat-pill__value stat-card__number">30+</span>
+              <span class="hero-fact-label">penabuh dalam satu sekaha</span>
             </div>
-            <div class="stat-pill">
-              <svg class="stat-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"
-                aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <div>
-                <div class="stat-pill__value">3 Babak Era</div>
-                <div class="stat-pill__label">Tua, Madya &amp; Kebyar Baru</div>
-              </div>
+            <div class="hero-fact-item" role="listitem">
+              <span class="stat-pill__value stat-card__number">3</span>
+              <span class="hero-fact-label">zaman perkembangan</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Bale tabuh -->
+    <!-- 2. Bale tabuh -->
     <section class="bale-tabuh-section" id="bale-tabuh">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <polygon points="12 2 22 12 12 22 2 12 12 2" />
-            </svg>
-            Bale Gong Interaktif • Sintesis Fisik Logam Perunggu
-          </p>
-          <h2 class="section-heading">
-            <span>Sentuhan Jemari,</span>
-            <span class="accent-italic"><i>Dengung Dewata</i></span>
-          </h2>
-          <p class="section-desc">
-            Mainkan langsung bilah perunggu Gangsa Pemade laras Pelog Selisir 2 oktaf. Suara dihasilkan secara murni
-            melalui pemodelan inharmonis perunggu krawang dan resonansi bumbung bambu via Web Audio API.
-          </p>
+        <div class="bale-header-grid">
+          <div>
+            <span class="section-kicker">Bale tabuh</span>
+            <h2 class="section-heading">Mainkan gangsa pemade</h2>
+          </div>
+          <div>
+            <p class="section-desc">
+              Bilah-bilah di bawah memakai laras pelog selisir dua oktaf. Klik bilahnya, atau tekan angka 1 sampai 0 di keyboard. Suaranya dibuat langsung di browser.
+            </p>
+          </div>
         </div>
 
         <div class="tabuh-console">
           <!-- Toolbar Pilihan Instrumen & Akustik -->
           <div class="tabuh-toolbar">
-            <div class="inst-tabs" role="tablist" aria-label="Pilihan Instrumen Gamelan">
+            <div class="inst-tabs" role="tablist" aria-label="Pilihan instrumen gamelan">
               <button type="button" class="inst-tab-btn is-active" role="tab" id="tabGangsa" aria-selected="true"
                 aria-controls="panelGangsa" data-target-panel="panelGangsa">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                  <rect x="3" y="6" width="18" height="12" rx="2" />
-                  <line x1="7" y1="6" x2="7" y2="18" />
-                  <line x1="11" y1="6" x2="11" y2="18" />
-                  <line x1="15" y1="6" x2="15" y2="18" />
-                </svg>
-                Gangsa Pemade (10 Bilah)
+                Gangsa pemade (10 bilah)
               </button>
               <button type="button" class="inst-tab-btn" role="tab" id="tabReyong" aria-selected="false"
                 aria-controls="panelReyong" data-target-panel="panelReyong">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="12" cy="12" r="3" />
-                  <circle cx="18" cy="12" r="3" />
-                </svg>
-                Reyong (12 Pencon)
+                Reyong (12 pencon)
               </button>
               <button type="button" class="inst-tab-btn" role="tab" id="tabRhythm" aria-selected="false"
                 aria-controls="panelRhythm" data-target-panel="panelRhythm">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                  <path d="M2 12c0 5 9 8 9 8s9-3 9-8V6c0-2-9-4-9-4S2 4 2 6v6z" />
-                </svg>
-                Kendang &amp; Ceng-ceng
+                Kendang dan ceng-ceng
               </button>
               <button type="button" class="inst-tab-btn" role="tab" id="tabGong" aria-selected="false"
                 aria-controls="panelGong" data-target-panel="panelGong">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                  <circle cx="12" cy="12" r="9" />
-                  <circle cx="12" cy="12" r="2" fill="currentColor" />
-                </svg>
-                Gong Ageng &amp; Kempur
+                Gong ageng dan kempur
               </button>
             </div>
 
             <div class="tabuh-controls">
-              <!-- Mode Ombak Toggle -->
+              <!-- Saklar Ombak -->
               <button type="button" class="toggle-pill-btn is-active" id="ombakToggle" aria-pressed="true"
-                title="Aktifkan simulasi pasangan Pengumbang & Pengisep untuk menghasilkan efek vibrasi ombak">
-                <span>Mode Ombak (Paired Detuning)</span>
-                <span class="status-dot">ON</span>
+                title="Simulasi pasangan pengumbang dan pengisep">
+                <span>Ombak</span>
+                <span class="status-dot">Nyala</span>
               </button>
 
-              <!-- Matedet Toggle -->
+              <!-- Saklar Matedet -->
               <button type="button" class="toggle-pill-btn" id="matedetToggle" aria-pressed="false"
-                title="Teknik meredam getaran bilah sesaat sebelum memukul bilah berikutnya">
-                <span>Teknik Matedet (Redam Bilah)</span>
-                <span class="status-dot">OFF</span>
+                title="Teknik meredam bilah">
+                <span>Matedet (redam bilah)</span>
+                <span class="status-dot">Mati</span>
               </button>
 
-              <!-- Master Volume -->
+              <!-- Volume Slider -->
               <div class="volume-control">
                 <label for="gamelanVolume">Volume:</label>
                 <input type="range" id="gamelanVolume" min="0" max="1" step="0.05" value="0.85"
-                  aria-label="Volume Instrumen">
+                  aria-label="Volume instrumen">
               </div>
             </div>
           </div>
 
-          <!-- Status nada -->
+          <!-- Status Nada Aktif -->
           <div class="tabuh-status-bar">
             <div class="note-display-pill" id="currentNoteDisplay">
               <span class="note-pill__aksara">ᬤᬶᬂ</span>
               <span class="note-pill__name">Ding (1)</span>
-              <span class="note-pill__cosmic">• Siap Ditabuh</span>
+              <span class="note-pill__cosmic">Dewa Iswara, arah Timur</span>
             </div>
             <div class="tabuh-hint-key">
-              Gunakan tuts angka <code>1</code> – <code>0</code> atau klik langsung bilah perunggu
+              Tekan tuts angka <code>1</code> sampai <code>0</code> atau klik bilah perunggu
             </div>
           </div>
 
-          <!-- Gangsa Pemade -->
+          <!-- Panel Gangsa Pemade -->
           <div class="inst-panel" id="panelGangsa" role="tabpanel" aria-labelledby="tabGangsa">
             <div class="rancak-frame">
-              <span class="rancak-decor">Pelawah Ukir Jepun Prada • Laras Pelog Selisir 2 Oktaf</span>
-              <div class="gangsa-keys-container" id="gangsaKeysContainer" aria-label="Bilah Gangsa Pemade">
-                <!-- Diisi secara dinamis oleh gamelan.js -->
+              <div class="gangsa-keys-container" id="gangsaKeysContainer" aria-label="Bilah gangsa pemade">
+                <!-- Diisi oleh gamelan.js -->
               </div>
             </div>
+            <p class="inst-caption">Bilah perunggu di atas bumbung bambu resonator.</p>
           </div>
 
-          <!-- Reyong -->
+          <!-- Panel Reyong -->
           <div class="inst-panel" id="panelReyong" role="tabpanel" aria-labelledby="tabReyong" hidden>
             <div class="reyong-frame">
-              <span class="rancak-decor">Pencon Perunggu Krawang • 4 Penabuh Berderet (Tuts Z s/d L)</span>
-              <div class="reyong-pots-container" id="reyongKeysContainer" aria-label="Pot Reyong">
-                <!-- Diisi secara dinamis oleh gamelan.js -->
+              <div class="reyong-pots-container" id="reyongKeysContainer" aria-label="Pot reyong">
+                <!-- Diisi oleh gamelan.js -->
               </div>
             </div>
+            <p class="inst-caption">Dua belas pencon perunggu untuk empat penabuh (tuts Z sampai L).</p>
           </div>
 
-          <!-- Kendang & Ceng-ceng -->
+          <!-- Panel Kendang & Ceng-ceng -->
           <div class="inst-panel" id="panelRhythm" role="tabpanel" aria-labelledby="tabRhythm" hidden>
             <div class="rhythm-grid">
               <button type="button" class="rhythm-pad" id="padKendangDug">
-                <svg class="rhythm-pad__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <ellipse cx="12" cy="7" rx="9" ry="4" />
-                  <path d="M3 7v10c0 2.2 4 4 9 4s9-1.8 9-4V7" />
-                </svg>
-                <div class="rhythm-pad__title">Kendang: Dug / Pung</div>
-                <div class="rhythm-pad__sub">Tepukan Kulit Rendah (Bass Membran)</div>
+                <div class="rhythm-pad__title">Kendang: dug / pung</div>
+                <div class="rhythm-pad__sub">Pukulan rendah</div>
               </button>
 
               <button type="button" class="rhythm-pad" id="padKendangPlak">
-                <svg class="rhythm-pad__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <ellipse cx="12" cy="7" rx="9" ry="4" />
-                  <path d="M3 7v10c0 2.2 4 4 9 4s9-1.8 9-4V7" />
-                  <line x1="8" y1="5" x2="16" y2="9" stroke-width="2.5" />
-                </svg>
-                <div class="rhythm-pad__title">Kendang: Tak / Plak</div>
-                <div class="rhythm-pad__sub">Tebasan Kering Sisi Rim (Aksen Cepat)</div>
+                <div class="rhythm-pad__title">Kendang: tak / plak</div>
+                <div class="rhythm-pad__sub">Pukulan pinggir</div>
               </button>
 
               <button type="button" class="rhythm-pad" id="padCengCrash">
-                <svg class="rhythm-pad__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 3v18M3 12h18" stroke-dasharray="2 2" />
-                </svg>
-                <div class="rhythm-pad__title">Ceng-ceng: Crash</div>
-                <div class="rhythm-pad__sub">Benturan Simbal Terbuka (Aksen Kebyar)</div>
+                <div class="rhythm-pad__title">Ceng-ceng: dentang terbuka</div>
+                <div class="rhythm-pad__sub">Suara simbal lepas</div>
               </button>
 
               <button type="button" class="rhythm-pad" id="padCengChoke">
-                <svg class="rhythm-pad__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="9" />
-                  <rect x="9" y="9" width="6" height="6" fill="currentColor" />
-                </svg>
-                <div class="rhythm-pad__title">Ceng-ceng: Choke</div>
-                <div class="rhythm-pad__sub">Tepukan Simbal Meredam (Sinkopasi Rapat)</div>
+                <div class="rhythm-pad__title">Ceng-ceng: dentang diredam</div>
+                <div class="rhythm-pad__sub">Suara simbal ditahan</div>
               </button>
             </div>
           </div>
 
-          <!-- Gong Ageng & Kempur -->
+          <!-- Panel Gong Ageng & Kempur -->
           <div class="inst-panel" id="panelGong" role="tabpanel" aria-labelledby="tabGong" hidden>
             <div class="gong-stage">
-              <button type="button" class="gong-ageng-visual" id="padGongAgeng" aria-label="Bunyikan Gong Ageng (Spasi)">
+              <button type="button" class="gong-ageng-visual" id="padGongAgeng" aria-label="Bunyikan gong ageng (Spasi)">
                 <div class="gong-ageng-boss"></div>
               </button>
-              <div style="text-align: center;">
-                <h4 style="font-size: 1.2rem; color: var(--c-gold); margin-bottom: 0.25rem;">Gong Ageng (Nawasanga 54 Hz)</h4>
-                <p style="font-size: 0.85rem; color: var(--c-sand);">Klik gong atau tekan tombol <kbd>Spasi</kbd> untuk menggetarkan dengung sub-bass pembuka siklus gongan</p>
+              <div>
+                <h3 class="gong-info-title">Gong ageng (54 Hz)</h3>
+                <p class="gong-info-desc">Tekan Spasi atau klik untuk membunyikan gong ageng.</p>
               </div>
 
-              <div style="margin-top: 1rem;">
-                <button type="button" class="btn btn--outline" id="padGongKempur">
-                  Bunyikan Gong Kempur (118 Hz)
+              <div>
+                <button type="button" class="btn btn--subtle" id="padGongKempur">
+                  Bunyikan gong kempur (118 Hz)
                 </button>
               </div>
             </div>
@@ -335,150 +248,123 @@
       </div>
     </section>
 
-    <!-- Studio kotekan -->
+    <!-- 3. Studio kotekan -->
     <section class="kotekan-studio-section" id="studio-kotekan">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 14 14"></polyline>
-            </svg>
-            Seni Interlocking Karawitan • Tenunan Dua Penabuh
-          </p>
-          <h2 class="section-heading">
-            <span>Merajut Kotekan,</span>
-            <span class="accent-italic"><i>Satu Jiwa Dua Penabuh</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Seni interlocking</span>
+          <h2 class="section-heading">Kotekan: satu melodi dimainkan berdua</h2>
           <p class="section-desc">
-            Kotekan adalah keajaiban ritmis Bali: bagian <strong>Polos</strong> (ketukan jatuh) dan <strong>Sangsih</strong> (ketukan sela)
-            saling menyusup cepat laksana roda gigi berputar. Kecepatannya melampaui batas anatomis satu orang penabuh,
-            menciptakan ilusi semburan nada yang tak terputus.
+            Kotekan membagi satu melodi jadi dua bagian. Polos memainkan ketukan utama, sangsih mengisi sela-selanya. Digabung, hasilnya terdengar lebih cepat daripada yang bisa dimainkan satu orang.
           </p>
         </div>
 
         <div class="kotekan-wrapper">
-          <div class="kotekan-header-bar">
-            <div class="kotekan-controls-group">
-              <div>
-                <label for="kotekanPatternSelect" style="display:block; font-size:0.75rem; color:var(--c-muted); margin-bottom:0.3rem;">Pola Kotekan:</label>
-                <select id="kotekanPatternSelect" class="kotekan-select">
-                  <option value="norot">Kotekan Norot (Langkah Cepat Bertingkat)</option>
-                  <option value="telu">Kotekan Telu (Tiga Nada Mengalir)</option>
-                  <option value="empat">Kotekan Empat (Sinkopasi Meledak)</option>
-                </select>
-              </div>
+          <div class="kotekan-controls-group">
+            <div class="kotekan-field">
+              <label for="kotekanPatternSelect" class="kotekan-label">Pola kotekan:</label>
+              <select id="kotekanPatternSelect" class="kotekan-select">
+                <option value="norot">Kotekan norot (langkah bertingkat)</option>
+                <option value="telu">Kotekan telu (tiga nada mengalir)</option>
+                <option value="empat">Kotekan empat (aksen berpindah)</option>
+              </select>
+            </div>
 
-              <div>
-                <label for="kotekanRoleSelect" style="display:block; font-size:0.75rem; color:var(--c-muted); margin-bottom:0.3rem;">Peran Interaktif:</label>
-                <select id="kotekanRoleSelect" class="kotekan-select">
-                  <option value="duet">Dengarkan Duet Penuh (Sekaha)</option>
-                  <option value="user_polos">Saya Mainkan Polos (Sistem Mainkan Sangsih)</option>
-                  <option value="user_sangsih">Saya Mainkan Sangsih (Sistem Mainkan Polos)</option>
-                </select>
-              </div>
+            <div class="kotekan-field">
+              <label for="kotekanRoleSelect" class="kotekan-label">Peran:</label>
+              <select id="kotekanRoleSelect" class="kotekan-select">
+                <option value="duet">Dengarkan duet penuh</option>
+                <option value="user_polos">Saya mainkan polos (sistem mainkan sangsih)</option>
+                <option value="user_sangsih">Saya mainkan sangsih (sistem mainkan polos)</option>
+              </select>
+            </div>
 
-              <div>
-                <label for="kotekanTempo" style="display:block; font-size:0.75rem; color:var(--c-muted); margin-bottom:0.3rem;">Tempo (BPM):</label>
-                <div style="display:flex; align-items:center; gap:0.6rem;">
-                  <input type="range" id="kotekanTempo" min="80" max="220" value="140" style="accent-color:var(--c-gold); width:110px;">
-                  <span id="kotekanTempoVal" style="font-family:var(--ff-display); font-size:0.85rem; color:var(--c-gold); min-width:65px;">140 BPM</span>
-                </div>
+            <div class="kotekan-field">
+              <label for="kotekanTempo" class="kotekan-label">Tempo (BPM):</label>
+              <div class="kotekan-tempo-row">
+                <input type="range" id="kotekanTempo" min="80" max="220" value="140" aria-label="Tempo BPM">
+                <span id="kotekanTempoVal" class="kotekan-tempo-val">140 BPM</span>
               </div>
             </div>
 
             <div>
-              <button type="button" class="btn btn--gold" id="playKotekanBtn">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" width="16" height="16" aria-hidden="true">
-                  <polygon points="6 4 20 12 6 20 6 4"/>
-                </svg>
-                <span>Mulai Jalinan Kotekan</span>
+              <button type="button" class="btn btn--fill" id="playKotekanBtn">
+                <span>Mulai kotekan</span>
               </button>
             </div>
           </div>
 
-          <!-- Matriks 16-Langkah Visual Interlocking -->
-          <div class="kotekan-matrix" id="kotekanMatrixGrid" aria-label="Visual Sequencer Matriks Kotekan">
-            <!-- Diisi secara dinamis oleh gamelan.js -->
+          <div class="kotekan-matrix-pane">
+            <div class="kotekan-matrix" id="kotekanMatrixGrid" aria-label="Matriks 16 langkah kotekan">
+              <!-- Diisi oleh gamelan.js -->
+            </div>
+            <p class="kotekan-status-feedback" id="kotekanStatusFeedback">
+              Pilih pola dan tekan tombol Mulai untuk merasakan jalinan ritme antara polos dan sangsih.
+            </p>
           </div>
-
-          <p class="kotekan-status-feedback" id="kotekanStatusFeedback">
-            Pilih pola dan tekan tombol Mulai untuk merasakan jalinan ritme interlocking antara Polos dan Sangsih.
-          </p>
         </div>
       </div>
     </section>
 
-    <!-- Laboratorium ombak -->
+    <!-- 4. Laboratorium ombak -->
     <section class="ombak-lab-section" id="lab-ombak">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            Akustik Fisika Pusaka • Fenomena Beating Rwa Bhineda
-          </p>
-          <h2 class="section-heading">
-            <span>Misteri Ombak,</span>
-            <span class="accent-italic"><i>Napas Hidup Gamelan Bali</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Akustik berpasangan</span>
+          <h2 class="section-heading">Apa itu ombak</h2>
           <p class="section-desc">
-            Berbeda dengan piano barat yang disetel rata (equal temperament), sepasang instrumen gamelan Bali sengaja dibuat
-            berselisih frekuensi tipis (4–8 Hz). Ketika dibunyikan bersamaan, selisih gelombang ini melahirkan getaran akustik
-            yang bergelombang lembut layaknya deru samudra: <strong>Ombak</strong>.
+            Gamelan Bali disetel berpasangan. Dua nada yang sama sengaja dibuat berselisih beberapa hertz, jadi kalau dibunyikan bersamaan terdengar bergelombang seperti ombak. Geser slider untuk mendengarnya.
           </p>
         </div>
 
         <div class="ombak-grid">
           <div class="canvas-frame">
-            <canvas id="ombakWaveCanvas" width="600" height="220" aria-label="Visualisasi Gelombang Superposisi Akustik Ombak"></canvas>
-            <div style="display:flex; justify-content:space-between; margin-top:0.75rem; font-size:0.72rem; color:var(--c-muted);">
-              <span>Gelombang Pengumbang &amp; Pengisep</span>
-              <span id="ombakBeatRateDisplay" style="color:var(--c-gold); font-weight:700;">6.8 Getaran / Detik • Karakter: Dinamis (Gong Kebyar)</span>
+            <canvas id="ombakWaveCanvas" width="600" height="220" aria-label="Visualisasi gelombang ombak"></canvas>
+            <div class="canvas-meta">
+              <span>Gelombang pengumbang dan pengisep</span>
+              <span id="ombakBeatRateDisplay" class="canvas-meta-rate">6.8 getaran per detik (sedang)</span>
             </div>
           </div>
 
           <div class="ombak-controls-card">
             <div class="ombak-param">
               <div class="ombak-param__header">
-                <span class="ombak-param__label">Frekuensi Pusat (Laras Dasar)</span>
+                <span class="ombak-param__label">Frekuensi dasar</span>
                 <span class="ombak-param__val" id="ombakBaseFreqVal">260 Hz</span>
               </div>
               <input type="range" id="ombakBaseFreq" min="200" max="350" value="260" step="1"
-                aria-label="Frekuensi Pusat Laras Dasar">
+                aria-label="Frekuensi dasar">
             </div>
 
             <div class="ombak-param">
               <div class="ombak-param__header">
-                <span class="ombak-param__label">Selisih Frekuensi (Kecepatan Ombak Δf)</span>
+                <span class="ombak-param__label">Selisih frekuensi (kecepatan ombak)</span>
                 <span class="ombak-param__val" id="ombakDeltaFreqVal">Δ 6.8 Hz</span>
               </div>
               <input type="range" id="ombakDeltaFreq" min="0" max="14" value="6.8" step="0.2"
-                aria-label="Selisih Frekuensi Kecepatan Ombak">
+                aria-label="Selisih frekuensi ombak">
             </div>
 
-            <div style="background:rgba(20,19,18,0.7); border:1px solid rgba(236,194,70,0.18); border-radius:6px; padding:0.85rem; margin-top:1.25rem;">
-              <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.4rem;">
-                <span style="color:var(--c-sand);">Pengumbang (Wadon / Rendah):</span>
-                <strong style="color:var(--c-gold);" id="pengumbangHzVal">256.6 Hz</strong>
+            <div class="ombak-table-box">
+              <div class="ombak-table-row">
+                <span>Pengumbang (rendah):</span>
+                <strong id="pengumbangHzVal">256.6 Hz</strong>
               </div>
-              <div style="display:flex; justify-content:space-between; font-size:0.82rem;">
-                <span style="color:var(--c-sand);">Pengisep (Lanang / Tinggi):</span>
-                <strong style="color:#FFAAA3;" id="pengisepHzVal">263.4 Hz</strong>
+              <div class="ombak-table-row">
+                <span>Pengisep (tinggi):</span>
+                <strong id="pengisepHzVal">263.4 Hz</strong>
               </div>
             </div>
 
             <div class="ombak-action-buttons">
               <button type="button" class="ombak-btn" id="btnPlayPengumbang">
-                Pengumbang Saja
+                Pengumbang saja
               </button>
               <button type="button" class="ombak-btn" id="btnPlayPengisep">
-                Pengisep Saja
+                Pengisep saja
               </button>
               <button type="button" class="ombak-btn is-active" id="btnPlayDuetOmbak">
-                Keduanya (Efek Ombak)
+                Keduanya (ombak)
               </button>
             </div>
           </div>
@@ -486,466 +372,379 @@
       </div>
     </section>
 
-    <!-- Autoplayer gending -->
-    <section class="section" id="gending-bali" style="background:#141312; border-bottom:1px solid rgba(236,194,70,0.14);">
+    <!-- 5. Autoplayer gending -->
+    <section class="gending-section" id="gending-bali">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-            </svg>
-            Repertoar Pusaka • Autoplayer Sekaha Virtual
-          </p>
-          <h2 class="section-heading">
-            <span>Gema Gending,</span>
-            <span class="accent-italic"><i>Melintasi Siklus Karawitan</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Repertoar tabuh</span>
+          <h2 class="section-heading">Putar satu gending</h2>
           <p class="section-desc">
-            Dengarkan komposisi tradisional gamelan Bali yang dimainkan secara polifonik oleh mesin sintesis:
-            dari getaran sakral Tabuh Gilak hingga kilatan virtuositas Gong Kebyar.
+            Pilih salah satu gending di bawah untuk mendengar bagaimana instrumen-instrumen gamelan berpadu membentuk komposisi utuh.
           </p>
         </div>
 
-        <div style="max-width:760px; margin:0 auto; background:#191817; border:1px solid rgba(236,194,70,0.25); border-radius:12px; padding:2rem; box-shadow:0 15px 40px rgba(0,0,0,0.5);">
-          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1.25rem; margin-bottom:1.5rem;">
-            <div>
-              <label for="gendingSelect" style="display:block; font-size:0.75rem; color:var(--c-muted); margin-bottom:0.35rem;">Pilihan Repertoar Gending:</label>
-              <select id="gendingSelect" class="kotekan-select" style="min-width:260px;">
-                <option value="gilak">Tabuh Gilak Sakral (8-Ketukan Matriks)</option>
-                <option value="kebyar">Kebyar Kilat &amp; Angsel Meledak</option>
-                <option value="sekar">Sekar Gadung (Lelambatan Suci)</option>
+        <div class="gending-bar">
+          <div class="gending-top-row">
+            <div class="gending-selector-wrap">
+              <label for="gendingSelect">Pilihan gending:</label>
+              <select id="gendingSelect" class="kotekan-select">
+                <option value="gilak">Tabuh gilak (8 ketukan)</option>
+                <option value="kebyar">Gong kebyar</option>
+                <option value="sekar">Sekar gadung</option>
               </select>
             </div>
 
-            <button type="button" class="btn btn--gold" id="playGendingBtn">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" width="16" height="16" aria-hidden="true">
-                <polygon points="6 4 20 12 6 20 6 4"/>
-              </svg>
-              <span>Dengarkan Sekaha Penuh</span>
+            <button type="button" class="btn btn--fill" id="playGendingBtn">
+              <span>Putar gending</span>
             </button>
           </div>
 
-          <div style="margin-bottom:1.25rem;">
-            <h3 id="gendingCurrentTitle" style="font-size:1.35rem; color:var(--c-gold); margin-bottom:0.4rem;">Tabuh Gilak Sakral (8-Ketukan Matriks)</h3>
-            <p id="gendingCurrentDesc" style="font-size:0.88rem; line-height:1.65; color:var(--c-sand);">
-              Gending agung dengan tempo tegas berwibawa yang mengiringi tarian Barong, Baris Gede, dan prosesi suci Ida Bhatara.
+          <div class="gending-info-row">
+            <h3 id="gendingCurrentTitle" class="gending-title">Tabuh gilak (8 ketukan)</h3>
+            <p id="gendingCurrentDesc" class="gending-desc">
+              Gending bertempo tegas yang biasa mengiringi tari barong dan baris gede.
             </p>
           </div>
 
           <!-- Progress Bar Gending -->
-          <div style="background:rgba(236,194,70,0.12); border-radius:999px; height:8px; overflow:hidden; margin-bottom:0.6rem;">
-            <div id="gendingProgressFill" style="background:var(--c-gold); width:0%; height:100%; transition:width 0.1s linear;"></div>
+          <div class="gending-progress-track">
+            <div id="gendingProgressFill" class="gending-progress-fill"></div>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--c-muted);">
-            <span id="gendingTimerText">Ketukan 1 / 32</span>
-            <span>Siklus Gongan Tanpa Akhir (Looping)</span>
+          <div class="gending-progress-meta">
+            <span id="gendingTimerText">Ketukan 1 dari 32</span>
+            <span>Putaran melodi berulang</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Denah sekaha -->
+    <!-- 6. Denah sekaha -->
     <section class="spatial-section" id="denah-sekaha">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="3" y1="9" x2="21" y2="9"></line>
-              <line x1="9" y1="21" x2="9" y2="9"></line>
-            </svg>
-            Tata Letak Panggung • Harmoni Komunal 30 Penabuh
-          </p>
-          <h2 class="section-heading">
-            <span>Anatomi Sekaha,</span>
-            <span class="accent-italic"><i>Posisi Kosmologis Instrumen</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Tata panggung</span>
+          <h2 class="section-heading">Posisi penabuh di panggung</h2>
           <p class="section-desc">
-            Di dalam bale gong pura, posisi setiap penabuh diatur menurut fungsi organologis dan filosofi arah mandala.
-            Klik posisi instrumen pada denah panggung untuk mendengar profil suara dan peran sakralnya.
+            Di panggung atau bale gong, penabuh duduk mengelilingi kendang. Posisi instrumen diatur berdasarkan fungsinya dalam ansambel.
           </p>
         </div>
 
         <div class="spatial-grid">
           <div class="stage-diagram">
-            <div class="stage-altar-label">Kaja • Arah Suci Gunung Agung (Utara / Pusat Suci)</div>
+            <div class="stage-altar-label">Kaja: arah gunung (belakang)</div>
 
             <div class="stage-rows">
-              <!-- Baris Belakang (Instrumen Rendah & Gong) -->
+              <!-- Baris Belakang -->
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="gong">
-                  <span>Gong Ageng &amp; Kempur</span>
+                  <span>Gong ageng dan kempur</span>
                 </button>
                 <button type="button" class="stage-spot" data-role="calung">
-                  <span>Calung &amp; Jegogan</span>
+                  <span>Calung dan jegogan</span>
                 </button>
               </div>
 
-              <!-- Baris Tengah (Pemimpin Melodi & Ritme) -->
+              <!-- Baris Tengah -->
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="reyong">
-                  <span>Reyong 4 Penabuh</span>
+                  <span>Reyong</span>
                 </button>
                 <button type="button" class="stage-spot is-selected" data-role="kendang">
-                  <span>Kendang Cedugan (Pusat)</span>
+                  <span>Kendang (tengah)</span>
                 </button>
                 <button type="button" class="stage-spot" data-role="cengceng">
-                  <span>Ceng-ceng Kopyak</span>
+                  <span>Ceng-ceng kopyak</span>
                 </button>
               </div>
 
-              <!-- Baris Depan (Pemandu Melodi & Kotekan Cepat) -->
+              <!-- Baris Depan -->
               <div class="stage-row">
                 <button type="button" class="stage-spot" data-role="trompong">
-                  <span>Trompong Solois</span>
+                  <span>Trompong</span>
                 </button>
                 <button type="button" class="stage-spot" data-role="ugal">
-                  <span>Ugal (Pemimpin Gangsa)</span>
+                  <span>Ugal</span>
                 </button>
                 <button type="button" class="stage-spot" data-role="pemade">
-                  <span>Gangsa Pemade &amp; Kantil</span>
+                  <span>Gangsa pemade dan kantil</span>
                 </button>
               </div>
             </div>
 
-            <div class="stage-altar-label" style="border-top:1px dashed rgba(236,194,70,0.2); border-bottom:none; padding-top:0.5rem; padding-bottom:0;">
-              Kelod • Arah Samudra (Penonton / Penari)
+            <div class="stage-altar-label stage-altar-label--kelod">
+              Kelod: arah samudra atau penonton (depan)
             </div>
           </div>
 
           <div class="spatial-detail-card" id="spatialDetailCard">
             <div class="spatial-aksara">ᬓᭂᬦ᭄ᬤᬂ</div>
-            <h3 class="spatial-title">Kendang Bali (Lanang &amp; Wadon)</h3>
-            <p class="spatial-kicker">Konduktor Ritmis &amp; Pengendali Dinamika Gending</p>
+            <h3 class="spatial-title">Kendang</h3>
+            <p class="spatial-kicker">Pemimpin tempo dan dinamika tabuh</p>
             <p class="spatial-desc">
-              Kendang adalah "jantung" gamelan Bali. Dua penabuh kendang (Kendang Cedugan atau Gupekan) memimpin seluruh
-              pergantian tempo, aksen angsel, dan dinamika sekaha tanpa bantuan partitur atau konduktor berdiri.
+              Sepasang kendang (lanang dan wadon) memimpin pergantian tempo dan aksen pukulan seluruh kelompok tanpa partitur.
             </p>
-            <button type="button" class="btn btn--gold" id="spatialAuditionBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-              <span>Uji Bunyi Instrumen Ini</span>
-            </button>
+            <div>
+              <button type="button" class="btn btn--fill" id="spatialAuditionBtn">
+                <span>Dengar bunyinya</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Tiga era gamelan -->
+    <!-- Ornamen pemisah kain poleng CSS -->
+    <div class="poleng-divider" aria-hidden="true"></div>
+
+    <!-- 7. Tiga zaman gamelan -->
     <section class="era-section" id="tiga-era">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
-            Kronologi Budaya • Evolusi Akustik Lintas Peradaban
-          </p>
-          <h2 class="section-heading">
-            <span>Tiga Babak Era,</span>
-            <span class="accent-italic"><i>Dari Besi Kuno ke Kebyar Emas</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Sejarah karawitan</span>
+          <h2 class="section-heading">Tiga zaman gamelan</h2>
           <p class="section-desc">
-            Klasifikasi resmi karawitan Bali membagi peradaban gamelan ke dalam tiga zaman besar berdasarkan instrumen,
-            laras nada, dan fungsi upacara sakral.
+            Gamelan di Bali berkembang lewat tiga babak besar, dari instrumen besi untuk upacara kuno hingga gong kebyar yang dinamis.
           </p>
         </div>
 
         <div class="era-chips">
-          <button type="button" class="era-chip is-active" data-era="semua">Semua Pusaka</button>
-          <button type="button" class="era-chip" data-era="tua">Gamelan Tua (Abad VIII – XV)</button>
-          <button type="button" class="era-chip" data-era="madya">Gamelan Madya (Abad XVI – XIX)</button>
-          <button type="button" class="era-chip" data-era="baru">Gamelan Baru (Abad XX – Kini)</button>
+          <button type="button" class="era-chip is-active" data-era="semua">Semua</button>
+          <button type="button" class="era-chip" data-era="tua">Gamelan tua (abad ke-8 sampai ke-15)</button>
+          <button type="button" class="era-chip" data-era="madya">Gamelan madya (abad ke-16 sampai ke-19)</button>
+          <button type="button" class="era-chip" data-era="baru">Gamelan baru (abad ke-20 sampai sekarang)</button>
         </div>
 
         <div class="era-cards-grid">
           <article class="era-card" data-era="tua">
             <div class="era-card__media">
-              <img src="assets/images/gamelan/gangsa-pemade.jpg" alt="Bilah Gamelan Sakral" loading="lazy">
-              <span class="era-card__badge">Era Tua • Abad X</span>
+              <img src="assets/images/gamelan/gangsa-pemade.jpg" alt="Bilah gamelan selonding" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Gamelan Selonding</h3>
-              <p class="era-card__period">Bilah Besi Tempa Kuno • Desa Tenganan Pegringsingan</p>
+              <h3 class="era-card__title">Gamelan selonding</h3>
+              <p class="era-card__period">Bilah besi tempa di Desa Tenganan Pegringsingan</p>
               <p class="era-card__desc">
-                Ansambel paling purba dan suci di Bali. Terbuat dari bilah besi berat tanpa bumbung bambu peredam,
-                menghasilkan getaran pekat bernuansa magis pengiring upacara Perang Pandan.
+                Ansambel kuno di Bali yang memakai bilah besi tanpa bumbung bambu peredam, dipakai pada upacara di desa adat Tenganan.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">Bahan Besi Tempa</span>
-                <span class="era-card__tag">7-Nada Kuno</span>
-                <span class="era-card__tag">Dewa Yadnya Sakral</span>
-              </div>
+              <p class="era-card__features">Bahan besi tempa, 7 nada kuno, upacara Dewa Yadnya</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Abad ke-10</span>
             </div>
           </article>
 
           <article class="era-card" data-era="madya">
             <div class="era-card__media">
-              <img src="assets/images/gamelan/reyong-pencon.jpg" alt="Reyong dan Pencon Semar Pagulingan" loading="lazy">
-              <span class="era-card__badge">Era Madya • Abad XVII</span>
+              <img src="assets/images/gamelan/reyong-pencon.jpg" alt="Reyong dan pencon Semar Pagulingan" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Semar Pagulingan</h3>
-              <p class="era-card__period">Alunan Asmara Puri • Laras 7-Nada Pelog Indah</p>
+              <h3 class="era-card__title">Semar pagulingan</h3>
+              <p class="era-card__period">Alunan istana raja dengan laras pelog 7 nada</p>
               <p class="era-card__desc">
-                Dahulu dimainkan di peraduan istana raja untuk mengiringi tidur dan ketenangan sang penguasa.
-                Karakter suaranya sangat manis, lembut, dan kaya ornamen hiasan bunga nada yang syahdu.
+                Dahulu dimainkan di lingkungan puri untuk mengiringi suasana malam istana dengan alunan nada yang lembut.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">Perunggu Krawang</span>
-                <span class="era-card__tag">Trompong Manis</span>
-                <span class="era-card__tag">Seni Keraton Gelgel</span>
-              </div>
+              <p class="era-card__features">Perunggu krawang, trompong manis, tradisi puri Gelgel</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Abad ke-17</span>
             </div>
           </article>
 
           <article class="era-card" data-era="madya">
             <div class="era-card__media">
-              <img src="assets/images/galeri/anak-gamelan.jpg" alt="Penabuh Gamelan Gender Wayang" loading="lazy">
-              <span class="era-card__badge">Era Madya • Abad XVI</span>
+              <img src="assets/images/galeri/anak-gamelan.jpg" alt="Penabuh gamelan gender wayang" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Gender Wayang</h3>
-              <p class="era-card__period">Laras Slendro Sakral • Pengiring Wayang Kulit &amp; Metatah</p>
+              <h3 class="era-card__title">Gender wayang</h3>
+              <p class="era-card__period">Laras slendro untuk wayang kulit dan potong gigi</p>
               <p class="era-card__desc">
-                Kuartet gender 10 bilah beroktaf ganda dengan teknik peredaman matedet paling rumit di dunia:
-                kedua tangan memukul sekaligus meredam bilah dalam waktu bersamaan tanpa sedetik pun henti.
+                Kuartet gender 10 bilah yang menuntut kedua tangan memukul sekaligus meredam bilah tanpa henti.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">Laras Slendro</span>
-                <span class="era-card__tag">Teknik Matedet Ekstrem</span>
-                <span class="era-card__tag">Manusa Yadnya</span>
-              </div>
+              <p class="era-card__features">Laras slendro, teknik matedet dua tangan, upacara Manusa Yadnya</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Abad ke-16</span>
             </div>
           </article>
 
           <article class="era-card" data-era="baru">
             <div class="era-card__media">
-              <img src="assets/images/gamelan/gong-kebyar-purwa-rancak.jpg" alt="Ansambel Gong Kebyar Purwa Rancak" loading="lazy">
-              <span class="era-card__badge">Era Baru • 1915</span>
+              <img src="assets/images/gamelan/gong-kebyar-purwa-rancak.jpg" alt="Ansambel Gong Kebyar" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Gamelan Gong Kebyar</h3>
-              <p class="era-card__period">Revolusi Estetika Buleleng • Ledakan Dinamika &amp; Angsel</p>
+              <h3 class="era-card__title">Gamelan gong kebyar</h3>
+              <p class="era-card__period">Lahir di Buleleng sekitar tahun 1915</p>
               <p class="era-card__desc">
-                Lahir di Buleleng sekitar tahun 1915, Gong Kebyar merevolusi karawitan Bali dengan kecepatan kilat,
-                perubahan tempo mendadak, dan ledakan aksen bersamaan yang menggambarkan bara semangat modernitas.
+                Gong kebyar membawa gaya baru ke panggung Bali lewat tempo cepat, aksen serentak, dan dinamika yang lincah.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">Pelog Selisir 5-Nada</span>
-                <span class="era-card__tag">Kotekan Norot</span>
-                <span class="era-card__tag">Orkestra Paling Populer</span>
-              </div>
+              <p class="era-card__features">Pelog selisir 5 nada, kotekan norot, ansambel paling umum</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Tahun 1915</span>
             </div>
           </article>
 
           <article class="era-card" data-era="baru">
             <div class="era-card__media">
-              <img src="assets/images/gamelan/kendang-sepasang.jpg" alt="Kendang dan Ceng-ceng Beleganjur" loading="lazy">
-              <span class="era-card__badge">Era Baru • Dinamika Berjalan</span>
+              <img src="assets/images/gamelan/kendang-sepasang.jpg" alt="Kendang dan ceng-ceng beleganjur" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Gamelan Beleganjur</h3>
-              <p class="era-card__period">Orkestra Prosesi Tempur • Pengusir Roh Bhuta Kala</p>
+              <h3 class="era-card__title">Gamelan beleganjur</h3>
+              <p class="era-card__period">Ansambel prosesi jalan kaki</p>
               <p class="era-card__desc">
-                Ansambel berjalan tanpa resonator berat yang didominasi oleh dentuman kendang cedugan, derap ceng-ceng kopyak,
-                dan gong beruntun untuk mengobarkan nyali kesatria dan mengusir roh jahat saat Tawur Agung Kesanga.
+                Ansambel berjalan tanpa resonator berat yang dipimpin kendang cedugan dan ceng-ceng kopyak saat pawai dan upacara.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">Perkusi Portabel</span>
-                <span class="era-card__tag">Dinamika Menggelegar</span>
-                <span class="era-card__tag">Pawai Ogoh-ogoh</span>
-              </div>
+              <p class="era-card__features">Perkusi portabel, tempo cepat, pengiring pawai</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Abad ke-20</span>
             </div>
           </article>
 
           <article class="era-card" data-era="madya">
             <div class="era-card__media">
-              <img src="assets/images/gamelan/gangsa-pemade.jpg" alt="Gamelan Gong Gede" loading="lazy">
-              <span class="era-card__badge">Era Madya • Abad XVI</span>
+              <img src="assets/images/gamelan/gangsa-pemade.jpg" alt="Gamelan gong gede" loading="lazy">
             </div>
             <div class="era-card__content">
-              <h3 class="era-card__title">Gamelan Gong Gede</h3>
-              <p class="era-card__period">Orkestra Agung Upacara Pura • Lambang Wibawa Kerajaan</p>
+              <h3 class="era-card__title">Gamelan gong gede</h3>
+              <p class="era-card__period">Ansambel besar upacara pura</p>
               <p class="era-card__desc">
-                Ansambel masif yang dimainkan oleh 40–50 penabuh dengan trompong ganda dan tempo lambat khidmat.
-                Khusus dipersembahkan pada upacara piodalan pura besar seperti Besakih dan Batur.
+                Ansambel besar yang dimainkan oleh 40 sampai 50 penabuh dengan tempo lambat saat piodalan pura besar.
               </p>
-              <div class="era-card__features">
-                <span class="era-card__tag">50 Penabuh</span>
-                <span class="era-card__tag">Tempo Lelambatan</span>
-                <span class="era-card__tag">Pura Sad Kahyangan</span>
-              </div>
+              <p class="era-card__features">40 sampai 50 penabuh, tempo lelambatan, pura Sad Kahyangan</p>
+            </div>
+            <div class="era-card__badge-col">
+              <span>Abad ke-16</span>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Filosofi -->
-    <section class="section" id="filosofi-gamelan" style="background:#141312; border-bottom:1px solid rgba(236,194,70,0.14);">
+    <!-- 8. Filosofi -->
+    <section class="filosofi-section" id="filosofi-gamelan">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-            Kearifan Leluhur • Spiritualitas Penabuh
-          </p>
-          <h2 class="section-heading">
-            <span>Alkimia Krawang &amp;</span>
-            <span class="accent-italic"><i>Taksu Megambel</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Nilai tradisi</span>
+          <h2 class="section-heading">Gamelan sebagai pusaka</h2>
           <p class="section-desc">
-            Bagi masyarakat Bali, instrumen gamelan dipandang sebagai pusaka berharga yang disucikan melalui upacara Pasupati agar memiliki taksu (daya seni yang menyentuh jiwa).
+            Masyarakat Bali merawat gamelan sebagai pusaka desa. Setiap perangkat disucikan dan dimainkan sebagai sarana persembahan bersama.
           </p>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem;">
-          <div style="background:#191817; border:1px solid rgba(236,194,70,0.22); border-radius:10px; padding:2rem;">
-            <div style="font-family:var(--ff-display); font-size:1.2rem; color:var(--c-gold); margin-bottom:0.75rem;">
-              Pande Gamelan &amp; Formula Krawang
-            </div>
-            <p style="font-size:0.9rem; line-height:1.7; color:var(--c-sand);">
-              Para empu gamelan dari klan Pande menempa logam <em>Krawang</em> dengan formula rahasia: 10 bagian tembaga murni
-              dicampur 3 bagian timah putih berkualitas tinggi. Proses peleburan diiringi puja mantra kepada Dewa Brahma
-              untuk memastikan perunggu memiliki elastisitas akustik terbaik dan dengung yang tak lekang zaman.
+        <div class="filosofi-columns">
+          <div class="filosofi-col">
+            <h3 class="filosofi-col__title">Empu gamelan dan bahan krawang</h3>
+            <p class="filosofi-col__desc">
+              Pande gamelan menempa logam krawang dari campuran 10 bagian tembaga dan 3 bagian timah putih. Bahan ini menghasilkan elastisitas logam dan bunyi dentang yang tahan lama.
             </p>
           </div>
 
-          <div style="background:#191817; border:1px solid rgba(236,194,70,0.22); border-radius:10px; padding:2rem;">
-            <div style="font-family:var(--ff-display); font-size:1.2rem; color:var(--c-gold); margin-bottom:0.75rem;">
-              Panca Nada Dewata Nawasanga
-            </div>
-            <p style="font-size:0.9rem; line-height:1.7; color:var(--c-sand);">
-              Kelima nada laras Pelog Selisir merepresentasikan arah mata angin tradisi Dewata Nawasanga:
-              <strong>Ding</strong> (Timur, Dewa Iswara), <strong>Dong</strong> (Tenggara, Maheswara),
-              <strong>Deng</strong> (Selatan, Brahma), <strong>Dung</strong> (Utara, Wisnu), dan
-              <strong>Dang</strong> (Pusat, Siwa). Menabuh gamelan hakikatnya adalah mengharmonisasikan energi alam semesta.
+          <div class="filosofi-col">
+            <h3 class="filosofi-col__title">Lima nada dan arah mata angin</h3>
+            <p class="filosofi-col__desc">
+              Kelima nada laras pelog selisir dihubungkan dengan arah mata angin tradisi sembilan penjuru Nawasanga: Ding di timur, Dong di tenggara, Deng di selatan, Dung di utara, dan Dang di pusat.
             </p>
           </div>
 
-          <div style="background:#191817; border:1px solid rgba(236,194,70,0.22); border-radius:10px; padding:2rem;">
-            <div style="font-family:var(--ff-display); font-size:1.2rem; color:var(--c-gold); margin-bottom:0.75rem;">
-              Etika Ngayah &amp; Ngerunguang Timpal
-            </div>
-            <p style="font-size:0.9rem; line-height:1.7; color:var(--c-sand);">
-              Prinsip utama sekaha adalah <em>ngerunguang timpal</em> (mendengarkan dan mengayomi kawan bermain).
-              Penabuh pantang menonjolkan diri sendiri di atas keutuhan kelompok. Permainan gamelan di pura adalah
-              bentuk <em>ngayah</em>: pelayanan suci tulus ikhlas demi keindahan persembahan kepada Sang Hyang Widhi Wasa.
+          <div class="filosofi-col">
+            <h3 class="filosofi-col__title">Etika ngayah dan saling mendengarkan</h3>
+            <p class="filosofi-col__desc">
+              Prinsip penting sekaha adalah saling mendengarkan kawan bermain. Penabuh bermain bukan untuk menonjolkan diri sendiri, melainkan sebagai bentuk pelayanan suci demi keutuhan lagu.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Glosarium -->
+    <!-- 9. Glosarium -->
     <section class="glosarium-section" id="glosarium">
       <div class="container">
-        <div class="section-head section-head--center">
-          <p class="eyebrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-            Kamus Istilah Karawitan • Glosarium Penabuh
-          </p>
-          <h2 class="section-heading">
-            <span>Kosakata Megambel,</span>
-            <span class="accent-italic"><i>Kamus Istilah Karawitan</i></span>
-          </h2>
+        <div class="section-head--split">
+          <span class="section-kicker">Kamus istilah</span>
+          <h2 class="section-heading">Istilah karawitan</h2>
           <p class="section-desc">
-            Pahami istilah-istilah otentik yang digunakan oleh para undagi dan penabuh gamelan Bali dalam latihan dan pertunjukan.
+            Daftar istilah yang sering dipakai penabuh saat latihan dan pementasan gamelan.
           </p>
         </div>
 
         <div class="glosarium-search-wrap">
-          <svg class="glosarium-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
           <input type="search" class="glosarium-search-input" id="glosariumSearch"
-            placeholder="Cari istilah karawitan (misal: Angsel, Kotekan, Ombak, Matedet)..." aria-label="Cari istilah karawitan">
+            placeholder="Ketik istilah yang dicari..." aria-label="Cari istilah karawitan">
         </div>
 
         <div class="glosarium-grid" id="glosariumGrid">
-          <div class="glosarium-item" data-term="angsel">
+          <div class="glosarium-item glosarium-card" data-term="angsel">
             <div class="glosarium-term">Angsel <span class="glosarium-aksara">ᬳᬂᬲᭂᬮ᭄</span></div>
             <p class="glosarium-def">
-              Aksen sinkopasi atau hentakan ritmis mendadak yang dipicu oleh aba-aba kendang, seringkali mengubah tempo atau mengakhiri suatu frase gending dengan ledakan serentak.
+              Aksen atau hentakan mendadak yang dipicu aba-aba kendang untuk mengubah tempo atau menutup kalimat lagu.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="kotekan">
+          <div class="glosarium-item glosarium-card" data-term="kotekan">
             <div class="glosarium-term">Kotekan <span class="glosarium-aksara">ᬓᭀᬢᬾᬓᬦ᭄</span></div>
             <p class="glosarium-def">
-              Teknik permainan interlocking di mana dua penabuh atau kelompok instrumen (Polos dan Sangsih) merajut bagian ketukan dasar dan sela dengan kecepatan tinggi.
+              Teknik permainan berpasangan di mana bagian polos dan sangsih saling mengisi dengan tempo cepat.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="matedet">
+          <div class="glosarium-item glosarium-card" data-term="matedet">
             <div class="glosarium-term">Matedet <span class="glosarium-aksara">ᬫᬢᭂᬤᭂᬢ᭄</span></div>
             <p class="glosarium-def">
-              Teknik meredam getaran bilah perunggu menggunakan jari tangan kiri (jempol dan telunjuk) tepat pada momen ketika tangan kanan memukul bilah nada selanjutnya.
+              Teknik meredam getaran bilah memakai jari tangan kiri saat tangan kanan memukul bilah berikutnya.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="ombak">
+          <div class="glosarium-item glosarium-card" data-term="ombak">
             <div class="glosarium-term">Ombak <span class="glosarium-aksara">ᬒᬫ᭄ᬩᬓ᭄</span></div>
             <p class="glosarium-def">
-              Fenomena akustik interferensi gelombang (beating) akibat selisih frekuensi 4–8 Hz antara pasangan nada Pengumbang (wadon) dan Pengisep (lanang).
+              Getaran akustik bergelombang akibat selisih frekuensi 4 sampai 8 Hz antara pasangan pengumbang dan pengisep.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="pengumbang">
+          <div class="glosarium-item glosarium-card" data-term="pengumbang">
             <div class="glosarium-term">Pengumbang <span class="glosarium-aksara">ᬧᭂᬗᬸᬫ᭄ᬩᬂ</span></div>
             <p class="glosarium-def">
-              Instrumen atau nada bernada sedikit lebih rendah (nada betina/wadon) dalam pasangan gamelan Bali, memberikan ketenangan dan resonansi dalam.
+              Instrumen atau nada yang disetel sedikit lebih rendah dalam pasangan gamelan Bali.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="pengisep">
+          <div class="glosarium-item glosarium-card" data-term="pengisep">
             <div class="glosarium-term">Pengisep <span class="glosarium-aksara">ᬧᭂᬗᬶᬲᭂᬧ᭄</span></div>
             <p class="glosarium-def">
-              Instrumen atau nada bernada sedikit lebih tinggi (nada jantan/lanang) dalam pasangan gamelan Bali, memberikan ketajaman dan kecemerlangan dengung.
+              Instrumen atau nada yang disetel sedikit lebih tinggi dalam pasangan gamelan Bali.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="pelawah">
-            <div class="glosarium-term">Pelawah / Rancak <span class="glosarium-aksara">ᬧᭂᬮᬯᬄ</span></div>
+          <div class="glosarium-item glosarium-card" data-term="pelawah">
+            <div class="glosarium-term">Pelawah atau rancak <span class="glosarium-aksara">ᬧᭂᬮᬯᬄ</span></div>
             <p class="glosarium-def">
-              Kotak atau rangka kayu berukir (biasanya kayu jati, nangka, atau cempaka) tempat meletakkan bilah perunggu dan bumbung bambu resonator.
+              Rangka kayu berukir tempat meletakkan bilah perunggu dan bumbung bambu resonator.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="panggul">
+          <div class="glosarium-item glosarium-card" data-term="panggul">
             <div class="glosarium-term">Panggul <span class="glosarium-aksara">ᬧᬂᬕᬸᬮ᭄</span></div>
             <p class="glosarium-def">
-              Alat pemukul instrumen gamelan. Beragam bentuknya: dari panggul bertanduk kerbau untuk gangsa, panggul kayu panjang untuk reyong, hingga panggul berbalut kain tebal untuk gong.
+              Alat pemukul gamelan, mulai dari tanduk kerbau untuk gangsa hingga kayu berbalut kain untuk gong.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="gongan">
+          <div class="glosarium-item glosarium-card" data-term="gongan">
             <div class="glosarium-term">Gongan <span class="glosarium-aksara">ᬕᭀᬗᬦ᭄</span></div>
             <p class="glosarium-def">
-              Satu siklus struktur melodi utuh yang dimulai dan diakhiri dengan dentangan Gong Ageng (siklus colotomic gamelan).
+              Satu putaran melodi utuh yang ditutup dengan pukulan gong ageng.
             </p>
           </div>
 
-          <div class="glosarium-item" data-term="taksu">
+          <div class="glosarium-item glosarium-card" data-term="taksu">
             <div class="glosarium-term">Taksu <span class="glosarium-aksara">ᬢᬓ᭄ᬲᬸ</span></div>
             <p class="glosarium-def">
-              Kharisma spiritual atau pancaran daya magis batiniah yang merasuk ke dalam pemain dan instrumen, membuat pertunjukan memukau sanubari penonton.
+              Daya seni mendalam yang terpancar dari penabuh dan instrumen saat memainkan gamelan dengan sungguh-sungguh.
             </p>
           </div>
         </div>
 
-        <div id="glosariumEmpty" hidden style="text-align:center; padding:2rem; color:var(--c-muted);">
+        <div id="glosariumEmpty" class="glosarium-empty" hidden>
           Istilah tidak ditemukan dalam kamus karawitan. Coba kata kunci lain.
         </div>
       </div>
@@ -1013,7 +812,6 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/js/animate.js" defer></script>
   <script src="assets/js/gamelan.js"></script>
-  <script src="assets/js/splash.js" defer></script>
 </body>
 
 </html>

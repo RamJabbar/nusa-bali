@@ -1,711 +1,738 @@
-// Nusa Bali Heritage: modul penelusuran kaligrafi tradisi Aksara Bali
+// Nusa Bali Heritage: modul latihan menulis aksara wianjana Bali
 
 (function () {
   'use strict';
 
-  // Pengaturan toleransi dan bobot penilaian presisi
-  const hitTolerance = 18;
-  const maxDeviation = 32;
-  const precisionWeight = 0.50;
-  const coverageWeight = 0.50;
-  const passingScore = 75;
-  const storageKey = 'nusabali_aksara_mastered';
+  // Ambang toleransi jarak piksel dan bobot perhitungan nilai ketepatan
+  const TOLERANSI_KENA = 18;
+  const SIMPANGAN_MAKS = 32;
+  const BOBOT_PRESISI = 0.50;
+  const BOBOT_KELENGKAPAN = 0.50;
+  const SKOR_LULUS = 75;
+  const KUNCI_PENYIMPANAN = 'nusabali_aksara_mastered';
 
-  const aksaraMeta = {
+  // Metadata aksara: makna filosofis, urutan hanacaraka, dan karakter Unicode Bali
+  const metaAksara = {
     ha: {
-      meaningShort: 'Simbol Prana • Nafas Mula Kehidupan',
-      meaningLong: 'Simbol Prana • Nafas Mula Kehidupan & Hyang Widhi',
+      meaningShort: 'Prana, napas awal kehidupan',
+      meaningLong: 'Prana, napas awal kehidupan dan ketuhanan',
       order: '01',
       char: 'ᬳ'
     },
     na: {
-      meaningShort: 'Api Penciptaan • Energi Teja & Vitalitas',
-      meaningLong: 'Api Teja • Dinamika Energi & Semangat Jiwa',
+      meaningShort: 'Teja, pancaran energi dan daya cipta',
+      meaningLong: 'Teja, pancaran energi api dan semangat hidup',
       order: '02',
       char: 'ᬦ'
     },
     ca: {
-      meaningShort: 'Cahaya Suci • Kejernihan Akal Budi',
-      meaningLong: 'Cahaya Suci • Kejernihan Pikiran & Budi Pekerti',
+      meaningShort: 'Cahaya dan kejernihan pikiran',
+      meaningLong: 'Cahaya kejernihan batin dan ketajaman budi',
       order: '03',
       char: 'ᬘ'
     },
     ra: {
-      meaningShort: 'Aliran Darah • Keteguhan Jiwa',
-      meaningLong: 'Darah & Keberanian • Penegak Nilai Kebenaran',
+      meaningShort: 'Keteguhan hati dan ketenangan rasa',
+      meaningLong: 'Keteguhan sikap dan keberanian membela kebenaran',
       order: '04',
       char: 'ᬭ'
     },
     ka: {
-      meaningShort: 'Kekuatan Sabda • Kehendak Murni',
-      meaningLong: 'Sabda Suci • Daya Cipta & Ketulusan Niat',
+      meaningShort: 'Sabda dan ketulusan niat',
+      meaningLong: 'Kekuatan kata, kejujuran sabda, dan ketulusan niat',
       order: '05',
       char: 'ᬓ'
     },
     da: {
-      meaningShort: 'Pemberian Agung • Keikhlasan Dharma',
-      meaningLong: 'Dharma Utama • Anugerah Luhur & Keikhlasan',
+      meaningShort: 'Dharma, anugerah dan keikhlasan',
+      meaningLong: 'Kebaikan hidup, kepedulian, dan keikhlasan bertindak',
       order: '06',
       char: 'ᬤ'
     },
     ta: {
-      meaningShort: 'Ketetapan Pikiran • Konsentrasi Batin',
-      meaningLong: 'Ketetapan Batin • Konsentrasi & Keteguhan Hati',
+      meaningShort: 'Konsentrasi dan fokus batin',
+      meaningLong: 'Pemusatan pikiran dan ketenangan dalam bertindak',
       order: '07',
       char: 'ᬢ'
     },
     sa: {
-      meaningShort: 'Ketenangan Suci • Kesadaran Siwa',
-      meaningLong: 'Kesadaran Siwa • Kedamaian & Ketenangan Jiwa',
+      meaningShort: 'Kedamaian rasa dan ketenangan batin',
+      meaningLong: 'Ketenangan rasa, keseimbangan batin, dan keheningan',
       order: '08',
       char: 'ᬲ'
     },
     wa: {
-      meaningShort: 'Wahana Rohani • Kebijaksanaan Bayu',
-      meaningLong: 'Kebijaksanaan Bayu • Arus Harmoni & Kesadaran',
+      meaningShort: 'Bayu, aliran napas dan dinamika gerak',
+      meaningLong: 'Bayu, keselarasan napas, dan gerak yang teratur',
       order: '09',
       char: 'ᬯ'
     },
     la: {
-      meaningShort: 'Keluhuran Budhi • Keselarasan Semesta',
-      meaningLong: 'Keluhuran Budhi • Manunggal Bersama Alam Semesta',
+      meaningShort: 'Keselarasan diri dengan alam semesta',
+      meaningLong: 'Hubungan timbal balik antara manusia dan alam sekitar',
       order: '10',
       char: 'ᬮ'
     }
   };
 
-  const aksaraList = ['ha', 'na', 'ca', 'ra', 'ka', 'da', 'ta', 'sa', 'wa', 'la'];
+  const daftarAksara = ['ha', 'na', 'ca', 'ra', 'ka', 'da', 'ta', 'sa', 'wa', 'la'];
 
-  let activeKey = 'ha';
-  let strokePaths = [];
-  let currentPath = null;
-  let isPenActive = false;
-  let displayGuide = true;
-  let isEvaluated = false;
-  let demoRafId = null;
-  let isDemoActive = false;
+  let kunciAktif = 'ha';
+  let jalurGoresan = [];
+  let jalurAktif = null;
+  let penSedangMenekan = false;
+  let tampilkanPanduan = true;
+  let sudahDinilai = false;
+  let idAnimasiPeragaan = null;
+  let peragaanSedangJalan = false;
 
-  let padCanvas = null;
-  let drawCtx = null;
-  let canvasWrap = null;
-  let startIndicator = null;
-  let resultScoreboard = null;
-  let btnDemo = null;
+  let kanvasLatihan = null;
+  let konteksGambar = null;
+  let pembungkusKanvas = null;
+  let penandaMulai = null;
+  let papanHasil = null;
+  let tombolPeragaan = null;
 
-  function loadMasteredAksara() {
+  // Mengambil daftar aksara yang sudah berhasil dikuasai dari penyimpanan lokal
+  function muatAksaraTuntas() {
     try {
-      const stored = localStorage.getItem(storageKey);
-      return stored ? JSON.parse(stored) : [];
+      const tersimpan = localStorage.getItem(KUNCI_PENYIMPANAN);
+      return tersimpan ? JSON.parse(tersimpan) : [];
     } catch (_) {
       return [];
     }
   }
 
-  function markAksaraMastered(key) {
-    const list = loadMasteredAksara();
-    if (!list.includes(key)) {
-      list.push(key);
+  // Menyimpan aksara baru yang berhasil lulus ke penyimpanan lokal
+  function tandaiAksaraTuntas(kunci) {
+    const daftar = muatAksaraTuntas();
+    if (!daftar.includes(kunci)) {
+      daftar.push(kunci);
       try {
-        localStorage.setItem(storageKey, JSON.stringify(list));
+        localStorage.setItem(KUNCI_PENYIMPANAN, JSON.stringify(daftar));
       } catch (_) {}
     }
-    refreshMasteryStats(list, key);
+    segarkanStatistikPenguasaan(daftar, kunci);
   }
 
-  function refreshMasteryStats(list, justMasteredKey = null) {
-    const totalMastered = list.length;
-    const progressPercent = Math.round((totalMastered / 10) * 100);
+  // Memperbarui hitungan, persentase, bilah progres, dan status centang baris
+  function segarkanStatistikPenguasaan(daftar, kunciBaruLulus = null) {
+    const jumlahTuntas = daftar.length;
+    const persentaseProgres = Math.round((jumlahTuntas / 10) * 100);
 
-    const countEl = document.getElementById('aksaraMasteredCount');
-    if (countEl) countEl.textContent = totalMastered;
+    const elemenHitungan = document.getElementById('aksaraMasteredCount');
+    if (elemenHitungan) elemenHitungan.textContent = jumlahTuntas;
 
-    const percentEl = document.getElementById('aksaraProgressPercent');
-    if (percentEl) percentEl.textContent = `${progressPercent}%`;
+    const elemenPersen = document.getElementById('aksaraProgressPercent');
+    if (elemenPersen) elemenPersen.textContent = `${persentaseProgres}%`;
 
-    const barEl = document.getElementById('aksaraProgressFill');
-    if (barEl) barEl.style.width = `${progressPercent}%`;
+    const elemenBar = document.getElementById('aksaraProgressFill');
+    if (elemenBar) elemenBar.style.width = `${persentaseProgres}%`;
 
-    const headerProgEl = document.getElementById('aksaraHeaderProgress');
-    if (headerProgEl) headerProgEl.textContent = `${totalMastered} / 10 Pratama`;
+    const elemenHeaderProgres = document.getElementById('aksaraHeaderProgress');
+    if (elemenHeaderProgres) elemenHeaderProgres.textContent = `${jumlahTuntas} / 10 tuntas`;
 
-    aksaraList.forEach((key) => {
-      const statusEl = document.getElementById(`status-${key}`);
-      const rowEl = document.getElementById(`aksara-row-${key}`);
-      if (!statusEl || !rowEl) return;
+    daftarAksara.forEach((kunci) => {
+      const elemenStatus = document.getElementById(`status-${kunci}`);
+      const elemenBaris = document.getElementById(`aksara-row-${kunci}`);
+      if (!elemenStatus || !elemenBaris) return;
 
-      const isCompleted = list.includes(key);
-      if (isCompleted) {
-        rowEl.classList.add('is-mastered');
-        statusEl.innerHTML = `
-          <span class="aksara-badge-check" title="Aksara Dikuasai">
+      const sudahTuntas = daftar.includes(kunci);
+      if (sudahTuntas) {
+        elemenBaris.classList.add('is-mastered');
+        elemenStatus.innerHTML = `
+          <span class="aksara-badge-check" title="Aksara dikuasai">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </span>`;
       } else {
-        rowEl.classList.remove('is-mastered');
-        const meta = aksaraMeta[key] || { order: '00' };
-        statusEl.innerHTML = `<span class="aksara-order-num">${meta.order}</span>`;
+        elemenBaris.classList.remove('is-mastered');
+        const dataMeta = metaAksara[kunci] || { order: '00' };
+        elemenStatus.innerHTML = `<span class="aksara-order-num">${dataMeta.order}</span>`;
       }
 
-      if (justMasteredKey && key === justMasteredKey) {
-        rowEl.classList.remove('is-celebrating');
-        void rowEl.offsetWidth;
-        rowEl.classList.add('is-celebrating');
-        setTimeout(() => rowEl.classList.remove('is-celebrating'), 1200);
+      // Animasi perayaan singkat saat baru saja lulus
+      if (kunciBaruLulus && kunci === kunciBaruLulus) {
+        elemenBaris.classList.remove('is-celebrating');
+        void elemenBaris.offsetWidth;
+        elemenBaris.classList.add('is-celebrating');
+        setTimeout(() => elemenBaris.classList.remove('is-celebrating'), 1200);
       }
     });
   }
 
-  function setupAksaraStudio() {
-    const section = document.getElementById('bahasa');
-    if (!section) return;
+  // Inisialisasi utama ruang latihan aksara
+  function siapkanStudioAksara() {
+    const bagian = document.getElementById('bahasa');
+    if (!bagian) return;
 
-    if (!fetchAksaraDataset()) {
+    if (!ambilKoleksiDataAksara()) {
       console.warn('Dataset aksara belum siap dimuat.');
       return;
     }
 
-    cacheDOMElements();
-    buildCharacterTabs();
-    setupDrawingSurface();
-    bindStudioEvents();
-    refreshMasteryStats(loadMasteredAksara());
-    switchAksara('ha');
+    simpanReferensiDOM();
+    susunDaftarAksara();
+    siapkanBidangGambar();
+    pasangAksiStudio();
+    segarkanStatistikPenguasaan(muatAksaraTuntas());
+    gantiAksara('ha');
   }
 
+  // Pastikan hoisting fungsi declaration tetap berfungsi normal saat DOM siap
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupAksaraStudio);
+    document.addEventListener('DOMContentLoaded', siapkanStudioAksara);
   } else {
-    setupAksaraStudio();
+    siapkanStudioAksara();
   }
 
-  function cacheDOMElements() {
-    padCanvas = document.getElementById('aksaraCanvas');
-    drawCtx = padCanvas ? padCanvas.getContext('2d') : null;
-    canvasWrap = document.getElementById('aksaraCanvasWrap');
-    startIndicator = document.getElementById('aksaraStartDot');
-    resultScoreboard = document.getElementById('aksaraResultPanel');
-    btnDemo = document.getElementById('aksaraDemoBtn');
+  // Menyimpan referensi elemen-elemen DOM yang sering diakses
+  function simpanReferensiDOM() {
+    kanvasLatihan = document.getElementById('aksaraCanvas');
+    konteksGambar = kanvasLatihan ? kanvasLatihan.getContext('2d') : null;
+    pembungkusKanvas = document.getElementById('aksaraCanvasWrap');
+    penandaMulai = document.getElementById('aksaraStartDot');
+    papanHasil = document.getElementById('aksaraResultPanel');
+    tombolPeragaan = document.getElementById('aksaraDemoBtn');
   }
 
-  function buildCharacterTabs() {
-    const listContainer = document.getElementById('aksaraList');
-    if (!listContainer) return;
+  // Menyusun baris daftar sepuluh aksara wianjana
+  function susunDaftarAksara() {
+    const wadahDaftar = document.getElementById('aksaraList');
+    if (!wadahDaftar) return;
 
-    const dataset = fetchAksaraDataset();
-    const completedList = loadMasteredAksara();
+    const koleksiData = ambilKoleksiDataAksara();
+    const daftarTuntas = muatAksaraTuntas();
 
-    let tabMarkup = '';
-    aksaraList.forEach((key) => {
-      const item = dataset[key];
-      if (!item) return;
-      const meta = aksaraMeta[key] || { meaningShort: '', order: '00', char: '' };
-      const isDone = completedList.includes(key);
+    let markupBaris = '';
+    daftarAksara.forEach((kunci) => {
+      const dataKarakter = koleksiData[kunci];
+      if (!dataKarakter) return;
+      const dataMeta = metaAksara[kunci] || { meaningShort: '', order: '00', char: '' };
+      const tuntas = daftarTuntas.includes(kunci);
 
-      tabMarkup += `
-        <div class="aksara-item" id="aksara-row-${key}" data-key="${key}" role="tab" tabindex="0" aria-selected="false">
+      markupBaris += `
+        <div class="aksara-item" id="aksara-row-${kunci}" data-key="${kunci}" role="tab" tabindex="0" aria-selected="false">
           <div class="aksara-item__preview-box" aria-hidden="true">
             <svg viewBox="0 0 300 300" class="aksara-item__preview-svg" preserveAspectRatio="xMidYMid meet">
-              <path d="${item.pathD}" fill="currentColor" />
+              <path d="${dataKarakter.pathD}" fill="currentColor" />
             </svg>
           </div>
           <div class="aksara-item__meta">
-            <h4 class="aksara-item__title">Aksara ${item.label}</h4>
-            <p class="aksara-item__meaning">${meta.meaningShort}</p>
+            <h4 class="aksara-item__title">Aksara ${dataKarakter.label}</h4>
+            <p class="aksara-item__meaning">${dataMeta.meaningShort}</p>
           </div>
-          <div class="aksara-item__status" id="status-${key}">
-            ${isDone
-              ? `<span class="aksara-badge-check" title="Aksara Dikuasai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="20 6 9 17 4 12" /></svg></span>`
-              : `<span class="aksara-order-num">${meta.order}</span>`
+          <div class="aksara-item__status" id="status-${kunci}">
+            ${tuntas
+              ? `<span class="aksara-badge-check" title="Aksara dikuasai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg></span>`
+              : `<span class="aksara-order-num">${dataMeta.order}</span>`
             }
           </div>
         </div>
       `;
     });
 
-    listContainer.innerHTML = tabMarkup;
+    wadahDaftar.innerHTML = markupBaris;
 
-    listContainer.querySelectorAll('.aksara-item').forEach((row) => {
-      const rowKey = row.getAttribute('data-key');
-      const pickRow = () => {
-        if (rowKey !== activeKey) switchAksara(rowKey);
+    wadahDaftar.querySelectorAll('.aksara-item').forEach((baris) => {
+      const kunciBaris = baris.getAttribute('data-key');
+      const pilihBaris = () => {
+        if (kunciBaris !== kunciAktif) gantiAksara(kunciBaris);
       };
 
-      row.addEventListener('click', pickRow);
-      row.addEventListener('keydown', (e) => {
+      baris.addEventListener('click', pilihBaris);
+      baris.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          pickRow();
+          pilihBaris();
         }
       });
     });
   }
 
-  function setupDrawingSurface() {
-    if (!padCanvas || !drawCtx) return;
+  // Menyiapkan interaksi pointer mouse, sentuhan, atau stylus pada permukaan kanvas
+  function siapkanBidangGambar() {
+    if (!kanvasLatihan || !konteksGambar) return;
 
-    fitCanvasToDPR();
-    window.addEventListener('resize', debounce(fitCanvasToDPR, 100));
+    sesuaikanKanvasDenganDPR();
+    window.addEventListener('resize', tundaPanggilan(sesuaikanKanvasDenganDPR, 100));
 
-    padCanvas.addEventListener('pointerdown', onPointerDown);
-    padCanvas.addEventListener('pointermove', onPointerMove);
-    padCanvas.addEventListener('pointerup', onPointerUp);
-    padCanvas.addEventListener('pointercancel', onPointerUp);
+    kanvasLatihan.addEventListener('pointerdown', tanganiPointerTekan);
+    kanvasLatihan.addEventListener('pointermove', tanganiPointerGeser);
+    kanvasLatihan.addEventListener('pointerup', tanganiPointerLepas);
+    kanvasLatihan.addEventListener('pointercancel', tanganiPointerLepas);
   }
 
-  function fitCanvasToDPR() {
-    if (!padCanvas || !drawCtx) return;
+  // Menyesuaikan resolusi kanvas dengan rasio piksel layar (HiDPI / Retina)
+  function sesuaikanKanvasDenganDPR() {
+    if (!kanvasLatihan || !konteksGambar) return;
 
-    const bounds = padCanvas.getBoundingClientRect();
-    if (bounds.width === 0 || bounds.height === 0) return;
+    const kotakUkur = kanvasLatihan.getBoundingClientRect();
+    if (kotakUkur.width === 0 || kotakUkur.height === 0) return;
 
-    const ratio = window.devicePixelRatio || 1;
-    padCanvas.width = Math.round(bounds.width * ratio);
-    padCanvas.height = Math.round(bounds.height * ratio);
+    const rasioDPR = window.devicePixelRatio || 1;
+    kanvasLatihan.width = Math.round(kotakUkur.width * rasioDPR);
+    kanvasLatihan.height = Math.round(kotakUkur.height * rasioDPR);
 
-    renderCanvasFrame();
-    positionStartIndicator();
+    gambarUlangKanvas();
+    posisikanPenandaMulai();
   }
 
-  function mapPointerToLogicalCoords(e) {
-    const bounds = padCanvas.getBoundingClientRect();
-    const posX = ((e.clientX - bounds.left) / bounds.width) * 300;
-    const posY = ((e.clientY - bounds.top) / bounds.height) * 300;
+  // Mengubah posisi piksel pointer ke kotak koordinat logis 300x300
+  function petakanKoordinatLogis(e) {
+    const kotakUkur = kanvasLatihan.getBoundingClientRect();
+    const posisiX = ((e.clientX - kotakUkur.left) / kotakUkur.width) * 300;
+    const posisiY = ((e.clientY - kotakUkur.top) / kotakUkur.height) * 300;
     return {
-      x: Math.max(0, Math.min(300, posX)),
-      y: Math.max(0, Math.min(300, posY))
+      x: Math.max(0, Math.min(300, posisiX)),
+      y: Math.max(0, Math.min(300, posisiY))
     };
   }
 
-  function onPointerDown(e) {
+  function tanganiPointerTekan(e) {
     if (e.button !== undefined && e.button !== 0) return;
 
-    if (isDemoActive) {
-      stopStrokeDemo();
+    if (peragaanSedangJalan) {
+      hentikanPeragaanGoresan();
     }
 
-    if (isEvaluated) {
-      isEvaluated = false;
-      if (resultScoreboard) resultScoreboard.hidden = true;
+    if (sudahDinilai) {
+      sudahDinilai = false;
+      if (papanHasil) papanHasil.hidden = true;
     }
 
-    isPenActive = true;
+    penSedangMenekan = true;
     try {
-      padCanvas.setPointerCapture(e.pointerId);
+      kanvasLatihan.setPointerCapture(e.pointerId);
     } catch (_) {}
 
-    const coord = mapPointerToLogicalCoords(e);
-    currentPath = [coord];
-    strokePaths.push(currentPath);
-    renderCanvasFrame();
+    const titikKoordinat = petakanKoordinatLogis(e);
+    jalurAktif = [titikKoordinat];
+    jalurGoresan.push(jalurAktif);
+
+    gambarUlangKanvas();
   }
 
-  function onPointerMove(e) {
-    if (!isPenActive || !currentPath) return;
+  function tanganiPointerGeser(e) {
+    if (!penSedangMenekan || !jalurAktif) return;
 
-    const coord = mapPointerToLogicalCoords(e);
-    const lastPoint = currentPath[currentPath.length - 1];
+    const titikKoordinat = petakanKoordinatLogis(e);
+    const titikTerakhir = jalurAktif[jalurAktif.length - 1];
 
-    const stepDist = Math.hypot(coord.x - lastPoint.x, coord.y - lastPoint.y);
-    if (stepDist < 2.5) return;
+    // Hindari mencatat titik yang terlalu berimpitan
+    const jarakLangkah = Math.hypot(titikKoordinat.x - titikTerakhir.x, titikKoordinat.y - titikTerakhir.y);
+    if (jarakLangkah < 2.5) return;
 
-    currentPath.push(coord);
-    renderCanvasFrame();
+    jalurAktif.push(titikKoordinat);
+    gambarUlangKanvas();
   }
 
-  function onPointerUp(e) {
-    if (!isPenActive) return;
-    isPenActive = false;
+  function tanganiPointerLepas(e) {
+    if (!penSedangMenekan) return;
+    penSedangMenekan = false;
 
     if (e?.pointerId) {
       try {
-        padCanvas.releasePointerCapture(e.pointerId);
+        kanvasLatihan.releasePointerCapture(e.pointerId);
       } catch (_) {}
     }
 
-    currentPath = null;
-    renderCanvasFrame();
+    jalurAktif = null;
+    gambarUlangKanvas();
   }
 
-  function renderCanvasFrame() {
-    if (!padCanvas || !drawCtx) return;
+  // Menggambar ulang seluruh lapisan: kisi, pola panduan, titik mulai, dan tinta pengguna
+  function gambarUlangKanvas() {
+    if (!kanvasLatihan || !konteksGambar) return;
 
-    const scaleX = padCanvas.width / 300;
-    const scaleY = padCanvas.height / 300;
+    const skalaX = kanvasLatihan.width / 300;
+    const skalaY = kanvasLatihan.height / 300;
 
-    drawCtx.setTransform(1, 0, 0, 1, 0, 0);
-    drawCtx.clearRect(0, 0, padCanvas.width, padCanvas.height);
+    konteksGambar.setTransform(1, 0, 0, 1, 0, 0);
+    konteksGambar.clearRect(0, 0, kanvasLatihan.width, kanvasLatihan.height);
 
-    drawCtx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+    konteksGambar.setTransform(skalaX, 0, 0, skalaY, 0, 0);
 
-    const activeChar = getActiveCharData();
+    const aksaraAktif = ambilDataAksaraAktif();
 
-    drawGridLines();
+    gambarGarisKisi();
 
-    if (displayGuide && activeChar?.pathD) {
-      drawCtx.save();
-      const pathShape = new Path2D(activeChar.pathD);
-      drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.45)';
-      drawCtx.lineWidth = 2.4;
-      drawCtx.setLineDash([6, 5]);
-      drawCtx.stroke(pathShape);
-      drawCtx.restore();
+    // Pola panduan garis putus-putus netral di atas permukaan lontar terang
+    if (tampilkanPanduan && aksaraAktif?.pathD) {
+      konteksGambar.save();
+      const bentukJalur = new Path2D(aksaraAktif.pathD);
+      konteksGambar.strokeStyle = 'rgba(45, 42, 38, 0.38)';
+      konteksGambar.lineWidth = 2.4;
+      konteksGambar.setLineDash([6, 5]);
+      konteksGambar.stroke(bentukJalur);
+      konteksGambar.restore();
     }
 
-    if (activeChar?.contours?.length && activeChar.contours[0].length) {
-      const originPoint = activeChar.contours[0][0];
-      renderStartGlyphDot(originPoint[0], originPoint[1]);
+    // Titik awal goresan pertama
+    if (aksaraAktif?.contours?.length && aksaraAktif.contours[0].length) {
+      const titikAwal = aksaraAktif.contours[0][0];
+      gambarTitikAwalGlif(titikAwal[0], titikAwal[1]);
     }
 
-    if (strokePaths.length > 0) {
-      drawUserInk();
+    if (jalurGoresan.length > 0) {
+      gambarTintaPengguna();
     }
   }
 
-  function drawGridLines() {
-    drawCtx.save();
-    drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.07)';
-    drawCtx.lineWidth = 1;
-    drawCtx.setLineDash([4, 4]);
+  // Garis kisi dan penanda sudut bidang penulisan lontar
+  function gambarGarisKisi() {
+    konteksGambar.save();
+    konteksGambar.strokeStyle = 'rgba(28, 26, 23, 0.08)';
+    konteksGambar.lineWidth = 1;
+    konteksGambar.setLineDash([4, 4]);
 
-    drawCtx.beginPath();
-    drawCtx.moveTo(150, 20);
-    drawCtx.lineTo(150, 280);
-    drawCtx.moveTo(20, 150);
-    drawCtx.lineTo(280, 150);
-    drawCtx.stroke();
+    konteksGambar.beginPath();
+    konteksGambar.moveTo(150, 20);
+    konteksGambar.lineTo(150, 280);
+    konteksGambar.moveTo(20, 150);
+    konteksGambar.lineTo(280, 150);
+    konteksGambar.stroke();
 
-    drawCtx.beginPath();
-    drawCtx.arc(150, 150, 85, 0, Math.PI * 2);
-    drawCtx.stroke();
+    konteksGambar.beginPath();
+    konteksGambar.arc(150, 150, 85, 0, Math.PI * 2);
+    konteksGambar.stroke();
 
-    drawCtx.setLineDash([]);
-    drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.14)';
-    const cornerMarkers = [
+    konteksGambar.setLineDash([]);
+    konteksGambar.strokeStyle = 'rgba(28, 26, 23, 0.16)';
+    const penandaSudut = [
       [24, 24, 36, 24, 24, 36],
       [276, 24, 264, 24, 276, 36],
       [24, 276, 36, 276, 24, 264],
       [276, 276, 264, 276, 276, 264]
     ];
-    cornerMarkers.forEach(([ax, ay, bx, by, cx, cy]) => {
-      drawCtx.beginPath();
-      drawCtx.moveTo(bx, by);
-      drawCtx.lineTo(ax, ay);
-      drawCtx.lineTo(cx, cy);
-      drawCtx.stroke();
+    penandaSudut.forEach(([ax, ay, bx, by, cx, cy]) => {
+      konteksGambar.beginPath();
+      konteksGambar.moveTo(bx, by);
+      konteksGambar.lineTo(ax, ay);
+      konteksGambar.lineTo(cx, cy);
+      konteksGambar.stroke();
     });
 
-    drawCtx.restore();
+    konteksGambar.restore();
   }
 
-  function renderStartGlyphDot(px, py) {
-    drawCtx.save();
-    drawCtx.fillStyle = 'rgba(189, 45, 36, 0.22)';
-    drawCtx.beginPath();
-    drawCtx.arc(px, py, 9, 0, Math.PI * 2);
-    drawCtx.fill();
+  // Lingkaran penanda titik awal tarikan pertama
+  function gambarTitikAwalGlif(titikX, titikY) {
+    konteksGambar.save();
+    konteksGambar.fillStyle = 'rgba(179, 38, 30, 0.20)';
+    konteksGambar.beginPath();
+    konteksGambar.arc(titikX, titikY, 9, 0, Math.PI * 2);
+    konteksGambar.fill();
 
-    drawCtx.fillStyle = '#BD2D24';
-    drawCtx.beginPath();
-    drawCtx.arc(px, py, 4.5, 0, Math.PI * 2);
-    drawCtx.fill();
+    konteksGambar.fillStyle = '#B3261E';
+    konteksGambar.beginPath();
+    konteksGambar.arc(titikX, titikY, 4.5, 0, Math.PI * 2);
+    konteksGambar.fill();
 
-    drawCtx.fillStyle = '#FFFFFF';
-    drawCtx.beginPath();
-    drawCtx.arc(px, py, 1.8, 0, Math.PI * 2);
-    drawCtx.fill();
-    drawCtx.restore();
+    konteksGambar.fillStyle = '#FFFFFF';
+    konteksGambar.beginPath();
+    konteksGambar.arc(titikX, titikY, 1.8, 0, Math.PI * 2);
+    konteksGambar.fill();
+    konteksGambar.restore();
   }
 
-  function drawUserInk() {
-    drawCtx.save();
-    drawCtx.lineCap = 'round';
-    drawCtx.lineJoin = 'round';
+  // Menggambar goresan tinta pengguna (tinta gelap saat menggambar, berwarna saat dinilai)
+  function gambarTintaPengguna() {
+    konteksGambar.save();
+    konteksGambar.lineCap = 'round';
+    konteksGambar.lineJoin = 'round';
 
-    if (!isEvaluated) {
-      drawCtx.lineWidth = 7.2;
-      drawCtx.strokeStyle = '#FAF8F5'; // warna krem var(--c-cream)
+    if (!sudahDinilai) {
+      konteksGambar.lineWidth = 7.2;
+      konteksGambar.strokeStyle = '#1C1A17'; // Warna arang tradisi di atas lontar terang
 
-      strokePaths.forEach((path) => {
-        if (!path || path.length === 0) return;
+      jalurGoresan.forEach((jalur) => {
+        if (!jalur || jalur.length === 0) return;
 
-        if (path.length === 1) {
-          drawCtx.fillStyle = '#FAF8F5';
-          drawCtx.beginPath();
-          drawCtx.arc(path[0].x, path[0].y, 3.6, 0, Math.PI * 2);
-          drawCtx.fill();
+        if (jalur.length === 1) {
+          konteksGambar.fillStyle = '#1C1A17';
+          konteksGambar.beginPath();
+          konteksGambar.arc(jalur[0].x, jalur[0].y, 3.6, 0, Math.PI * 2);
+          konteksGambar.fill();
           return;
         }
 
-        drawCtx.beginPath();
-        drawCtx.moveTo(path[0].x, path[0].y);
+        konteksGambar.beginPath();
+        konteksGambar.moveTo(jalur[0].x, jalur[0].y);
 
-        for (let i = 1; i < path.length - 1; i++) {
-          const midPointX = (path[i].x + path[i + 1].x) / 2;
-          const midPointY = (path[i].y + path[i + 1].y) / 2;
-          drawCtx.quadraticCurveTo(path[i].x, path[i].y, midPointX, midPointY);
+        for (let i = 1; i < jalur.length - 1; i++) {
+          const titikTengahX = (jalur[i].x + jalur[i + 1].x) / 2;
+          const titikTengahY = (jalur[i].y + jalur[i + 1].y) / 2;
+          konteksGambar.quadraticCurveTo(jalur[i].x, jalur[i].y, titikTengahX, titikTengahY);
         }
-        drawCtx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
-        drawCtx.stroke();
+        konteksGambar.lineTo(jalur[jalur.length - 1].x, jalur[jalur.length - 1].y);
+        konteksGambar.stroke();
       });
     } else {
-      drawCtx.lineWidth = 7.2;
+      // Penilaian visual: hijau (dekat), kuning/kuning tua (sedang), merah tua (jauh)
+      konteksGambar.lineWidth = 7.2;
 
-      strokePaths.forEach((path) => {
-        if (!path || path.length === 0) return;
+      jalurGoresan.forEach((jalur) => {
+        if (!jalur || jalur.length === 0) return;
 
-        if (path.length === 1) {
-          const p = path[0];
-          const isAccurate = (p.distToRef !== undefined && p.distToRef <= hitTolerance);
-          drawCtx.fillStyle = isAccurate ? '#4ADE80' : '#EF4444';
-          drawCtx.beginPath();
-          drawCtx.arc(p.x, p.y, 3.6, 0, Math.PI * 2);
-          drawCtx.fill();
+        if (jalur.length === 1) {
+          const p = jalur[0];
+          const akurat = (p.distToRef !== undefined && p.distToRef <= TOLERANSI_KENA);
+          konteksGambar.fillStyle = akurat ? '#15803D' : '#B91C1C';
+          konteksGambar.beginPath();
+          konteksGambar.arc(p.x, p.y, 3.6, 0, Math.PI * 2);
+          konteksGambar.fill();
           return;
         }
 
-        for (let i = 0; i < path.length - 1; i++) {
-          const p1 = path[i];
-          const p2 = path[i + 1];
-          const meanDist = ((p1.distToRef || 0) + (p2.distToRef || 0)) / 2;
+        for (let i = 0; i < jalur.length - 1; i++) {
+          const p1 = jalur[i];
+          const p2 = jalur[i + 1];
+          const jarakRataRata = ((p1.distToRef || 0) + (p2.distToRef || 0)) / 2;
 
-          drawCtx.beginPath();
-          drawCtx.moveTo(p1.x, p1.y);
-          drawCtx.lineTo(p2.x, p2.y);
+          konteksGambar.beginPath();
+          konteksGambar.moveTo(p1.x, p1.y);
+          konteksGambar.lineTo(p2.x, p2.y);
 
-          if (meanDist <= hitTolerance) {
-            drawCtx.strokeStyle = 'rgba(74, 222, 128, 0.95)';
-          } else if (meanDist <= maxDeviation) {
-            drawCtx.strokeStyle = 'rgba(251, 191, 36, 0.92)';
+          if (jarakRataRata <= TOLERANSI_KENA) {
+            konteksGambar.strokeStyle = '#15803D';
+          } else if (jarakRataRata <= SIMPANGAN_MAKS) {
+            konteksGambar.strokeStyle = '#B45309';
           } else {
-            drawCtx.strokeStyle = 'rgba(239, 68, 68, 0.92)';
+            konteksGambar.strokeStyle = '#B91C1C';
           }
-          drawCtx.stroke();
+          konteksGambar.stroke();
         }
       });
     }
 
-    drawCtx.restore();
+    konteksGambar.restore();
   }
 
-  function positionStartIndicator() {
-    if (!startIndicator) return;
-    const charData = getActiveCharData();
+  // Menentukan posisi titik mulai DOM agar tepat berimpit dengan titik di kanvas
+  function posisikanPenandaMulai() {
+    if (!penandaMulai) return;
+    const dataAksara = ambilDataAksaraAktif();
 
-    if (charData?.contours?.length && charData.contours[0].length) {
-      const pt = charData.contours[0][0];
-      const leftPercent = (pt[0] / 300) * 100;
-      const topPercent = (pt[1] / 300) * 100;
-      startIndicator.style.left = `${leftPercent}%`;
-      startIndicator.style.top = `${topPercent}%`;
-      startIndicator.style.display = 'block';
+    if (dataAksara?.contours?.length && dataAksara.contours[0].length) {
+      const titikAwal = dataAksara.contours[0][0];
+      const persenKiri = (titikAwal[0] / 300) * 100;
+      const persenAtas = (titikAwal[1] / 300) * 100;
+      penandaMulai.style.left = `${persenKiri}%`;
+      penandaMulai.style.top = `${persenAtas}%`;
+      penandaMulai.style.display = 'block';
     } else {
-      startIndicator.style.display = 'none';
+      penandaMulai.style.display = 'none';
     }
   }
 
-  function toggleStrokeDemo() {
-    if (isDemoActive) {
-      stopStrokeDemo();
+  function alihStatusPeragaan() {
+    if (peragaanSedangJalan) {
+      hentikanPeragaanGoresan();
     } else {
-      startStrokeDemo();
+      mulaiPeragaanGoresan();
     }
   }
 
-  function startStrokeDemo() {
-    const charData = getActiveCharData();
-    if (!charData?.contours?.length) return;
+  // Memutar simulasi tarikan goresan aksara tahap demi tahap
+  function mulaiPeragaanGoresan() {
+    const dataAksara = ambilDataAksaraAktif();
+    if (!dataAksara?.contours?.length) return;
 
-    isDemoActive = true;
+    peragaanSedangJalan = true;
 
-    if (btnDemo) {
-      btnDemo.classList.add('is-playing');
-      btnDemo.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor">
+    if (tombolPeragaan) {
+      tombolPeragaan.classList.add('is-playing');
+      tombolPeragaan.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <rect x="6" y="5" width="4" height="14" rx="1"/>
           <rect x="14" y="5" width="4" height="14" rx="1"/>
         </svg>
-        HENTIKAN PERAGAAN
+        Hentikan peragaan
       `;
     }
 
-    const contoursList = charData.contours;
-    let contourIdx = 0;
-    let cursorIdx = 0;
+    const daftarKontur = dataAksara.contours;
+    let indeksKontur = 0;
+    let indeksKursor = 0;
 
-    function renderDemoTick() {
-      if (!isDemoActive) return;
+    function jalankanFramePeragaan() {
+      if (!peragaanSedangJalan) return;
 
-      renderCanvasFrame();
+      gambarUlangKanvas();
 
-      drawCtx.save();
-      const scaleFactorX = padCanvas.width / 300;
-      const scaleFactorY = padCanvas.height / 300;
-      drawCtx.setTransform(scaleFactorX, 0, 0, scaleFactorY, 0, 0);
+      konteksGambar.save();
+      const faktorSkalaX = kanvasLatihan.width / 300;
+      const faktorSkalaY = kanvasLatihan.height / 300;
+      konteksGambar.setTransform(faktorSkalaX, 0, 0, faktorSkalaY, 0, 0);
 
-      drawCtx.lineCap = 'round';
-      drawCtx.lineJoin = 'round';
+      konteksGambar.lineCap = 'round';
+      konteksGambar.lineJoin = 'round';
 
-      for (let c = 0; c < contourIdx; c++) {
-        const polyline = contoursList[c];
-        if (polyline.length < 2) continue;
-        drawCtx.strokeStyle = 'rgba(236, 194, 70, 0.85)';
-        drawCtx.lineWidth = 5;
-        drawCtx.beginPath();
-        drawCtx.moveTo(polyline[0][0], polyline[0][1]);
-        for (let p = 1; p < polyline.length; p++) {
-          drawCtx.lineTo(polyline[p][0], polyline[p][1]);
+      // Gambar kontur yang sudah selesai digores sebelumnya
+      for (let c = 0; c < indeksKontur; c++) {
+        const garisKontur = daftarKontur[c];
+        if (garisKontur.length < 2) continue;
+        konteksGambar.strokeStyle = '#B3261E';
+        konteksGambar.lineWidth = 5;
+        konteksGambar.beginPath();
+        konteksGambar.moveTo(garisKontur[0][0], garisKontur[0][1]);
+        for (let p = 1; p < garisKontur.length; p++) {
+          konteksGambar.lineTo(garisKontur[p][0], garisKontur[p][1]);
         }
-        drawCtx.stroke();
+        konteksGambar.stroke();
       }
 
-      const activeContour = contoursList[contourIdx];
-      if (activeContour && activeContour.length > 1) {
-        drawCtx.strokeStyle = '#ECC246';
-        drawCtx.lineWidth = 6;
-        drawCtx.beginPath();
-        drawCtx.moveTo(activeContour[0][0], activeContour[0][1]);
-        const boundP = Math.min(cursorIdx, activeContour.length - 1);
-        for (let p = 1; p <= boundP; p++) {
-          drawCtx.lineTo(activeContour[p][0], activeContour[p][1]);
+      // Gambar kontur aktif yang sedang berjalan
+      const konturAktif = daftarKontur[indeksKontur];
+      if (konturAktif && konturAktif.length > 1) {
+        konteksGambar.strokeStyle = '#B3261E';
+        konteksGambar.lineWidth = 6;
+        konteksGambar.beginPath();
+        konteksGambar.moveTo(konturAktif[0][0], konturAktif[0][1]);
+        const batasTitik = Math.min(indeksKursor, konturAktif.length - 1);
+        for (let p = 1; p <= batasTitik; p++) {
+          konteksGambar.lineTo(konturAktif[p][0], konturAktif[p][1]);
         }
-        drawCtx.stroke();
+        konteksGambar.stroke();
 
-        const penTip = activeContour[boundP];
-        drawCtx.fillStyle = '#FFFFFF';
-        drawCtx.beginPath();
-        drawCtx.arc(penTip[0], penTip[1], 4.5, 0, Math.PI * 2);
-        drawCtx.fill();
+        // Titik pena aktif
+        const ujungPena = konturAktif[batasTitik];
+        konteksGambar.fillStyle = '#FFFFFF';
+        konteksGambar.beginPath();
+        konteksGambar.arc(ujungPena[0], ujungPena[1], 4.5, 0, Math.PI * 2);
+        konteksGambar.fill();
 
-        drawCtx.fillStyle = 'rgba(236, 194, 70, 0.45)';
-        drawCtx.beginPath();
-        drawCtx.arc(penTip[0], penTip[1], 9, 0, Math.PI * 2);
-        drawCtx.fill();
+        konteksGambar.fillStyle = 'rgba(179, 38, 30, 0.25)';
+        konteksGambar.beginPath();
+        konteksGambar.arc(ujungPena[0], ujungPena[1], 9, 0, Math.PI * 2);
+        konteksGambar.fill();
       }
 
-      drawCtx.restore();
+      konteksGambar.restore();
 
-      cursorIdx += 3;
-      if (cursorIdx >= activeContour.length) {
-        contourIdx++;
-        cursorIdx = 0;
-        if (contourIdx >= contoursList.length) {
+      indeksKursor += 3;
+      if (indeksKursor >= konturAktif.length) {
+        indeksKontur++;
+        indeksKursor = 0;
+        if (indeksKontur >= daftarKontur.length) {
           setTimeout(() => {
-            stopStrokeDemo();
+            hentikanPeragaanGoresan();
           }, 800);
           return;
         }
       }
 
-      demoRafId = requestAnimationFrame(renderDemoTick);
+      idAnimasiPeragaan = requestAnimationFrame(jalankanFramePeragaan);
     }
 
-    demoRafId = requestAnimationFrame(renderDemoTick);
+    idAnimasiPeragaan = requestAnimationFrame(jalankanFramePeragaan);
   }
 
-  function stopStrokeDemo() {
-    isDemoActive = false;
-    if (demoRafId) {
-      cancelAnimationFrame(demoRafId);
-      demoRafId = null;
+  function hentikanPeragaanGoresan() {
+    peragaanSedangJalan = false;
+    if (idAnimasiPeragaan) {
+      cancelAnimationFrame(idAnimasiPeragaan);
+      idAnimasiPeragaan = null;
     }
-    if (btnDemo) {
-      btnDemo.classList.remove('is-playing');
-      btnDemo.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor">
+    if (tombolPeragaan) {
+      tombolPeragaan.classList.remove('is-playing');
+      tombolPeragaan.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="6 4 18 12 6 20 6 4" />
         </svg>
-        PERAGAKAN GORESAN
+        Peragakan goresan
       `;
     }
-    renderCanvasFrame();
+    gambarUlangKanvas();
   }
 
-  function evaluateTracePrecision() {
-    const charData = getActiveCharData();
-    if (!charData?.contours?.length) return;
+  // Menilai presisi dan kelengkapan bentuk goresan terhadap titik kontur acuan
+  function nilaiKetepatanGoresan() {
+    const dataAksara = ambilDataAksaraAktif();
+    if (!dataAksara?.contours?.length) return;
 
-    const referenceCoords = [];
-    charData.contours.forEach((contour) => {
-      contour.forEach((pt) => {
-        referenceCoords.push({ x: pt[0], y: pt[1] });
+    const koordinatAcuan = [];
+    dataAksara.contours.forEach((kontur) => {
+      kontur.forEach((pt) => {
+        koordinatAcuan.push({ x: pt[0], y: pt[1] });
       });
     });
 
-    const collectedPoints = [];
-    strokePaths.forEach((path) => {
-      path.forEach((pt) => {
-        collectedPoints.push(pt);
+    const titikTercatat = [];
+    jalurGoresan.forEach((jalur) => {
+      jalur.forEach((pt) => {
+        titikTercatat.push(pt);
       });
     });
 
-    if (collectedPoints.length < 5) {
-      notifyEmptyCanvas();
+    if (titikTercatat.length < 5) {
+      beriTahuKanvasKosong();
       return;
     }
 
     let sumPrecision = 0;
-    for (let i = 0; i < collectedPoints.length; i++) {
-      const drawnPt = collectedPoints[i];
-      let shortestDistSq = Infinity;
+    for (let i = 0; i < titikTercatat.length; i++) {
+      const titikGambar = titikTercatat[i];
+      let jarakKuadratTerpendek = Infinity;
 
-      for (let j = 0; j < referenceCoords.length; j++) {
-        const deltaX = drawnPt.x - referenceCoords[j].x;
-        const deltaY = drawnPt.y - referenceCoords[j].y;
-        const distSq = deltaX * deltaX + deltaY * deltaY;
-        if (distSq < shortestDistSq) {
-          shortestDistSq = distSq;
+      for (let j = 0; j < koordinatAcuan.length; j++) {
+        const selisihX = titikGambar.x - koordinatAcuan[j].x;
+        const selisihY = titikGambar.y - koordinatAcuan[j].y;
+        const jarakKuadrat = selisihX * selisihX + selisihY * selisihY;
+        if (jarakKuadrat < jarakKuadratTerpendek) {
+          jarakKuadratTerpendek = jarakKuadrat;
         }
       }
 
-      const dist = Math.sqrt(shortestDistSq);
-      drawnPt.distToRef = dist;
+      const jarak = Math.sqrt(jarakKuadratTerpendek);
+      titikGambar.distToRef = jarak;
 
-      const accuracy = Math.max(0, 1 - (dist / maxDeviation));
-      sumPrecision += accuracy;
+      const akurasi = Math.max(0, 1 - (jarak / SIMPANGAN_MAKS));
+      sumPrecision += akurasi;
     }
 
-    const precisionRatio = sumPrecision / collectedPoints.length;
+    const rasioPresisi = sumPrecision / titikTercatat.length;
 
-    const toleranceSq = hitTolerance * hitTolerance;
-    let coveredPointsCount = 0;
+    const toleransiKuadrat = TOLERANSI_KENA * TOLERANSI_KENA;
+    let titikTerpenuhiHitungan = 0;
 
-    for (let i = 0; i < referenceCoords.length; i++) {
-      const refPt = referenceCoords[i];
-      let isHit = false;
+    for (let i = 0; i < koordinatAcuan.length; i++) {
+      const titikAcuan = koordinatAcuan[i];
+      let terkena = false;
 
-      for (let j = 0; j < collectedPoints.length; j++) {
-        const drawn = collectedPoints[j];
-        const dx = refPt.x - drawn.x;
-        const dy = refPt.y - drawn.y;
-        if (dx * dx + dy * dy <= toleranceSq) {
-          isHit = true;
+      for (let j = 0; j < titikTercatat.length; j++) {
+        const drawn = titikTercatat[j];
+        const jarakX = titikAcuan.x - drawn.x;
+        const jarakY = titikAcuan.y - drawn.y;
+        if (jarakX * jarakX + jarakY * jarakY <= toleransiKuadrat) {
+          terkena = true;
           break;
         }
       }
 
-      if (isHit) coveredPointsCount++;
+      if (terkena) titikTerpenuhiHitungan++;
     }
 
-    const coverageRatio = referenceCoords.length > 0 ? (coveredPointsCount / referenceCoords.length) : 0;
-    const compositeScore = (precisionRatio * precisionWeight) + (coverageRatio * coverageWeight);
-    const finalScore = Math.max(0, Math.min(100, Math.round(compositeScore * 100)));
+    const rasioKelengkapan = koordinatAcuan.length > 0 ? (titikTerpenuhiHitungan / koordinatAcuan.length) : 0;
+    const skorGabungan = (rasioPresisi * BOBOT_PRESISI) + (rasioKelengkapan * BOBOT_KELENGKAPAN);
+    const skorAkhir = Math.max(0, Math.min(100, Math.round(skorGabungan * 100)));
 
-    const precPct = Math.round(precisionRatio * 100);
-    const covPct = Math.round(coverageRatio * 100);
+    const persenPresisi = Math.round(rasioPresisi * 100);
+    const persenKelengkapan = Math.round(rasioKelengkapan * 100);
 
-    renderEvaluationMetrics(finalScore, precPct, covPct);
+    tampilkanMetrikPenilaian(skorAkhir, persenPresisi, persenKelengkapan);
 
-    isEvaluated = true;
-    renderCanvasFrame();
+    sudahDinilai = true;
+    gambarUlangKanvas();
 
-    if (finalScore >= passingScore) {
-      markAksaraMastered(activeKey);
+    if (skorAkhir >= SKOR_LULUS) {
+      tandaiAksaraTuntas(kunciAktif);
     }
   }
 
-  function getMetricDOMNodes() {
+  function ambilElemenMetrikDOM() {
     return {
       score: document.getElementById('aksaraResultScore'),
       label: document.getElementById('aksaraResultLabel'),
@@ -718,205 +745,195 @@
     };
   }
 
-  function notifyEmptyCanvas() {
-    if (!resultScoreboard) return;
+  function beriTahuKanvasKosong() {
+    if (!papanHasil) return;
 
-    resultScoreboard.hidden = false;
-    const nodes = getMetricDOMNodes();
+    papanHasil.hidden = false;
+    const elemenMetrik = ambilElemenMetrikDOM();
 
-    if (nodes.score) nodes.score.textContent = '0%';
-    if (nodes.label) {
-      nodes.label.textContent = 'Kanvas Masih Kosong';
-      nodes.label.className = 'aksara-result-label label--low';
+    if (elemenMetrik.score) elemenMetrik.score.textContent = '0%';
+    if (elemenMetrik.label) {
+      elemenMetrik.label.textContent = 'Kanvas masih kosong';
+      elemenMetrik.label.className = 'aksara-result-label label--low';
     }
-    if (nodes.desc) {
-      nodes.desc.textContent = 'Silakan goreskan aksara di atas kanvas mengikuti pola panduan emas sebelum memeriksa presisi.';
+    if (elemenMetrik.desc) {
+      elemenMetrik.desc.textContent = 'Goreskan jarimu di atas kanvas mengikuti garis putus-putus sebelum memeriksa nilai.';
     }
-    if (nodes.precisionVal) nodes.precisionVal.textContent = '0%';
-    if (nodes.coverageVal) nodes.coverageVal.textContent = '0%';
-    if (nodes.precisionBar) nodes.precisionBar.style.width = '0%';
-    if (nodes.coverageBar) nodes.coverageBar.style.width = '0%';
-    if (nodes.status) {
-      nodes.status.innerHTML = `
+    if (elemenMetrik.precisionVal) elemenMetrik.precisionVal.textContent = '0%';
+    if (elemenMetrik.coverageVal) elemenMetrik.coverageVal.textContent = '0%';
+    if (elemenMetrik.precisionBar) elemenMetrik.precisionBar.style.width = '0%';
+    if (elemenMetrik.coverageBar) elemenMetrik.coverageBar.style.width = '0%';
+    if (elemenMetrik.status) {
+      elemenMetrik.status.innerHTML = `
         <div class="aksara-alert aksara-alert--warn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          Tarik garis dengan mouse, sentuhan jari, atau stylus pada kanvas.
+          <span>Tarik garis di kanvas dengan mouse, sentuhan jari, atau stylus.</span>
         </div>`;
     }
   }
 
-  function renderEvaluationMetrics(score, precPct, covPct) {
-    if (!resultScoreboard) return;
+  function tampilkanMetrikPenilaian(score, precPct, covPct) {
+    if (!papanHasil) return;
 
-    resultScoreboard.hidden = false;
-    const nodes = getMetricDOMNodes();
+    papanHasil.hidden = false;
+    const elemenMetrik = ambilElemenMetrikDOM();
 
-    if (nodes.score) nodes.score.textContent = `${score}%`;
-    if (nodes.precisionVal) nodes.precisionVal.textContent = `${precPct}%`;
-    if (nodes.coverageVal) nodes.coverageVal.textContent = `${covPct}%`;
-    if (nodes.precisionBar) nodes.precisionBar.style.width = `${precPct}%`;
-    if (nodes.coverageBar) nodes.coverageBar.style.width = `${covPct}%`;
+    if (elemenMetrik.score) elemenMetrik.score.textContent = `${score}%`;
+    if (elemenMetrik.precisionVal) elemenMetrik.precisionVal.textContent = `${precPct}%`;
+    if (elemenMetrik.coverageVal) elemenMetrik.coverageVal.textContent = `${covPct}%`;
+    if (elemenMetrik.precisionBar) elemenMetrik.precisionBar.style.width = `${precPct}%`;
+    if (elemenMetrik.coverageBar) elemenMetrik.coverageBar.style.width = `${covPct}%`;
 
-    let labelText = '';
-    let labelClass = '';
-    let descText = '';
+    let teksLabel = '';
+    let kelasLabel = '';
+    let teksDeskripsi = '';
 
     if (score >= 80) {
-      labelText = 'Sangat Presisi!';
-      labelClass = 'label--high';
-      descText = 'Luar biasa! Tarikan garis Anda selaras dan anggun mengikuti kelokan sakral pengrupak lontar.';
+      teksLabel = 'Tepat sekali';
+      kelasLabel = 'label--high';
+      teksDeskripsi = 'Goresanmu sudah selaras dengan pola aksara wianjana.';
     } else if (score >= 60) {
-      labelText = 'Cukup Rapi, Coba Lagi';
-      labelClass = 'label--mid';
-      descText = 'Bagus! Perhatikan bagian lengkungan yang berwarna merah untuk mencapai ambang kelulusan 75%.';
+      teksLabel = 'Cukup dekat';
+      kelasLabel = 'label--mid';
+      teksDeskripsi = 'Bentuk dasar sudah terlihat. Perhatikan lekukan yang berwarna kuning atau merah.';
     } else {
-      labelText = 'Perlu Latihan Lagi';
-      labelClass = 'label--low';
-      descText = 'Goresan masih banyak keluar dari jalur pola emas. Tetap tenang dan ulangi tarikan dari simpul awal.';
+      teksLabel = 'Perlu latihan lagi';
+      kelasLabel = 'label--low';
+      teksDeskripsi = 'Goresan masih banyak keluar dari jalur panduan. Mulai lagi dari titik merah.';
     }
 
-    if (nodes.label) {
-      nodes.label.textContent = labelText;
-      nodes.label.className = `aksara-result-label ${labelClass}`;
+    if (elemenMetrik.label) {
+      elemenMetrik.label.textContent = teksLabel;
+      elemenMetrik.label.className = `aksara-result-label ${kelasLabel}`;
     }
-    if (nodes.desc) {
-      nodes.desc.textContent = descText;
+    if (elemenMetrik.desc) {
+      elemenMetrik.desc.textContent = teksDeskripsi;
     }
 
-    if (nodes.status) {
-      if (score >= passingScore) {
-        nodes.status.innerHTML = `
+    if (elemenMetrik.status) {
+      if (score >= SKOR_LULUS) {
+        elemenMetrik.status.innerHTML = `
           <div class="aksara-alert aksara-alert--success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-            <span><strong>Aksara Berhasil Dikuasai!</strong> Tanda kelulusan telah dicatat pada jurnal pusaka Anda.</span>
+            <span><strong>Aksara dikuasai.</strong> Progres latihanmu sudah tersimpan di peramban ini.</span>
           </div>`;
       } else {
-        nodes.status.innerHTML = `
+        elemenMetrik.status.innerHTML = `
           <div class="aksara-alert aksara-alert--info">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="16" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <span>Ambang kelulusan: <strong>75%</strong>. Tekan <em>"Hapus & Ulangi"</em> untuk mengasah kembali kelenturan jemari.</span>
+            <span>Skor kelulusan minimal <strong>75%</strong>. Tekan tombol <em>Hapus dan ulangi</em> untuk mencoba lagi.</span>
           </div>`;
       }
     }
   }
 
-  function bindStudioEvents() {
-    const btnReset = document.getElementById('aksaraBtnReset');
-    if (btnReset) {
-      btnReset.addEventListener('click', () => {
-        strokePaths = [];
-        isEvaluated = false;
-        if (resultScoreboard) resultScoreboard.hidden = true;
-        if (isDemoActive) stopStrokeDemo();
-        renderCanvasFrame();
+  function pasangAksiStudio() {
+    const tombolReset = document.getElementById('aksaraBtnReset');
+    if (tombolReset) {
+      tombolReset.addEventListener('click', () => {
+        jalurGoresan = [];
+        sudahDinilai = false;
+        if (papanHasil) papanHasil.hidden = true;
+        if (peragaanSedangJalan) hentikanPeragaanGoresan();
+        gambarUlangKanvas();
       });
     }
 
-    const btnGuide = document.getElementById('aksaraBtnGuide');
-    if (btnGuide) {
-      btnGuide.addEventListener('click', () => {
-        displayGuide = !displayGuide;
-        btnGuide.classList.toggle('is-off', !displayGuide);
-        renderCanvasFrame();
+    const tombolPanduan = document.getElementById('aksaraBtnGuide');
+    if (tombolPanduan) {
+      tombolPanduan.addEventListener('click', () => {
+        tampilkanPanduan = !tampilkanPanduan;
+        tombolPanduan.classList.toggle('is-off', !tampilkanPanduan);
+        gambarUlangKanvas();
       });
     }
 
-    const btnScore = document.getElementById('aksaraBtnScore');
-    if (btnScore) {
-      btnScore.addEventListener('click', () => {
-        if (isDemoActive) stopStrokeDemo();
-        evaluateTracePrecision();
+    const tombolNilai = document.getElementById('aksaraBtnScore');
+    if (tombolNilai) {
+      tombolNilai.addEventListener('click', () => {
+        if (peragaanSedangJalan) hentikanPeragaanGoresan();
+        nilaiKetepatanGoresan();
       });
     }
 
-    const btnNext = document.getElementById('aksaraBtnNext');
-    if (btnNext) {
-      btnNext.addEventListener('click', () => {
-        const curIdx = aksaraList.indexOf(activeKey);
-        const nextIdx = (curIdx + 1) % aksaraList.length;
-        switchAksara(aksaraList[nextIdx]);
+    const tombolBerikutnya = document.getElementById('aksaraBtnNext');
+    if (tombolBerikutnya) {
+      tombolBerikutnya.addEventListener('click', () => {
+        const indeksSekarang = daftarAksara.indexOf(kunciAktif);
+        const indeksBerikutnya = (indeksSekarang + 1) % daftarAksara.length;
+        gantiAksara(daftarAksara[indeksBerikutnya]);
       });
     }
 
-    if (btnDemo) {
-      btnDemo.addEventListener('click', toggleStrokeDemo);
+    if (tombolPeragaan) {
+      tombolPeragaan.addEventListener('click', alihStatusPeragaan);
     }
 
-    const btnDismissResult = document.getElementById('aksaraResultClose');
-    if (btnDismissResult) {
-      btnDismissResult.addEventListener('click', () => {
-        if (resultScoreboard) resultScoreboard.hidden = true;
+    const tombolTutupHasil = document.getElementById('aksaraResultClose');
+    if (tombolTutupHasil) {
+      tombolTutupHasil.addEventListener('click', () => {
+        if (papanHasil) papanHasil.hidden = true;
       });
     }
   }
 
-  function switchAksara(key) {
-    const dataset = fetchAksaraDataset();
-    if (!dataset || !dataset[key]) return;
+  function gantiAksara(kunci) {
+    const koleksiData = ambilKoleksiDataAksara();
+    if (!koleksiData || !koleksiData[kunci]) return;
 
-    if (isDemoActive) stopStrokeDemo();
+    if (peragaanSedangJalan) hentikanPeragaanGoresan();
 
-    activeKey = key;
-    strokePaths = [];
-    isEvaluated = false;
-    if (resultScoreboard) resultScoreboard.hidden = true;
+    kunciAktif = kunci;
+    jalurGoresan = [];
+    sudahDinilai = false;
+    if (papanHasil) papanHasil.hidden = true;
 
-    aksaraList.forEach((k) => {
-      const row = document.getElementById(`aksara-row-${k}`);
-      if (!row) return;
-      const isCurrent = (k === key);
-      row.classList.toggle('is-active', isCurrent);
-      row.setAttribute('aria-selected', String(isCurrent));
+    daftarAksara.forEach((k) => {
+      const elemenBaris = document.getElementById(`aksara-row-${k}`);
+      if (!elemenBaris) return;
+      const sedangAktif = (k === kunci);
+      elemenBaris.classList.toggle('is-active', sedangAktif);
+      elemenBaris.setAttribute('aria-selected', String(sedangAktif));
 
-      if (isCurrent && window.innerWidth <= 992) {
-        row.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      if (sedangAktif && window.innerWidth <= 992) {
+        elemenBaris.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     });
 
-    const item = dataset[key];
-    const meta = aksaraMeta[key] || { meaningLong: '', char: '' };
+    const dataKarakter = koleksiData[kunci];
+    const dataMeta = metaAksara[kunci] || { meaningLong: '', char: '' };
 
-    const nameEl = document.getElementById('aksaraActiveName');
-    if (nameEl) nameEl.textContent = `Aksara ${item.label}`;
+    const elemenNama = document.getElementById('aksaraActiveName');
+    if (elemenNama) elemenNama.textContent = `Aksara ${dataKarakter.label}`;
 
-    const glyphEl = document.getElementById('aksaraActiveGlyph');
-    if (glyphEl) glyphEl.textContent = meta.char;
+    const elemenGlif = document.getElementById('aksaraActiveGlyph');
+    if (elemenGlif) elemenGlif.textContent = dataMeta.char;
 
-    const unicodeEl = document.getElementById('aksaraActiveUnicode');
-    if (unicodeEl) unicodeEl.textContent = item.unicode;
+    const elemenUnicode = document.getElementById('aksaraActiveUnicode');
+    if (elemenUnicode) elemenUnicode.textContent = dataKarakter.unicode;
 
-    const meaningEl = document.getElementById('aksaraActiveMeaning');
-    if (meaningEl) meaningEl.textContent = meta.meaningLong;
+    const elemenMakna = document.getElementById('aksaraActiveMeaning');
+    if (elemenMakna) elemenMakna.textContent = dataMeta.meaningLong;
 
-    positionStartIndicator();
-    renderCanvasFrame();
+    posisikanPenandaMulai();
+    gambarUlangKanvas();
   }
 
-  function fetchAksaraDataset() {
-    return (typeof aksaraData !== 'undefined') ? aksaraData : (window.aksaraData || null);
+  function ambilKoleksiDataAksara() {
+    if (typeof dataAksara !== 'undefined') return dataAksara;
+    if (typeof aksaraData !== 'undefined') return aksaraData;
+    if (typeof window !== 'undefined' && window.dataAksara) return window.dataAksara;
+    if (typeof window !== 'undefined' && window.aksaraData) return window.aksaraData;
+    return null;
   }
 
-  function getActiveCharData() {
-    const dataset = fetchAksaraDataset();
-    return dataset ? dataset[activeKey] : null;
+  function ambilDataAksaraAktif() {
+    const koleksiData = ambilKoleksiDataAksara();
+    return koleksiData ? koleksiData[kunciAktif] : null;
   }
 
-  function debounce(callback, delay) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => callback.apply(this, args), delay);
+  function tundaPanggilan(fungsiPanggilan, jedaWaktu) {
+    let pengaturWaktu;
+    return function (...argumen) {
+      clearTimeout(pengaturWaktu);
+      pengaturWaktu = setTimeout(() => fungsiPanggilan.apply(this, argumen), jedaWaktu);
     };
   }
 })();

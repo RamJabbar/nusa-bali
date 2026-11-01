@@ -29,7 +29,7 @@
   function initSplashScreen() {
     var splash = document.getElementById('splashScreen');
 
-    // If there is no splash element on this page (e.g. visited gamelan.html, peta.html, etc. directly)
+    // If there is no splash element on this page (e.g. visited gamelan.html, tari.html, etc. directly)
     if (!splash) {
       try {
         sessionStorage.setItem(config.storageKey, 'true');

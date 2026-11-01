@@ -1,15 +1,12 @@
-// Nusa Bali Heritage: Mesin Akustik dan Studio Interaktif Gamelan Bali
-// Mengimplementasikan sintesis fisik perunggu krawang (Web Audio API),
-// fenomena ombak (paired-tuning pengumbang-pengisep), simulasi kotekan, dan autoplayer gending.
+// Nusa Bali Heritage: Suara dan studio interaktif Gamelan Bali
+// Mengolah nada perunggu krawang langsung di peramban, efek ombak berpasangan,
+// pola kotekan, dan putaran melodi gending.
 
 (function () {
   'use strict';
 
-  // Laras & data instrumen
-
-  // Laras Pelog Selisir (5-Nada Pentatonik Sakral) 2 Oktaf untuk Gangsa Pemade
-  // Disesuaikan dengan skala frekuensi ansambel Gong Kebyar klasik (pusat A440)
-  const PELOG_SELISIR_NOTES = [
+  // Laras pelog selisir (5 nada) 2 oktaf untuk gangsa pemade
+  const NADA_PELOG_SELISIR = [
     {
       id: 'ding1',
       name: 'Ding',
@@ -142,1355 +139,1300 @@
     }
   ];
 
-  // Reyong Bali: 12 Pot Pencon Berderet Horizontal (Dimainkan 4 Penabuh)
-  const REYONG_NOTES = [
-    { id: 'reyong_1', name: 'Dang (Rendah)', aksara: 'ᬤᬂ', freq: 187, key: 'Z', potIndex: 1 },
+  // Reyong Bali: 12 pencon berderet mendatar untuk 4 penabuh
+  const NADA_REYONG = [
+    { id: 'reyong_1', name: 'Dang (rendah)', aksara: 'ᬤᬂ', freq: 187, key: 'Z', potIndex: 1 },
     { id: 'reyong_2', name: 'Ding', aksara: 'ᬤᬶᬂ', freq: 224, key: 'X', potIndex: 2 },
     { id: 'reyong_3', name: 'Dong', aksara: 'ᬤᭀᬂ', freq: 248, key: 'C', potIndex: 3 },
     { id: 'reyong_4', name: 'Deng', aksara: 'ᬤᬾᬂ', freq: 278, key: 'V', potIndex: 4 },
     { id: 'reyong_5', name: 'Dung', aksara: 'ᬤᬸᬂ', freq: 334, key: 'B', potIndex: 5 },
     { id: 'reyong_6', name: 'Dang', aksara: 'ᬤᬂ', freq: 374, key: 'N', potIndex: 6 },
-    { id: 'reyong_7', name: 'Ding (Madya)', aksara: 'ᬤᬶᬂ', freq: 448, key: 'M', potIndex: 7 },
+    { id: 'reyong_7', name: 'Ding (sedang)', aksara: 'ᬤᬶᬂ', freq: 448, key: 'M', potIndex: 7 },
     { id: 'reyong_8', name: 'Dong', aksara: 'ᬤᭀᬂ', freq: 496, key: ',', potIndex: 8 },
     { id: 'reyong_9', name: 'Deng', aksara: 'ᬤᬾᬂ', freq: 556, key: '.', potIndex: 9 },
     { id: 'reyong_10', name: 'Dung', aksara: 'ᬤᬸᬂ', freq: 668, key: '/', potIndex: 10 },
-    { id: 'reyong_11', name: 'Dang (Tinggi)', aksara: 'ᬤᬂ', freq: 748, key: 'K', potIndex: 11 },
-    { id: 'reyong_12', name: 'Ding (Puncak)', aksara: 'ᬤᬶᬂ', freq: 896, key: 'L', potIndex: 12 }
+    { id: 'reyong_11', name: 'Dang (tinggi)', aksara: 'ᬤᬂ', freq: 748, key: 'K', potIndex: 11 },
+    { id: 'reyong_12', name: 'Ding (puncak)', aksara: 'ᬤᬶᬂ', freq: 896, key: 'L', potIndex: 12 }
   ];
 
-  // Sintesis audio gamelan Bali (Web Audio API)
-
-  class BalineseGamelanAudioEngine {
+  // Mesin penghasil suara gamelan di browser
+  class MesinAudioGamelan {
     constructor() {
-      this.ctx = null;
-      this.masterGain = null;
-      this.compressor = null;
-      this.reverbNode = null;
-      this.isInitialized = false;
+      this.konteks = null;
+      this.penguatUtama = null;
+      this.kompresor = null;
+      this.nodeGema = null;
+      this.sudahSiap = false;
 
-      // Konfigurasi Akustik
-      this.ombakEnabled = true;
-      this.ombakDelta = 6.8; // Selisih frekuensi Pengumbang & Pengisep (~6-7 Hz)
-      this.matedetEnabled = false; // Mode redam bilah
-      this.masterVolume = 0.85;
-      this.pitchTranspose = 0; // dalam semitone (-2 s.d +2)
+      // Setelan getaran
+      this.ombakAktif = true;
+      this.selisihOmbak = 6.8;
+      this.matedetAktif = false;
+      this.volumeUtama = 0.85;
+      this.transposisiNada = 0;
 
-      // Pelacak suara aktif untuk teknik Matedet (damping)
-      this.activeVoices = new Map();
-      this.recentNoteTimestamp = 0;
-      this.activeGongVoice = null;
+      // Pelacak suara yang sedang berbunyi untuk teknik matedet
+      this.suaraAktif = new Map();
+      this.waktuNadaTerakhir = 0;
+      this.suaraGongAktif = null;
     }
 
-    init() {
-      if (this.isInitialized && this.ctx) {
-        if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') {
-          this.ctx.resume();
+    inisialisasi() {
+      if (this.sudahSiap && this.konteks) {
+        if (this.konteks.state === 'suspended' || this.konteks.state === 'interrupted') {
+          this.konteks.resume();
         }
         return;
       }
 
-      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtxClass) {
+      const KelasKonteksAudio = window.AudioContext || window.webkitAudioContext;
+      if (!KelasKonteksAudio) {
         console.warn('Web Audio API tidak didukung pada peramban ini.');
         return;
       }
 
-      this.ctx = new AudioCtxClass();
+      this.konteks = new KelasKonteksAudio();
 
-      // Master Compressor untuk mencegah distorsi saat banyak instrumen berdentang bersamaan
-      this.compressor = this.ctx.createDynamicsCompressor();
-      this.compressor.threshold.setValueAtTime(-14, this.ctx.currentTime);
-      this.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
-      this.compressor.ratio.setValueAtTime(6, this.ctx.currentTime);
-      this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
-      this.compressor.release.setValueAtTime(0.2, this.ctx.currentTime);
+      // Kompresor agar suara tidak pecah saat banyak bilah berdentang bersamaan
+      this.kompresor = this.konteks.createDynamicsCompressor();
+      this.kompresor.threshold.setValueAtTime(-14, this.konteks.currentTime);
+      this.kompresor.knee.setValueAtTime(8, this.konteks.currentTime);
+      this.kompresor.ratio.setValueAtTime(6, this.konteks.currentTime);
+      this.kompresor.attack.setValueAtTime(0.003, this.konteks.currentTime);
+      this.kompresor.release.setValueAtTime(0.2, this.konteks.currentTime);
 
-      // Master Gain
-      this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(this.masterVolume, this.ctx.currentTime);
+      // Pengatur volume keseluruhan
+      this.penguatUtama = this.konteks.createGain();
+      this.penguatUtama.gain.setValueAtTime(this.volumeUtama, this.konteks.currentTime);
 
-      // Efek Ambiens Suci (Courtyard Reverb / Ambience Hall) menggunakan Convolver sintetis
-      this.reverbNode = this.createSyntheticReverb(1.8, 2.2);
+      // Ruang gema sederhana menyerupai bale wantilan
+      this.nodeGema = this.buatGemaSintetis(1.8, 2.2);
 
-      // Routing audio: Voices -> Reverb & Dry -> Compressor -> Master -> Destination
-      const dryGain = this.ctx.createGain();
-      dryGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
+      // Rute audio: Sumber -> Suara langsung & Gema -> Kompresor -> Volume utama -> Pengeras suara
+      const penguatKering = this.konteks.createGain();
+      penguatKering.gain.setValueAtTime(0.85, this.konteks.currentTime);
 
-      const wetGain = this.ctx.createGain();
-      wetGain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+      const penguatBasah = this.konteks.createGain();
+      penguatBasah.gain.setValueAtTime(0.35, this.konteks.currentTime);
 
-      this.busGain = this.ctx.createGain();
-      this.busGain.connect(dryGain);
-      this.busGain.connect(this.reverbNode);
+      this.jalurPenguat = this.konteks.createGain();
+      this.jalurPenguat.connect(penguatKering);
+      this.jalurPenguat.connect(this.nodeGema);
 
-      dryGain.connect(this.compressor);
-      this.reverbNode.connect(wetGain);
-      wetGain.connect(this.compressor);
+      penguatKering.connect(this.kompresor);
+      this.nodeGema.connect(penguatBasah);
+      penguatBasah.connect(this.kompresor);
 
-      this.compressor.connect(this.masterGain);
-      this.masterGain.connect(this.ctx.destination);
+      this.kompresor.connect(this.penguatUtama);
+      this.penguatUtama.connect(this.konteks.destination);
 
-      this.isInitialized = true;
+      this.sudahSiap = true;
     }
 
-    createSyntheticReverb(duration, decay) {
-      const sampleRate = this.ctx.sampleRate;
-      const length = Math.floor(sampleRate * duration);
-      const impulse = this.ctx.createBuffer(2, length, sampleRate);
-      const left = impulse.getChannelData(0);
-      const right = impulse.getChannelData(1);
+    buatGemaSintetis(durasi, peluruhan) {
+      const sampleRate = this.konteks.sampleRate;
+      const length = Math.floor(sampleRate * durasi);
+      const impuls = this.konteks.createBuffer(2, length, sampleRate);
+      const left = impuls.getChannelData(0);
+      const right = impuls.getChannelData(1);
 
       let energy = 0;
       for (let i = 0; i < length; i++) {
-        const factor = Math.exp(-i / (sampleRate * decay * 0.25));
-        const l = (Math.random() * 2 - 1) * factor;
-        const r = (Math.random() * 2 - 1) * factor;
+        const faktor = Math.exp(-i / (sampleRate * peluruhan * 0.25));
+        const l = (Math.random() * 2 - 1) * faktor;
+        const r = (Math.random() * 2 - 1) * faktor;
         left[i] = l;
         right[i] = r;
         energy += (l * l + r * r) * 0.5;
       }
 
-      // Normalisasi energi impulse response agar sinyal convolver tidak melonjak ~66x lipat
-      const norm = Math.sqrt(energy) || 1;
+      // Normalisasi agar volume gema seimbang
+      const faktorNormal = Math.sqrt(energy) || 1;
       for (let i = 0; i < length; i++) {
-        left[i] /= norm;
-        right[i] /= norm;
+        left[i] /= faktorNormal;
+        right[i] /= faktorNormal;
       }
 
-      const convolver = this.ctx.createConvolver();
-      convolver.buffer = impulse;
-      return convolver;
+      const konvolver = this.konteks.createConvolver();
+      konvolver.buffer = impuls;
+      return konvolver;
     }
 
-    ensureContext() {
-      if (!this.isInitialized) {
-        this.init();
+    pastikanKonteks() {
+      if (!this.sudahSiap) {
+        this.inisialisasi();
       }
-      if (this.ctx && (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted')) {
-        this.ctx.resume();
-      }
-    }
-
-    setVolume(val) {
-      this.masterVolume = Math.max(0, Math.min(1, val));
-      if (this.masterGain && this.ctx) {
-        this.masterGain.gain.setTargetAtTime(this.masterVolume, this.ctx.currentTime, 0.03);
+      if (this.konteks && (this.konteks.state === 'suspended' || this.konteks.state === 'interrupted')) {
+        this.konteks.resume();
       }
     }
 
-    setOmbakEnabled(enabled) {
-      this.ombakEnabled = Boolean(enabled);
+    aturVolume(nilai) {
+      this.volumeUtama = Math.max(0, Math.min(1, nilai));
+      if (this.penguatUtama && this.konteks) {
+        this.penguatUtama.gain.setTargetAtTime(this.volumeUtama, this.konteks.currentTime, 0.03);
+      }
     }
 
-    setOmbakDelta(delta) {
-      this.ombakDelta = Math.max(0, Math.min(14, delta));
+    aturOmbakAktif(diaktifkan) {
+      this.ombakAktif = Boolean(diaktifkan);
     }
 
-    setMatedetEnabled(enabled) {
-      this.matedetEnabled = Boolean(enabled);
+    aturSelisihOmbak(selisih) {
+      this.selisihOmbak = Math.max(0, Math.min(14, selisih));
     }
 
-    // Peredaman bilah (Matedet) dengan fade out cepat 35ms
-    dampenKey(noteId) {
-      const voiceList = this.activeVoices.get(noteId);
-      if (voiceList && voiceList.length && this.ctx) {
-        const now = this.ctx.currentTime;
-        voiceList.forEach(({ gainNode, startTime }) => {
-          if (now - (startTime || 0) < 3.0) {
+    aturMatedetAktif(diaktifkan) {
+      this.matedetAktif = Boolean(diaktifkan);
+    }
+
+    // Redam getaran bilah dalam 40 milidetik saat tangan menutup bilah
+    redamBilah(idNada) {
+      const daftarSuara = this.suaraAktif.get(idNada);
+      if (daftarSuara && daftarSuara.length && this.konteks) {
+        const waktuSekarang = this.konteks.currentTime;
+        daftarSuara.forEach(({ gainNode, startTime }) => {
+          if (waktuSekarang - (startTime || 0) < 3.0) {
             try {
-              gainNode.gain.cancelScheduledValues(now);
-              gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-              gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+              gainNode.gain.cancelScheduledValues(waktuSekarang);
+              gainNode.gain.setValueAtTime(gainNode.gain.value, waktuSekarang);
+              gainNode.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.04);
             } catch (e) {
-              // Abaikan jika node sudah terdisposisi
+              // Node mungkin sudah selesai diputar
             }
           }
         });
-        this.activeVoices.delete(noteId);
+        this.suaraAktif.delete(idNada);
       }
     }
 
-    dampenAll() {
-      if (!this.ctx) return;
-      this.activeVoices.forEach((voiceList, noteId) => {
-        this.dampenKey(noteId);
+    redamSemua() {
+      if (!this.konteks) return;
+      this.suaraAktif.forEach((daftarSuara, idNada) => {
+        this.redamBilah(idNada);
       });
-      this.activeVoices.clear();
+      this.suaraAktif.clear();
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS GANGSA PEMADE (Metalfon Perunggu Krawang + Resonator Bumbung)
-    // -----------------------------------------------------------------------
-    playGangsaNote(noteData, velocity = 0.9) {
-      this.ensureContext();
-      if (!this.ctx) return;
+    // Nada bilah gangsa pemade
+    mainkanNadaGangsa(dataNada, kecepatanPukul = 0.9) {
+      this.pastikanKonteks();
+      if (!this.konteks) return;
 
-      const now = this.ctx.currentTime;
+      const waktuSekarang = this.konteks.currentTime;
 
-      // Jika Matedet aktif, redam nada sebelumnya pada bilah yang sama
-      if (this.matedetEnabled) {
-        this.dampenKey(noteData.id);
+      // Jika matedet aktif, redam nada sebelumnya pada bilah yang sama
+      if (this.matedetAktif) {
+        this.redamBilah(dataNada.id);
       }
 
-      // Hitung frekuensi dasar dengan faktor transposisi
-      const baseFreq = noteData.freq * Math.pow(2, this.pitchTranspose / 12);
+      const frekuensiDasar = dataNada.freq * Math.pow(2, this.transposisiNada / 12);
 
-      // Struktur parsial inharmonis logam perunggu gamelan Bali
-      // Mode getaran bilah bebas: fundamental, f1 * 2.76, f1 * 5.4, f1 * 8.93
-      const partials = [
+      // Nada tambahan khas getaran perunggu
+      const parsialPerunggu = [
         { mult: 1.0, gain: 0.75, decay: 2.8 },
         { mult: 2.76, gain: 0.38, decay: 0.9 },
         { mult: 5.4, gain: 0.22, decay: 0.4 },
         { mult: 8.93, gain: 0.12, decay: 0.18 }
       ];
 
-      const voicePair = [];
+      const pasanganSuara = [];
 
-      // Konfigurasi nada tunggal atau sepasang Pengumbang & Pengisep
-      const voicesConfig = this.ombakEnabled
+      // Bunyi tunggal atau sepasang pengumbang dan pengisep
+      const konfigurasiSuara = this.ombakAktif
         ? [
-            { pan: -0.25, freqOffset: -this.ombakDelta / 2, label: 'Pengumbang (Wadon)' },
-            { pan: 0.25, freqOffset: +this.ombakDelta / 2, label: 'Pengisep (Lanang)' }
+            { pan: -0.25, freqOffset: -this.selisihOmbak / 2, label: 'Pengumbang' },
+            { pan: 0.25, freqOffset: +this.selisihOmbak / 2, label: 'Pengisep' }
           ]
         : [{ pan: 0.0, freqOffset: 0, label: 'Tunggal' }];
 
-      voicesConfig.forEach((cfg) => {
-        const vGain = this.ctx.createGain();
-        const panner = this.ctx.createStereoPanner ? this.ctx.createStereoPanner() : null;
+      konfigurasiSuara.forEach((setelan) => {
+        const penguatSuara = this.konteks.createGain();
+        const penataStereo = this.konteks.createStereoPanner ? this.konteks.createStereoPanner() : null;
 
-        if (panner) {
-          panner.pan.setValueAtTime(cfg.pan, now);
-          vGain.connect(panner);
-          panner.connect(this.busGain);
+        if (penataStereo) {
+          penataStereo.pan.setValueAtTime(setelan.pan, waktuSekarang);
+          penguatSuara.connect(penataStereo);
+          penataStereo.connect(this.jalurPenguat);
         } else {
-          vGain.connect(this.busGain);
+          penguatSuara.connect(this.jalurPenguat);
         }
 
-        // Resonator bumbung bambu (Acoustic cavity bandpass)
-        const bumbungFilter = this.ctx.createBiquadFilter();
-        bumbungFilter.type = 'peaking';
-        bumbungFilter.frequency.setValueAtTime(baseFreq, now);
-        bumbungFilter.Q.setValueAtTime(4.5, now);
-        bumbungFilter.gain.setValueAtTime(7.0, now);
+        // Bumbung bambu resonator di bawah bilah
+        const penyaringBumbung = this.konteks.createBiquadFilter();
+        penyaringBumbung.type = 'peaking';
+        penyaringBumbung.frequency.setValueAtTime(frekuensiDasar, waktuSekarang);
+        penyaringBumbung.Q.setValueAtTime(4.5, waktuSekarang);
+        penyaringBumbung.gain.setValueAtTime(7.0, waktuSekarang);
 
-        // Parsial osilator perunggu
-        partials.forEach((part) => {
-          const osc = this.ctx.createOscillator();
-          const pGain = this.ctx.createGain();
+        // Osilator untuk setiap tingkatan getar perunggu
+        parsialPerunggu.forEach((bagianParsial) => {
+          const osilator = this.konteks.createOscillator();
+          const penguatParsial = this.konteks.createGain();
 
-          osc.type = 'sine';
-          const targetFreq = (baseFreq + cfg.freqOffset) * part.mult;
-          osc.frequency.setValueAtTime(targetFreq, now);
+          osilator.type = 'sine';
+          const frekuensiTujuan = (frekuensiDasar + setelan.freqOffset) * bagianParsial.mult;
+          osilator.frequency.setValueAtTime(frekuensiTujuan, waktuSekarang);
 
-          const peakGain = part.gain * velocity * (this.ombakEnabled ? 0.65 : 0.9);
-          pGain.gain.setValueAtTime(0.0001, now);
-          // Serangan pukulan instan (2ms)
-          pGain.gain.exponentialRampToValueAtTime(peakGain, now + 0.002);
-          // Peluruhan alami resonansi bilah perunggu
-          pGain.gain.exponentialRampToValueAtTime(0.0001, now + part.decay);
+          const penguatPuncak = bagianParsial.gain * kecepatanPukul * (this.ombakAktif ? 0.65 : 0.9);
+          penguatParsial.gain.setValueAtTime(0.0001, waktuSekarang);
+          penguatParsial.gain.exponentialRampToValueAtTime(penguatPuncak, waktuSekarang + 0.002);
+          penguatParsial.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + bagianParsial.decay);
 
-          osc.connect(pGain);
-          pGain.connect(bumbungFilter);
+          osilator.connect(penguatParsial);
+          penguatParsial.connect(penyaringBumbung);
 
-          osc.start(now);
-          osc.stop(now + part.decay + 0.1);
+          osilator.start(waktuSekarang);
+          osilator.stop(waktuSekarang + bagianParsial.decay + 0.1);
         });
 
-        // Transien pukulan panggul kayu/tanduk (Mallet Impact Click)
-        const clickOsc = this.ctx.createOscillator();
-        const clickGain = this.ctx.createGain();
-        clickOsc.type = 'triangle';
-        clickOsc.frequency.setValueAtTime(baseFreq * 6.2, now);
-        clickOsc.frequency.exponentialRampToValueAtTime(baseFreq * 0.8, now + 0.02);
+        // Bunyi ketukan awal dari panggul kayu
+        const osilatorKetukan = this.konteks.createOscillator();
+        const penguatKetukan = this.konteks.createGain();
+        osilatorKetukan.type = 'triangle';
+        osilatorKetukan.frequency.setValueAtTime(frekuensiDasar * 6.2, waktuSekarang);
+        osilatorKetukan.frequency.exponentialRampToValueAtTime(frekuensiDasar * 0.8, waktuSekarang + 0.02);
 
-        clickGain.gain.setValueAtTime(0.3 * velocity, now);
-        clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+        penguatKetukan.gain.setValueAtTime(0.3 * kecepatanPukul, waktuSekarang);
+        penguatKetukan.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.025);
 
-        clickOsc.connect(clickGain);
-        clickGain.connect(bumbungFilter);
+        osilatorKetukan.connect(penguatKetukan);
+        penguatKetukan.connect(penyaringBumbung);
 
-        clickOsc.start(now);
-        clickOsc.stop(now + 0.03);
+        osilatorKetukan.start(waktuSekarang);
+        osilatorKetukan.stop(waktuSekarang + 0.03);
 
-        bumbungFilter.connect(vGain);
-        voicePair.push({ gainNode: vGain, startTime: now });
+        penyaringBumbung.connect(penguatSuara);
+        pasanganSuara.push({ gainNode: penguatSuara, startTime: waktuSekarang });
       });
 
-      // Catat suara untuk pemicu matedet
-      if (!this.activeVoices.has(noteData.id)) {
-        this.activeVoices.set(noteData.id, []);
+      if (!this.suaraAktif.has(dataNada.id)) {
+        this.suaraAktif.set(dataNada.id, []);
       }
-      this.activeVoices.get(noteData.id).push(...voicePair);
+      this.suaraAktif.get(dataNada.id).push(...pasanganSuara);
 
-      // Pembersihan memori otomatis (Garbage Collection) setelah suara reda alami (~3.1 detik)
       setTimeout(() => {
-        const list = this.activeVoices.get(noteData.id);
-        if (list) {
-          const remaining = list.filter((v) => v.startTime !== now);
-          if (remaining.length === 0) {
-            this.activeVoices.delete(noteData.id);
+        const daftar = this.suaraAktif.get(dataNada.id);
+        if (daftar) {
+          const suaraTersisa = daftar.filter((v) => v.startTime !== waktuSekarang);
+          if (suaraTersisa.length === 0) {
+            this.suaraAktif.delete(dataNada.id);
           } else {
-            this.activeVoices.set(noteData.id, remaining);
+            this.suaraAktif.set(dataNada.id, suaraTersisa);
           }
         }
       }, 3100);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS REYONG BALI (Pencon / Gong-Chime dengan Nada Punchy Berpencu)
-    // -----------------------------------------------------------------------
-    playReyongNote(noteData, velocity = 0.85) {
-      this.ensureContext();
-      if (!this.ctx) return;
+    // Bunyi pot reyong
+    mainkanNadaReyong(dataNada, kecepatanPukul = 0.85) {
+      this.pastikanKonteks();
+      if (!this.konteks) return;
 
-      const now = this.ctx.currentTime;
-      const baseFreq = noteData.freq * Math.pow(2, this.pitchTranspose / 12);
+      const waktuSekarang = this.konteks.currentTime;
+      const frekuensiDasar = dataNada.freq * Math.pow(2, this.transposisiNada / 12);
 
-      // Karakter pencon: overtone bulat, ada 'tong' logam yang tegas
-      const osc1 = this.ctx.createOscillator();
-      const osc2 = this.ctx.createOscillator();
-      const osc3 = this.ctx.createOscillator();
-      const gainNode = this.ctx.createGain();
+      const osilator1 = this.konteks.createOscillator();
+      const osilator2 = this.konteks.createOscillator();
+      const osilator3 = this.konteks.createOscillator();
+      const nodePenguat = this.konteks.createGain();
 
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(baseFreq, now);
+      osilator1.type = 'sine';
+      osilator1.frequency.setValueAtTime(frekuensiDasar, waktuSekarang);
 
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(baseFreq * 2.08, now); // Overtone pencon
+      osilator2.type = 'sine';
+      osilator2.frequency.setValueAtTime(frekuensiDasar * 2.08, waktuSekarang);
 
-      osc3.type = 'triangle';
-      osc3.frequency.setValueAtTime(baseFreq * 3.42, now); // Overtone dentang pencu
+      osilator3.type = 'triangle';
+      osilator3.frequency.setValueAtTime(frekuensiDasar * 3.42, waktuSekarang);
 
-      const g1 = this.ctx.createGain();
-      const g2 = this.ctx.createGain();
-      const g3 = this.ctx.createGain();
+      const penguat1 = this.konteks.createGain();
+      const penguat2 = this.konteks.createGain();
+      const penguat3 = this.konteks.createGain();
 
-      g1.gain.setValueAtTime(0.8 * velocity, now);
-      g1.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+      penguat1.gain.setValueAtTime(0.8 * kecepatanPukul, waktuSekarang);
+      penguat1.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 1.6);
 
-      g2.gain.setValueAtTime(0.35 * velocity, now);
-      g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+      penguat2.gain.setValueAtTime(0.35 * kecepatanPukul, waktuSekarang);
+      penguat2.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.6);
 
-      g3.gain.setValueAtTime(0.18 * velocity, now);
-      g3.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+      penguat3.gain.setValueAtTime(0.18 * kecepatanPukul, waktuSekarang);
+      penguat3.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.2);
 
-      osc1.connect(g1);
-      osc2.connect(g2);
-      osc3.connect(g3);
+      osilator1.connect(penguat1);
+      osilator2.connect(penguat2);
+      osilator3.connect(penguat3);
 
-      g1.connect(gainNode);
-      g2.connect(gainNode);
-      g3.connect(gainNode);
+      penguat1.connect(nodePenguat);
+      penguat2.connect(nodePenguat);
+      penguat3.connect(nodePenguat);
 
-      // Serangan panggul panjang reyong
-      gainNode.connect(this.busGain);
+      nodePenguat.connect(this.jalurPenguat);
 
-      osc1.start(now);
-      osc2.start(now);
-      osc3.start(now);
+      osilator1.start(waktuSekarang);
+      osilator2.start(waktuSekarang);
+      osilator3.start(waktuSekarang);
 
-      osc1.stop(now + 1.8);
-      osc2.stop(now + 1.8);
-      osc3.stop(now + 1.8);
+      osilator1.stop(waktuSekarang + 1.8);
+      osilator2.stop(waktuSekarang + 1.8);
+      osilator3.stop(waktuSekarang + 1.8);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS KENDANG BALI (Kendang Lanang dan Wadon: Suara Pung, Dug, Tak, Plak)
-    // -----------------------------------------------------------------------
-    playKendang(type = 'dug') {
-      this.ensureContext();
-      if (!this.ctx) return;
+    // Pukulan kendang
+    mainkanKendang(tipe = 'dug') {
+      this.pastikanKonteks();
+      if (!this.konteks) return;
 
-      const now = this.ctx.currentTime;
+      const waktuSekarang = this.konteks.currentTime;
 
-      if (type === 'dug' || type === 'pung') {
-        // Suara rendah membran kulit sapi (Dug / Pung)
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const startPitch = type === 'dug' ? 140 : 175;
-        const endPitch = type === 'dug' ? 58 : 72;
+      if (tipe === 'dug' || tipe === 'pung') {
+        const osilator = this.konteks.createOscillator();
+        const penguat = this.konteks.createGain();
+        const titinadaAwal = tipe === 'dug' ? 140 : 175;
+        const titinadaAkhir = tipe === 'dug' ? 58 : 72;
 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(startPitch, now);
-        osc.frequency.exponentialRampToValueAtTime(endPitch, now + 0.08);
+        osilator.type = 'sine';
+        osilator.frequency.setValueAtTime(titinadaAwal, waktuSekarang);
+        osilator.frequency.exponentialRampToValueAtTime(titinadaAkhir, waktuSekarang + 0.08);
 
-        gain.gain.setValueAtTime(0.95, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+        penguat.gain.setValueAtTime(0.95, waktuSekarang);
+        penguat.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.42);
 
-        osc.connect(gain);
-        gain.connect(this.busGain);
+        osilator.connect(penguat);
+        penguat.connect(this.jalurPenguat);
 
-        osc.start(now);
-        osc.stop(now + 0.45);
+        osilator.start(waktuSekarang);
+        osilator.stop(waktuSekarang + 0.45);
       } else {
-        // Tepukan tebas / plak / tak kering di tepi kendang (Rim slap)
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(420, now);
-        osc.frequency.exponentialRampToValueAtTime(180, now + 0.04);
+        const osilator = this.konteks.createOscillator();
+        const penguat = this.konteks.createGain();
+        osilator.type = 'triangle';
+        osilator.frequency.setValueAtTime(420, waktuSekarang);
+        osilator.frequency.exponentialRampToValueAtTime(180, waktuSekarang + 0.04);
 
-        gain.gain.setValueAtTime(0.8, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+        penguat.gain.setValueAtTime(0.8, waktuSekarang);
+        penguat.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.12);
 
-        // Sentakan noise berfrekuensi tinggi
-        const noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.05, this.ctx.sampleRate);
-        const data = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < data.length; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.2));
+        const penyanggaDesis = this.konteks.createBuffer(1, this.konteks.sampleRate * 0.05, this.konteks.sampleRate);
+        const dataSaluran = penyanggaDesis.getChannelData(0);
+        for (let i = 0; i < dataSaluran.length; i++) {
+          dataSaluran[i] = (Math.random() * 2 - 1) * Math.exp(-i / (dataSaluran.length * 0.2));
         }
-        const noiseNode = this.ctx.createBufferSource();
-        noiseNode.buffer = noiseBuffer;
+        const nodeDesis = this.konteks.createBufferSource();
+        nodeDesis.buffer = penyanggaDesis;
 
-        const noiseFilter = this.ctx.createBiquadFilter();
-        noiseFilter.type = 'bandpass';
-        noiseFilter.frequency.setValueAtTime(1400, now);
-        noiseFilter.Q.setValueAtTime(2.0, now);
+        const penyaringDesis = this.konteks.createBiquadFilter();
+        penyaringDesis.type = 'bandpass';
+        penyaringDesis.frequency.setValueAtTime(1400, waktuSekarang);
+        penyaringDesis.Q.setValueAtTime(2.0, waktuSekarang);
 
-        const noiseGain = this.ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.4, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+        const penguatDesis = this.konteks.createGain();
+        penguatDesis.gain.setValueAtTime(0.4, waktuSekarang);
+        penguatDesis.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.05);
 
-        noiseNode.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(this.busGain);
+        nodeDesis.connect(penyaringDesis);
+        penyaringDesis.connect(penguatDesis);
+        penguatDesis.connect(this.jalurPenguat);
 
-        osc.connect(gain);
-        gain.connect(this.busGain);
+        osilator.connect(penguat);
+        penguat.connect(this.jalurPenguat);
 
-        osc.start(now);
-        noiseNode.start(now);
+        osilator.start(waktuSekarang);
+        nodeDesis.start(waktuSekarang);
 
-        osc.stop(now + 0.15);
-        noiseNode.stop(now + 0.06);
+        osilator.stop(waktuSekarang + 0.15);
+        nodeDesis.stop(waktuSekarang + 0.06);
       }
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS CENG-CENG KOPYAK (Simbal Logam Perunggu Khas Aksen Kebyar)
-    // -----------------------------------------------------------------------
-    playCengCeng(type = 'crash') {
-      this.ensureContext();
-      if (!this.ctx) return;
+    // Dentang ceng-ceng kopyak
+    mainkanCengCeng(tipe = 'crash') {
+      this.pastikanKonteks();
+      if (!this.konteks) return;
 
-      const now = this.ctx.currentTime;
-      const pitches = [820, 1150, 1420, 1920, 2650, 3800];
-      const decay = type === 'choke' ? 0.08 : 0.45;
+      const waktuSekarang = this.konteks.currentTime;
+      const daftarTitinada = [820, 1150, 1420, 1920, 2650, 3800];
+      const peluruhan = tipe === 'choke' ? 0.08 : 0.45;
 
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.setValueAtTime(3200, now);
+      const penyaring = this.konteks.createBiquadFilter();
+      penyaring.type = 'highpass';
+      penyaring.frequency.setValueAtTime(3200, waktuSekarang);
 
-      const gain = this.ctx.createGain();
-      gain.gain.setValueAtTime(0.5, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+      const penguat = this.konteks.createGain();
+      penguat.gain.setValueAtTime(0.5, waktuSekarang);
+      penguat.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + peluruhan);
 
-      const perOscGain = 0.75 / pitches.length;
-      pitches.forEach((freq) => {
-        const osc = this.ctx.createOscillator();
-        const pGain = this.ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, now);
-        pGain.gain.setValueAtTime(perOscGain, now);
-        osc.connect(pGain);
-        pGain.connect(filter);
-        osc.start(now);
-        osc.stop(now + decay + 0.02);
+      const penguatPerOsilator = 0.75 / daftarTitinada.length;
+      daftarTitinada.forEach((frekuensi) => {
+        const osilator = this.konteks.createOscillator();
+        const penguatParsial = this.konteks.createGain();
+        osilator.type = 'square';
+        osilator.frequency.setValueAtTime(frekuensi, waktuSekarang);
+        penguatParsial.gain.setValueAtTime(penguatPerOsilator, waktuSekarang);
+        osilator.connect(penguatParsial);
+        penguatParsial.connect(penyaring);
+        osilator.start(waktuSekarang);
+        osilator.stop(waktuSekarang + peluruhan + 0.02);
       });
 
-      filter.connect(gain);
-      gain.connect(this.busGain);
+      penyaring.connect(penguat);
+      penguat.connect(this.jalurPenguat);
     }
 
-    // -----------------------------------------------------------------------
-    // SINTESIS GONG AGENG & KEMPUR (Getaran Sub-Bass Pembawa Taksu Agung)
-    // -----------------------------------------------------------------------
-    playGong(type = 'ageng') {
-      this.ensureContext();
-      if (!this.ctx) return;
+    // Dentang gong ageng dan kempur
+    mainkanGong(tipe = 'ageng') {
+      this.pastikanKonteks();
+      if (!this.konteks) return;
 
-      const now = this.ctx.currentTime;
-      const isAgeng = type === 'ageng';
-      const baseFreq = isAgeng ? 54 : 118;
-      const decay = isAgeng ? 5.2 : 3.4;
+      const waktuSekarang = this.konteks.currentTime;
+      const adalahAgeng = tipe === 'ageng';
+      const frekuensiDasar = adalahAgeng ? 54 : 118;
+      const peluruhan = adalahAgeng ? 5.2 : 3.4;
 
-      // Polyphony limiter / choker: Redam suara gong sebelumnya dengan fade-out 80ms
-      // Mencegah akumulasi puluhan osilator sub-bass saat tombol ditekan cepat berulang
-      if (this.activeGongVoice && this.activeGongVoice.type === type) {
+      if (this.suaraGongAktif && this.suaraGongAktif.type === tipe) {
         try {
-          const prevGain = this.activeGongVoice.gainNode;
-          prevGain.gain.cancelScheduledValues(now);
-          prevGain.gain.setValueAtTime(prevGain.gain.value, now);
-          prevGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+          const penguatSebelumnya = this.suaraGongAktif.gainNode;
+          penguatSebelumnya.gain.cancelScheduledValues(waktuSekarang);
+          penguatSebelumnya.gain.setValueAtTime(penguatSebelumnya.gain.value, waktuSekarang);
+          penguatSebelumnya.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.08);
         } catch (e) {
-          // Abaikan jika node sudah terdisposisi
+          // Node mungkin sudah selesai
         }
       }
 
-      // Pasangan getaran pengumbang-pengisep gong besar (menghasilkan dengung lambat megah 3 Hz)
-      const osc1 = this.ctx.createOscillator();
-      const osc2 = this.ctx.createOscillator();
-      const oscSub = this.ctx.createOscillator();
+      const osilator1 = this.konteks.createOscillator();
+      const osilator2 = this.konteks.createOscillator();
+      const osilatorSub = this.konteks.createOscillator();
 
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(baseFreq, now);
+      osilator1.type = 'sine';
+      osilator1.frequency.setValueAtTime(frekuensiDasar, waktuSekarang);
 
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(baseFreq + (isAgeng ? 3.2 : 4.8), now);
+      osilator2.type = 'sine';
+      osilator2.frequency.setValueAtTime(frekuensiDasar + (adalahAgeng ? 3.2 : 4.8), waktuSekarang);
 
-      oscSub.type = 'triangle';
-      oscSub.frequency.setValueAtTime(baseFreq * 2.05, now);
+      osilatorSub.type = 'triangle';
+      osilatorSub.frequency.setValueAtTime(frekuensiDasar * 2.05, waktuSekarang);
 
-      const gMaster = this.ctx.createGain();
-      gMaster.gain.setValueAtTime(0.0001, now);
-      gMaster.gain.exponentialRampToValueAtTime(0.95, now + 0.015);
-      gMaster.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+      const penguatUtamaGong = this.konteks.createGain();
+      penguatUtamaGong.gain.setValueAtTime(0.0001, waktuSekarang);
+      penguatUtamaGong.gain.exponentialRampToValueAtTime(0.95, waktuSekarang + 0.015);
+      penguatUtamaGong.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + peluruhan);
 
-      osc1.connect(gMaster);
-      osc2.connect(gMaster);
-      oscSub.connect(gMaster);
+      osilator1.connect(penguatUtamaGong);
+      osilator2.connect(penguatUtamaGong);
+      osilatorSub.connect(penguatUtamaGong);
 
-      // Transien empuk panggul gong berbulu
-      const malletOsc = this.ctx.createOscillator();
-      const malletGain = this.ctx.createGain();
-      malletOsc.type = 'sine';
-      malletOsc.frequency.setValueAtTime(baseFreq * 1.5, now);
-      malletOsc.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, now + 0.06);
+      const osilatorPanggul = this.konteks.createOscillator();
+      const penguatPanggul = this.konteks.createGain();
+      osilatorPanggul.type = 'sine';
+      osilatorPanggul.frequency.setValueAtTime(frekuensiDasar * 1.5, waktuSekarang);
+      osilatorPanggul.frequency.exponentialRampToValueAtTime(frekuensiDasar * 0.7, waktuSekarang + 0.06);
 
-      malletGain.gain.setValueAtTime(0.6, now);
-      malletGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+      penguatPanggul.gain.setValueAtTime(0.6, waktuSekarang);
+      penguatPanggul.gain.exponentialRampToValueAtTime(0.0001, waktuSekarang + 0.08);
 
-      malletOsc.connect(malletGain);
-      malletGain.connect(this.busGain);
+      osilatorPanggul.connect(penguatPanggul);
+      penguatPanggul.connect(this.jalurPenguat);
 
-      gMaster.connect(this.busGain);
+      penguatUtamaGong.connect(this.jalurPenguat);
 
-      // Catat voice gong aktif
-      this.activeGongVoice = { type, gainNode: gMaster, startTime: now };
+      this.suaraGongAktif = { type: tipe, gainNode: penguatUtamaGong, startTime: waktuSekarang };
       setTimeout(() => {
-        if (this.activeGongVoice && this.activeGongVoice.startTime === now) {
-          this.activeGongVoice = null;
+        if (this.suaraGongAktif && this.suaraGongAktif.startTime === waktuSekarang) {
+          this.suaraGongAktif = null;
         }
-      }, (decay + 0.1) * 1000);
+      }, (peluruhan + 0.1) * 1000);
 
-      osc1.start(now);
-      osc2.start(now);
-      oscSub.start(now);
-      malletOsc.start(now);
+      osilator1.start(waktuSekarang);
+      osilator2.start(waktuSekarang);
+      osilatorSub.start(waktuSekarang);
+      osilatorPanggul.start(waktuSekarang);
 
-      osc1.stop(now + decay + 0.1);
-      osc2.stop(now + decay + 0.1);
-      oscSub.stop(now + decay + 0.1);
-      malletOsc.stop(now + 0.1);
+      osilator1.stop(waktuSekarang + peluruhan + 0.1);
+      osilator2.stop(waktuSekarang + peluruhan + 0.1);
+      osilatorSub.stop(waktuSekarang + peluruhan + 0.1);
+      osilatorPanggul.stop(waktuSekarang + 0.1);
     }
+
+    // Alias metode untuk kompatibilitas panggilan
+    init() { return this.inisialisasi(); }
+    ensureContext() { return this.pastikanKonteks(); }
+    setVolume(val) { return this.aturVolume(val); }
+    setOmbakEnabled(val) { return this.aturOmbakAktif(val); }
+    setOmbakDelta(val) { return this.aturSelisihOmbak(val); }
+    setMatedetEnabled(val) { return this.aturMatedetAktif(val); }
+    dampenKey(id) { return this.redamBilah(id); }
+    dampenAll() { return this.redamSemua(); }
+    playGangsaNote(note, vel) { return this.mainkanNadaGangsa(note, vel); }
+    playReyongNote(note, vel) { return this.mainkanNadaReyong(note, vel); }
+    playKendang(type) { return this.mainkanKendang(type); }
+    playCengCeng(type) { return this.mainkanCengCeng(type); }
+    playGong(type) { return this.mainkanGong(type); }
   }
 
-  // Inisialisasi Instance Audio Engine Global
-  const audioEngine = new BalineseGamelanAudioEngine();
+  // Buat contoh mesin audio global
+  const mesinAudio = new MesinAudioGamelan();
 
-  // Bale Tabuh (instrumen virtual interaktif)
+  // Bagian 1: Bale tabuh interaktif
+  function siapkanBaleTabuh() {
+    const wadahBilah = document.getElementById('gangsaKeysContainer');
+    const wadahReyong = document.getElementById('reyongKeysContainer');
+    const tampilanNada = document.getElementById('currentNoteDisplay');
+    const saklarMatedet = document.getElementById('matedetToggle');
+    const saklarOmbak = document.getElementById('ombakToggle');
+    const penggeserVolume = document.getElementById('gamelanVolume');
+    const tabInstrumen = document.querySelectorAll('.inst-tab-btn');
+    const panelInstrumen = document.querySelectorAll('.inst-panel');
 
-  function setupBaleTabuh() {
-    const keysContainer = document.getElementById('gangsaKeysContainer');
-    const reyongContainer = document.getElementById('reyongKeysContainer');
-    const currentNoteDisplay = document.getElementById('currentNoteDisplay');
-    const matedetToggle = document.getElementById('matedetToggle');
-    const ombakToggle = document.getElementById('ombakToggle');
-    const volumeSlider = document.getElementById('gamelanVolume');
-    const instrumentTabs = document.querySelectorAll('.inst-tab-btn');
-    const instrumentPanels = document.querySelectorAll('.inst-panel');
+    if (!wadahBilah) return;
 
-    if (!keysContainer) return;
+    // Tampilkan 10 bilah gangsa pemade
+    wadahBilah.innerHTML = '';
+    NADA_PELOG_SELISIR.forEach((dataNada, index) => {
+      const elemenBilah = document.createElement('button');
+      elemenBilah.type = 'button';
+      elemenBilah.className = `gangsa-key gangsa-key--octave-${dataNada.octave}`;
+      elemenBilah.dataset.noteId = dataNada.id;
+      elemenBilah.setAttribute('aria-label', `Bilah Gangsa ${dataNada.name} (${dataNada.aksara}), Nada ${dataNada.solfege}, Tombol ${dataNada.keyChar}`);
+      elemenBilah.tabIndex = 0;
 
-    // Render 10 Bilah Perunggu Gangsa Pemade (2 Oktaf)
-    keysContainer.innerHTML = '';
-    PELOG_SELISIR_NOTES.forEach((note, index) => {
-      const keyElem = document.createElement('button');
-      keyElem.type = 'button';
-      keyElem.className = `gangsa-key gangsa-key--octave-${note.octave}`;
-      keyElem.dataset.noteId = note.id;
-      keyElem.setAttribute('aria-label', `Bilah Gangsa ${note.name} (${note.aksara}), Nada ${note.solfege}, Tombol ${note.keyChar}`);
-      keyElem.tabIndex = 0;
+      const persenTinggi = 100 - index * 4.2;
 
-      // Variasi panjang bilah perunggu (nada rendah lebih panjang, nada tinggi lebih pendek)
-      const heightPercent = 100 - index * 4.2;
-
-      keyElem.innerHTML = `
-        <div class="gangsa-key__inner" style="height: ${heightPercent}%;">
+      elemenBilah.innerHTML = `
+        <div class="gangsa-key__inner" style="height: ${persenTinggi}%;">
           <span class="gangsa-key__rivet gangsa-key__rivet--top" aria-hidden="true"></span>
           <div class="gangsa-key__content">
-            <span class="gangsa-key__aksara">${note.aksara}</span>
-            <span class="gangsa-key__name">${note.name}</span>
-            <span class="gangsa-key__solfege">${note.solfege}</span>
+            <span class="gangsa-key__aksara">${dataNada.aksara}</span>
+            <span class="gangsa-key__name">${dataNada.name}</span>
+            <span class="gangsa-key__solfege">${dataNada.solfege}</span>
           </div>
-          <span class="gangsa-key__badge">${note.keyChar}</span>
+          <span class="gangsa-key__badge">${dataNada.keyChar}</span>
           <span class="gangsa-key__rivet gangsa-key__rivet--bot" aria-hidden="true"></span>
         </div>
-        <div class="gangsa-key__tube" aria-hidden="true" title="Bumbung Bambu Resonator"></div>
+        <div class="gangsa-key__tube" aria-hidden="true" title="Bumbung bambu resonator"></div>
       `;
 
-      // Event Click & Touch
-      const triggerNote = (e) => {
+      const picuNada = (e) => {
         if (e) e.preventDefault();
-        audioEngine.playGangsaNote(note);
-        animateKeyStrike(keyElem, note);
+        mesinAudio.mainkanNadaGangsa(dataNada);
+        animasikanPukulanBilah(elemenBilah, dataNada);
       };
 
-      keyElem.addEventListener('pointerdown', triggerNote);
+      elemenBilah.addEventListener('pointerdown', picuNada);
 
-      if (matedetToggle) {
-        keyElem.addEventListener('pointerup', () => {
-          if (audioEngine.matedetEnabled) {
-            audioEngine.dampenKey(note.id);
+      if (saklarMatedet) {
+        elemenBilah.addEventListener('pointerup', () => {
+          if (mesinAudio.matedetAktif) {
+            mesinAudio.redamBilah(dataNada.id);
           }
         });
       }
 
-      keysContainer.appendChild(keyElem);
+      wadahBilah.appendChild(elemenBilah);
     });
 
-    // Render 12 Pot Pencon Reyong Bali
-    if (reyongContainer) {
-      reyongContainer.innerHTML = '';
-      REYONG_NOTES.forEach((note) => {
-        const potElem = document.createElement('button');
-        potElem.type = 'button';
-        potElem.className = 'reyong-pot';
-        potElem.dataset.noteId = note.id;
-        potElem.setAttribute('aria-label', `Pot Reyong ${note.name}, Nada ${note.aksara}, Tombol ${note.key}`);
-        potElem.tabIndex = 0;
+    // Tampilkan 12 pot reyong
+    if (wadahReyong) {
+      wadahReyong.innerHTML = '';
+      NADA_REYONG.forEach((dataNada) => {
+        const elemenPot = document.createElement('button');
+        elemenPot.type = 'button';
+        elemenPot.className = 'reyong-pot';
+        elemenPot.dataset.noteId = dataNada.id;
+        elemenPot.setAttribute('aria-label', `Pot Reyong ${dataNada.name}, Nada ${dataNada.aksara}, Tombol ${dataNada.key}`);
+        elemenPot.tabIndex = 0;
 
-        potElem.innerHTML = `
+        elemenPot.innerHTML = `
           <div class="reyong-pot__boss">
             <span class="reyong-pot__pencu" aria-hidden="true"></span>
           </div>
           <div class="reyong-pot__meta">
-            <span class="reyong-pot__aksara">${note.aksara}</span>
-            <span class="reyong-pot__key">${note.key}</span>
+            <span class="reyong-pot__aksara">${dataNada.aksara}</span>
+            <span class="reyong-pot__key">${dataNada.key}</span>
           </div>
         `;
 
-        potElem.addEventListener('pointerdown', (e) => {
+        elemenPot.addEventListener('pointerdown', (e) => {
           e.preventDefault();
-          audioEngine.playReyongNote(note);
-          animatePotStrike(potElem, note);
+          mesinAudio.mainkanNadaReyong(dataNada);
+          animasikanPukulanPot(elemenPot, dataNada);
         });
 
-        reyongContainer.appendChild(potElem);
+        wadahReyong.appendChild(elemenPot);
       });
     }
 
-    // Trigger Animasi Bilah Dipukul
-    function animateKeyStrike(elem, note) {
-      elem.classList.add('is-struck');
-      setTimeout(() => elem.classList.remove('is-struck'), 160);
+    // Respon visual saat bilah dipukul
+    function animasikanPukulanBilah(elemen, dataNada) {
+      elemen.classList.add('is-struck');
+      setTimeout(() => elemen.classList.remove('is-struck'), 160);
 
-      if (currentNoteDisplay) {
-        currentNoteDisplay.innerHTML = `
-          <span class="note-pill__aksara">${note.aksara}</span>
-          <span class="note-pill__name">${note.name} (${note.solfege})</span>
-          <span class="note-pill__cosmic">• Dewa ${note.dewa} [${note.arah}]</span>
+      if (tampilanNada) {
+        tampilanNada.innerHTML = `
+          <span class="note-pill__aksara">${dataNada.aksara}</span>
+          <span class="note-pill__name">${dataNada.name} (${dataNada.solfege})</span>
+          <span class="note-pill__cosmic">Dewa ${dataNada.dewa}, arah ${dataNada.arah}</span>
         `;
-        currentNoteDisplay.classList.add('is-active');
-        clearTimeout(currentNoteDisplay._timeout);
-        currentNoteDisplay._timeout = setTimeout(() => {
-          currentNoteDisplay.classList.remove('is-active');
+        tampilanNada.classList.add('is-active');
+        clearTimeout(tampilanNada._timeout);
+        tampilanNada._timeout = setTimeout(() => {
+          tampilanNada.classList.remove('is-active');
         }, 1800);
       }
     }
 
-    function animatePotStrike(elem, note) {
-      elem.classList.add('is-struck');
-      setTimeout(() => elem.classList.remove('is-struck'), 180);
+    function animasikanPukulanPot(elemen, dataNada) {
+      elemen.classList.add('is-struck');
+      setTimeout(() => elemen.classList.remove('is-struck'), 180);
 
-      if (currentNoteDisplay) {
-        currentNoteDisplay.innerHTML = `
-          <span class="note-pill__aksara">${note.aksara}</span>
-          <span class="note-pill__name">Reyong ${note.name}</span>
-          <span class="note-pill__cosmic">• ${note.freq} Hz</span>
+      if (tampilanNada) {
+        tampilanNada.innerHTML = `
+          <span class="note-pill__aksara">${dataNada.aksara}</span>
+          <span class="note-pill__name">Reyong ${dataNada.name}</span>
+          <span class="note-pill__cosmic">${dataNada.freq} Hz</span>
         `;
       }
     }
 
-    // Setup Ritme Section (Kendang & Ceng-ceng Pad)
-    const kendangDugBtn = document.getElementById('padKendangDug');
-    const kendangPlakBtn = document.getElementById('padKendangPlak');
-    const cengCrashBtn = document.getElementById('padCengCrash');
-    const cengChokeBtn = document.getElementById('padCengChoke');
-    const gongAgengBtn = document.getElementById('padGongAgeng');
-    const gongKempurBtn = document.getElementById('padGongKempur');
+    // Tombol ritme kendang, ceng-ceng, dan gong
+    const tombolKendangDug = document.getElementById('padKendangDug');
+    const tombolKendangPlak = document.getElementById('padKendangPlak');
+    const tombolCengCrash = document.getElementById('padCengCrash');
+    const tombolCengChoke = document.getElementById('padCengChoke');
+    const tombolGongAgeng = document.getElementById('padGongAgeng');
+    const tombolGongKempur = document.getElementById('padGongKempur');
 
-    const bindPadStrike = (btn, action, duration = 160) => {
-      if (!btn) return;
-      btn.addEventListener('pointerdown', () => {
-        action();
-        btn.classList.add('is-struck');
-        setTimeout(() => btn.classList.remove('is-struck'), duration);
+    const pasangPukulanBantalan = (tombol, aksi, durasi = 160) => {
+      if (!tombol) return;
+      tombol.addEventListener('pointerdown', () => {
+        aksi();
+        tombol.classList.add('is-struck');
+        setTimeout(() => tombol.classList.remove('is-struck'), durasi);
       });
     };
 
-    bindPadStrike(kendangDugBtn, () => audioEngine.playKendang('dug'));
-    bindPadStrike(kendangPlakBtn, () => audioEngine.playKendang('plak'));
-    bindPadStrike(cengCrashBtn, () => audioEngine.playCengCeng('crash'));
-    bindPadStrike(cengChokeBtn, () => audioEngine.playCengCeng('choke'));
-    bindPadStrike(gongAgengBtn, () => audioEngine.playGong('ageng'), 300);
-    bindPadStrike(gongKempurBtn, () => audioEngine.playGong('kempur'), 240);
+    pasangPukulanBantalan(tombolKendangDug, () => mesinAudio.mainkanKendang('dug'));
+    pasangPukulanBantalan(tombolKendangPlak, () => mesinAudio.mainkanKendang('plak'));
+    pasangPukulanBantalan(tombolCengCrash, () => mesinAudio.mainkanCengCeng('crash'));
+    pasangPukulanBantalan(tombolCengChoke, () => mesinAudio.mainkanCengCeng('choke'));
+    pasangPukulanBantalan(tombolGongAgeng, () => mesinAudio.mainkanGong('ageng'), 300);
+    pasangPukulanBantalan(tombolGongKempur, () => mesinAudio.mainkanGong('kempur'), 240);
 
-    // Dukungan Multi-Touch Glissando (sapuan jari pada bilah Gangsa)
-    let activeTouchedGangsaId = null;
-    keysContainer.addEventListener('touchmove', (e) => {
+    // Sapuan jari pada bilah gangsa di layar sentuh
+    let idGangsaSentuhAktif = null;
+    wadahBilah.addEventListener('touchmove', (e) => {
       for (let i = 0; i < e.touches.length; i++) {
-        const touch = e.touches[i];
-        const el = document.elementFromPoint(touch.clientX, touch.clientY);
-        const keyBtn = el ? el.closest('.gangsa-key') : null;
-        if (keyBtn && keyBtn.dataset.noteId && keyBtn.dataset.noteId !== activeTouchedGangsaId) {
-          activeTouchedGangsaId = keyBtn.dataset.noteId;
-          const note = PELOG_SELISIR_NOTES.find((n) => n.id === keyBtn.dataset.noteId);
-          if (note) {
-            audioEngine.playGangsaNote(note);
-            animateKeyStrike(keyBtn, note);
+        const sentuh = e.touches[i];
+        const elemen = document.elementFromPoint(sentuh.clientX, sentuh.clientY);
+        const tombolBilah = elemen ? elemen.closest('.gangsa-key') : null;
+        if (tombolBilah && tombolBilah.dataset.noteId && tombolBilah.dataset.noteId !== idGangsaSentuhAktif) {
+          idGangsaSentuhAktif = tombolBilah.dataset.noteId;
+          const nada = NADA_PELOG_SELISIR.find((n) => n.id === tombolBilah.dataset.noteId);
+          if (nada) {
+            mesinAudio.mainkanNadaGangsa(nada);
+            animasikanPukulanBilah(tombolBilah, nada);
           }
         }
       }
     }, { passive: true });
 
-    const resetTouchGangsa = () => { activeTouchedGangsaId = null; };
-    keysContainer.addEventListener('touchend', resetTouchGangsa, { passive: true });
-    keysContainer.addEventListener('touchcancel', resetTouchGangsa, { passive: true });
+    const aturUlangSentuhGangsa = () => { idGangsaSentuhAktif = null; };
+    wadahBilah.addEventListener('touchend', aturUlangSentuhGangsa, { passive: true });
+    wadahBilah.addEventListener('touchcancel', aturUlangSentuhGangsa, { passive: true });
 
-    if (reyongContainer) {
-      let activeTouchedReyongId = null;
-      reyongContainer.addEventListener('touchmove', (e) => {
+    if (wadahReyong) {
+      let idReyongSentuhAktif = null;
+      wadahReyong.addEventListener('touchmove', (e) => {
         for (let i = 0; i < e.touches.length; i++) {
-          const touch = e.touches[i];
-          const el = document.elementFromPoint(touch.clientX, touch.clientY);
-          const potBtn = el ? el.closest('.reyong-pot') : null;
-          if (potBtn && potBtn.dataset.noteId && potBtn.dataset.noteId !== activeTouchedReyongId) {
-            activeTouchedReyongId = potBtn.dataset.noteId;
-            const note = REYONG_NOTES.find((n) => n.id === potBtn.dataset.noteId);
-            if (note) {
-              audioEngine.playReyongNote(note);
-              animatePotStrike(potBtn, note);
+          const sentuh = e.touches[i];
+          const elemen = document.elementFromPoint(sentuh.clientX, sentuh.clientY);
+          const tombolPot = elemen ? elemen.closest('.reyong-pot') : null;
+          if (tombolPot && tombolPot.dataset.noteId && tombolPot.dataset.noteId !== idReyongSentuhAktif) {
+            idReyongSentuhAktif = tombolPot.dataset.noteId;
+            const nada = NADA_REYONG.find((n) => n.id === tombolPot.dataset.noteId);
+            if (nada) {
+              mesinAudio.mainkanNadaReyong(nada);
+              animasikanPukulanPot(tombolPot, nada);
             }
           }
         }
       }, { passive: true });
 
-      const resetTouchReyong = () => { activeTouchedReyongId = null; };
-      reyongContainer.addEventListener('touchend', resetTouchReyong, { passive: true });
-      reyongContainer.addEventListener('touchcancel', resetTouchReyong, { passive: true });
+      const aturUlangSentuhReyong = () => { idReyongSentuhAktif = null; };
+      wadahReyong.addEventListener('touchend', aturUlangSentuhReyong, { passive: true });
+      wadahReyong.addEventListener('touchcancel', aturUlangSentuhReyong, { passive: true });
     }
 
-    // Tab Switcher Instrumen (Gangsa, Reyong, Kendang, Gong)
-    instrumentTabs.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        instrumentTabs.forEach((b) => {
-          b.classList.remove('is-active');
-          b.setAttribute('aria-selected', 'false');
+    // Perpindahan tab instrumen
+    tabInstrumen.forEach((tombol) => {
+      tombol.addEventListener('click', () => {
+        tabInstrumen.forEach((t) => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
         });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-selected', 'true');
+        tombol.classList.add('is-active');
+        tombol.setAttribute('aria-selected', 'true');
 
-        const targetId = btn.dataset.targetPanel;
-        instrumentPanels.forEach((panel) => {
+        const targetId = tombol.dataset.targetPanel;
+        panelInstrumen.forEach((panel) => {
           panel.hidden = panel.id !== targetId;
         });
       });
     });
 
-    // Toggle Mode Ombak
-    if (ombakToggle) {
-      ombakToggle.addEventListener('click', () => {
-        const active = !audioEngine.ombakEnabled;
-        audioEngine.setOmbakEnabled(active);
-        ombakToggle.classList.toggle('is-active', active);
-        ombakToggle.setAttribute('aria-pressed', String(active));
-        const badge = ombakToggle.querySelector('.status-dot');
-        if (badge) badge.textContent = active ? 'ON' : 'OFF';
+    // Saklar ombak
+    if (saklarOmbak) {
+      saklarOmbak.addEventListener('click', () => {
+        const aktif = !mesinAudio.ombakAktif;
+        mesinAudio.aturOmbakAktif(aktif);
+        saklarOmbak.classList.toggle('is-active', aktif);
+        saklarOmbak.setAttribute('aria-pressed', String(aktif));
+        const tanda = saklarOmbak.querySelector('.status-dot');
+        if (tanda) tanda.textContent = aktif ? 'Nyala' : 'Mati';
       });
     }
 
-    // Toggle Teknik Matedet (Redam Bilah)
-    if (matedetToggle) {
-      matedetToggle.addEventListener('click', () => {
-        const active = !audioEngine.matedetEnabled;
-        audioEngine.setMatedetEnabled(active);
-        matedetToggle.classList.toggle('is-active', active);
-        matedetToggle.setAttribute('aria-pressed', String(active));
-        const badge = matedetToggle.querySelector('.status-dot');
-        if (badge) badge.textContent = active ? 'ON' : 'OFF';
+    // Saklar matedet (redam bilah)
+    if (saklarMatedet) {
+      saklarMatedet.addEventListener('click', () => {
+        const aktif = !mesinAudio.matedetAktif;
+        mesinAudio.aturMatedetAktif(aktif);
+        saklarMatedet.classList.toggle('is-active', aktif);
+        saklarMatedet.setAttribute('aria-pressed', String(aktif));
+        const tanda = saklarMatedet.querySelector('.status-dot');
+        if (tanda) tanda.textContent = aktif ? 'Nyala' : 'Mati';
       });
     }
 
-    // Volume Slider
-    if (volumeSlider) {
-      volumeSlider.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
-        audioEngine.setVolume(val);
+    // Penggeser volume
+    if (penggeserVolume) {
+      penggeserVolume.addEventListener('input', (e) => {
+        const nilai = parseFloat(e.target.value);
+        mesinAudio.aturVolume(nilai);
       });
     }
 
-    // Keyboard Shortcuts (1-0 untuk Gangsa, Z-M untuk Reyong, Spasi untuk Gong)
+    // Tombol keyboard (1-0 untuk gangsa, Z-M untuk reyong, Spasi untuk gong)
     window.addEventListener('keydown', (e) => {
-      // 1. Jangan ganggu shortcut sistem / browser (Ctrl+C, Cmd+C, Ctrl+Z, Ctrl+V, Alt+Tab, dll)
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-      // 2. Jangan ganggu input teks formulir atau elemen yang sedang diedit
-      const activeEl = document.activeElement;
-      if (activeEl && (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.isContentEditable)) {
+      const elemenAktif = document.activeElement;
+      if (elemenAktif && (['INPUT', 'TEXTAREA', 'SELECT'].includes(elemenAktif.tagName) || elemenAktif.isContentEditable)) {
         return;
       }
 
-      // 3. Spasi: Hanya trigger Gong jika fokus BUKAN pada tombol/link/interaktif
       if (e.code === 'Space') {
-        const isInteractive = activeEl && (['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT', 'SUMMARY'].includes(activeEl.tagName));
-        if (!isInteractive) {
+        const adalahInteraktif = elemenAktif && (['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT', 'SUMMARY'].includes(elemenAktif.tagName));
+        if (!adalahInteraktif) {
           e.preventDefault();
-          audioEngine.playGong('ageng');
-          if (gongAgengBtn) {
-            gongAgengBtn.classList.add('is-struck');
-            setTimeout(() => gongAgengBtn.classList.remove('is-struck'), 300);
+          mesinAudio.mainkanGong('ageng');
+          if (tombolGongAgeng) {
+            tombolGongAgeng.classList.add('is-struck');
+            setTimeout(() => tombolGongAgeng.classList.remove('is-struck'), 300);
           }
         }
         return;
       }
 
-      const keyChar = e.key.toUpperCase();
+      const karakterKunci = e.key.toUpperCase();
 
-      // Gangsa Pemade Keys (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-      const gangsaMatch = PELOG_SELISIR_NOTES.find((n) => n.keyChar === e.key);
-      if (gangsaMatch) {
+      const kecocokanGangsa = NADA_PELOG_SELISIR.find((n) => n.keyChar === e.key);
+      if (kecocokanGangsa) {
         e.preventDefault();
-        const elem = keysContainer.querySelector(`[data-note-id="${gangsaMatch.id}"]`);
-        audioEngine.playGangsaNote(gangsaMatch);
-        if (elem) animateKeyStrike(elem, gangsaMatch);
+        const elemen = wadahBilah.querySelector(`[data-note-id="${kecocokanGangsa.id}"]`);
+        mesinAudio.mainkanNadaGangsa(kecocokanGangsa);
+        if (elemen) animasikanPukulanBilah(elemen, kecocokanGangsa);
         return;
       }
 
-      // Reyong Keys (Z, X, C, V, B, N, M, dll)
-      const reyongMatch = REYONG_NOTES.find((n) => n.key === keyChar || n.key === e.key);
-      if (reyongMatch && reyongContainer) {
+      const kecocokanReyong = NADA_REYONG.find((n) => n.key === karakterKunci || n.key === e.key);
+      if (kecocokanReyong && wadahReyong) {
         e.preventDefault();
-        const elem = reyongContainer.querySelector(`[data-note-id="${reyongMatch.id}"]`);
-        audioEngine.playReyongNote(reyongMatch);
-        if (elem) animatePotStrike(elem, reyongMatch);
+        const elemen = wadahReyong.querySelector(`[data-note-id="${kecocokanReyong.id}"]`);
+        mesinAudio.mainkanNadaReyong(kecocokanReyong);
+        if (elemen) animasikanPukulanPot(elemen, kecocokanReyong);
         return;
       }
     });
 
     window.addEventListener('keyup', (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-      if (audioEngine.matedetEnabled) {
-        const match = PELOG_SELISIR_NOTES.find((n) => n.keyChar === e.key);
-        if (match) {
-          audioEngine.dampenKey(match.id);
+      if (mesinAudio.matedetAktif) {
+        const cocok = NADA_PELOG_SELISIR.find((n) => n.keyChar === e.key);
+        if (cocok) {
+          mesinAudio.redamBilah(cocok.id);
         }
       }
     });
   }
 
-  // Koordinator pemutaran audio global
-  let stopKotekanFn = null;
-  let stopGendingFn = null;
-  let stopOmbakLabFn = null;
+  // Pengendali pemutaran audio global agar tidak bertumpukan
+  let fungsiHentikanKotekan = null;
+  let fungsiHentikanGending = null;
+  let fungsiHentikanLabOmbak = null;
 
-  function stopAllAudioPlayback(except = null) {
-    if (except !== 'kotekan' && typeof stopKotekanFn === 'function') stopKotekanFn();
-    if (except !== 'gending' && typeof stopGendingFn === 'function') stopGendingFn();
-    if (except !== 'ombak' && typeof stopOmbakLabFn === 'function') stopOmbakLabFn();
+  function hentikanSemuaAudio(kecuali = null) {
+    if (kecuali !== 'kotekan' && typeof fungsiHentikanKotekan === 'function') fungsiHentikanKotekan();
+    if (kecuali !== 'gending' && typeof fungsiHentikanGending === 'function') fungsiHentikanGending();
+    if (kecuali !== 'ombak' && typeof fungsiHentikanLabOmbak === 'function') fungsiHentikanLabOmbak();
   }
 
-  // Studio Kotekan (duet Polos & Sangsih)
+  // Bagian 2: Studio kotekan
+  function siapkanStudioKotekan() {
+    const tombolMainKotekan = document.getElementById('playKotekanBtn');
+    const pilihanPeran = document.getElementById('kotekanRoleSelect');
+    const pilihanPola = document.getElementById('kotekanPatternSelect');
+    const penggeserTempo = document.getElementById('kotekanTempo');
+    const nilaiTempo = document.getElementById('kotekanTempoVal');
+    const kisiMatriks = document.getElementById('kotekanMatrixGrid');
+    const statusKotekan = document.getElementById('kotekanStatusFeedback');
 
-  function setupKotekanStudio() {
-    const playDuetBtn = document.getElementById('playKotekanBtn');
-    const roleSelect = document.getElementById('kotekanRoleSelect');
-    const patternSelect = document.getElementById('kotekanPatternSelect');
-    const tempoSlider = document.getElementById('kotekanTempo');
-    const tempoValue = document.getElementById('kotekanTempoVal');
-    const matrixGrid = document.getElementById('kotekanMatrixGrid');
-    const kotekanStatus = document.getElementById('kotekanStatusFeedback');
+    if (!kisiMatriks || !tombolMainKotekan) return;
 
-    if (!matrixGrid || !playDuetBtn) return;
-
-    // Pola Kotekan Tradisional Bali (Siklus 16 Langkah)
-    // Angka merujuk pada indeks not di PELOG_SELISIR_NOTES:
-    // 0: Ding1, 1: Dong1, 2: Deng1, 3: Dung1, 4: Dang1, 5: Ding2, 6: Dong2, dst. (-1 = senyap/istirahat)
-    const PATTERNS = {
+    // Pola 16 ketukan: angka adalah indeks di NADA_PELOG_SELISIR, -1 berarti istirahat
+    const POLA_KOTEKAN = {
       norot: {
-        name: 'Kotekan Norot (Saling Mengikuti)',
-        desc: 'Pola paling ikonik Gong Kebyar: Sangsih melangkah satu langkah mendahului atau mengisi sela Polos.',
+        name: 'Kotekan norot',
+        desc: 'Pola dasar gong kebyar. Sangsih mengisi sela di antara ketukan polos.',
         polos:   [0, -1, 1, -1, 2, -1, 3, -1, 4, -1, 3, -1, 2, -1, 1, -1],
         sangsih: [-1, 1, -1, 2, -1, 3, -1, 4, -1, 5, -1, 4, -1, 3, -1, 2]
       },
       telu: {
-        name: 'Kotekan Telu (Tiga Nada Mengisi)',
-        desc: 'Tiga nada dasar yang dianyam secara zig-zag cepat menciptakan ilusi arpeggio air terjun.',
+        name: 'Kotekan telu',
+        desc: 'Tiga nada yang dimainkan bergantian antara dua penabuh.',
         polos:   [1, -1, 2, -1, -1, 1, -1, 2, 3, -1, 2, -1, -1, 3, -1, 1],
         sangsih: [-1, 2, -1, 3, 2, -1, 3, -1, -1, 2, -1, 1, 2, -1, 2, -1]
       },
       empat: {
-        name: 'Kotekan Empat (Sinkopasi Meledak)',
-        desc: 'Aksen sinkopasi padat 4 nada, sering memicu aksen angsel kendang.',
+        name: 'Kotekan empat',
+        desc: 'Empat nada cepat berpindah dengan aksen kuat.',
         polos:   [0, 1, -1, 2, 0, 1, -1, 3, 2, 1, -1, 0, 1, 2, 3, -1],
         sangsih: [-1, 2, 3, -1, -1, 2, 4, -1, -1, 3, 2, -1, -1, 3, 4, 5]
       }
     };
 
-    let isPlaying = false;
-    let timerId = null;
-    let currentStep = 0;
-    let bpm = 140;
+    let sedangMain = false;
+    let idPewaktu = null;
+    let langkahSaatIni = 0;
+    let ketukanPerMenit = 140;
 
-    // Render Matrix Grid (16 Steps Polos & Sangsih)
-    function renderGrid(patternKey) {
-      const pat = PATTERNS[patternKey] || PATTERNS.norot;
-      matrixGrid.innerHTML = '';
+    function tampilkanKisi(kunciPola) {
+      const polaTerpilih = POLA_KOTEKAN[kunciPola] || POLA_KOTEKAN.norot;
+      kisiMatriks.innerHTML = '';
 
-      // Baris Polos
-      const rowPolos = document.createElement('div');
-      rowPolos.className = 'kotekan-row kotekan-row--polos';
-      rowPolos.innerHTML = `<div class="kotekan-row__label"><span>POLOS</span><small>(On-beat)</small></div>`;
+      const barisPolos = document.createElement('div');
+      barisPolos.className = 'kotekan-row kotekan-row--polos';
+      barisPolos.innerHTML = `<div class="kotekan-row__label"><span>Polos</span><small>(ketukan utama)</small></div>`;
 
-      // Baris Sangsih
-      const rowSangsih = document.createElement('div');
-      rowSangsih.className = 'kotekan-row kotekan-row--sangsih';
-      rowSangsih.innerHTML = `<div class="kotekan-row__label"><span>SANGSIH</span><small>(Off-beat)</small></div>`;
+      const barisSangsih = document.createElement('div');
+      barisSangsih.className = 'kotekan-row kotekan-row--sangsih';
+      barisSangsih.innerHTML = `<div class="kotekan-row__label"><span>Sangsih</span><small>(ketukan sela)</small></div>`;
 
-      const stepsContainerPolos = document.createElement('div');
-      stepsContainerPolos.className = 'kotekan-steps';
+      const wadahLangkahPolos = document.createElement('div');
+      wadahLangkahPolos.className = 'kotekan-steps';
 
-      const stepsContainerSangsih = document.createElement('div');
-      stepsContainerSangsih.className = 'kotekan-steps';
+      const wadahLangkahSangsih = document.createElement('div');
+      wadahLangkahSangsih.className = 'kotekan-steps';
 
       for (let i = 0; i < 16; i++) {
-        const pNoteIdx = pat.polos[i];
-        const sNoteIdx = pat.sangsih[i];
+        const indeksNadaPolos = polaTerpilih.polos[i];
+        const indeksNadaSangsih = polaTerpilih.sangsih[i];
 
-        const stepP = document.createElement('div');
-        stepP.className = `kotekan-cell ${pNoteIdx !== -1 ? 'has-note' : 'is-rest'}`;
-        stepP.dataset.step = i;
-        if (pNoteIdx !== -1) {
-          stepP.innerHTML = `<span class="kotekan-cell__note">${PELOG_SELISIR_NOTES[pNoteIdx]?.aksara || ''}</span>`;
+        const selLangkahPolos = document.createElement('div');
+        selLangkahPolos.className = `kotekan-cell ${indeksNadaPolos !== -1 ? 'has-note' : 'is-rest'}`;
+        selLangkahPolos.dataset.step = i;
+        if (indeksNadaPolos !== -1) {
+          selLangkahPolos.innerHTML = `<span class="kotekan-cell__note">${NADA_PELOG_SELISIR[indeksNadaPolos]?.aksara || ''}</span>`;
         }
-        stepsContainerPolos.appendChild(stepP);
+        wadahLangkahPolos.appendChild(selLangkahPolos);
 
-        const stepS = document.createElement('div');
-        stepS.className = `kotekan-cell ${sNoteIdx !== -1 ? 'has-note' : 'is-rest'}`;
-        stepS.dataset.step = i;
-        if (sNoteIdx !== -1) {
-          stepS.innerHTML = `<span class="kotekan-cell__note">${PELOG_SELISIR_NOTES[sNoteIdx]?.aksara || ''}</span>`;
+        const selLangkahSangsih = document.createElement('div');
+        selLangkahSangsih.className = `kotekan-cell ${indeksNadaSangsih !== -1 ? 'has-note' : 'is-rest'}`;
+        selLangkahSangsih.dataset.step = i;
+        if (indeksNadaSangsih !== -1) {
+          selLangkahSangsih.innerHTML = `<span class="kotekan-cell__note">${NADA_PELOG_SELISIR[indeksNadaSangsih]?.aksara || ''}</span>`;
         }
-        stepsContainerSangsih.appendChild(stepS);
+        wadahLangkahSangsih.appendChild(selLangkahSangsih);
       }
 
-      rowPolos.appendChild(stepsContainerPolos);
-      rowSangsih.appendChild(stepsContainerSangsih);
+      barisPolos.appendChild(wadahLangkahPolos);
+      barisSangsih.appendChild(wadahLangkahSangsih);
 
-      matrixGrid.appendChild(rowPolos);
-      matrixGrid.appendChild(rowSangsih);
+      kisiMatriks.appendChild(barisPolos);
+      kisiMatriks.appendChild(barisSangsih);
     }
 
-    renderGrid('norot');
+    tampilkanKisi('norot');
 
-    if (patternSelect) {
-      patternSelect.addEventListener('change', (e) => {
-        stopSequencer();
-        renderGrid(e.target.value);
+    if (pilihanPola) {
+      pilihanPola.addEventListener('change', (e) => {
+        hentikanPengurut();
+        tampilkanKisi(e.target.value);
       });
     }
 
-    if (tempoSlider && tempoValue) {
-      tempoSlider.addEventListener('input', (e) => {
-        bpm = parseInt(e.target.value, 10);
-        tempoValue.textContent = `${bpm} BPM`;
-        // Tempo diterapkan pada langkah berikutnya tanpa membatalkan/membekukan timer yang sedang berjalan!
+    if (penggeserTempo && nilaiTempo) {
+      penggeserTempo.addEventListener('input', (e) => {
+        ketukanPerMenit = parseInt(e.target.value, 10);
+        nilaiTempo.textContent = `${ketukanPerMenit} BPM`;
       });
     }
 
-    function scheduleStep() {
-      if (!isPlaying) return;
-      onStepTick();
-      const stepDurationMs = (60000 / bpm) / 4; // 16th notes
-      timerId = setTimeout(scheduleStep, stepDurationMs);
+    function jadwalkanLangkah() {
+      if (!sedangMain) return;
+      saatKetukanLangkah();
+      const durasiLangkahMs = (60000 / ketukanPerMenit) / 4;
+      idPewaktu = setTimeout(jadwalkanLangkah, durasiLangkahMs);
     }
 
-    function onStepTick() {
-      const selectedPatternKey = patternSelect ? patternSelect.value : 'norot';
-      const pat = PATTERNS[selectedPatternKey] || PATTERNS.norot;
-      const role = roleSelect ? roleSelect.value : 'duet'; // 'duet', 'user_polos', 'user_sangsih'
+    function saatKetukanLangkah() {
+      const kunciPolaTerpilih = pilihanPola ? pilihanPola.value : 'norot';
+      const polaTerpilih = POLA_KOTEKAN[kunciPolaTerpilih] || POLA_KOTEKAN.norot;
+      const peran = pilihanPeran ? pilihanPeran.value : 'duet';
 
-      // Visual active cell
-      const allCells = matrixGrid.querySelectorAll('.kotekan-cell');
-      allCells.forEach((c) => {
-        if (parseInt(c.dataset.step, 10) === currentStep) {
+      const semuaSel = kisiMatriks.querySelectorAll('.kotekan-cell');
+      semuaSel.forEach((c) => {
+        if (parseInt(c.dataset.step, 10) === langkahSaatIni) {
           c.classList.add('is-current-step');
         } else {
           c.classList.remove('is-current-step');
         }
       });
 
-      const pNoteIdx = pat.polos[currentStep];
-      const sNoteIdx = pat.sangsih[currentStep];
+      const indeksNadaPolos = polaTerpilih.polos[langkahSaatIni];
+      const indeksNadaSangsih = polaTerpilih.sangsih[langkahSaatIni];
 
-      // Audio Trigger sesuai peran yang dipilih
-      if (role === 'duet') {
-        if (pNoteIdx !== -1 && PELOG_SELISIR_NOTES[pNoteIdx]) {
-          audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[pNoteIdx], 0.85);
+      if (peran === 'duet') {
+        if (indeksNadaPolos !== -1 && NADA_PELOG_SELISIR[indeksNadaPolos]) {
+          mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[indeksNadaPolos], 0.85);
         }
-        if (sNoteIdx !== -1 && PELOG_SELISIR_NOTES[sNoteIdx]) {
-          audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[sNoteIdx], 0.85);
+        if (indeksNadaSangsih !== -1 && NADA_PELOG_SELISIR[indeksNadaSangsih]) {
+          mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[indeksNadaSangsih], 0.85);
         }
-      } else if (role === 'user_polos') {
-        // User memainkan Polos, sistem otomatis memainkan Sangsih
-        if (sNoteIdx !== -1 && PELOG_SELISIR_NOTES[sNoteIdx]) {
-          audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[sNoteIdx], 0.85);
+      } else if (peran === 'user_polos') {
+        if (indeksNadaSangsih !== -1 && NADA_PELOG_SELISIR[indeksNadaSangsih]) {
+          mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[indeksNadaSangsih], 0.85);
         }
-      } else if (role === 'user_sangsih') {
-        // User memainkan Sangsih, sistem otomatis memainkan Polos
-        if (pNoteIdx !== -1 && PELOG_SELISIR_NOTES[pNoteIdx]) {
-          audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[pNoteIdx], 0.85);
+      } else if (peran === 'user_sangsih') {
+        if (indeksNadaPolos !== -1 && NADA_PELOG_SELISIR[indeksNadaPolos]) {
+          mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[indeksNadaPolos], 0.85);
         }
       }
 
-      // Setiap ketukan ke-16, bunyikan gong kempur halus
-      if (currentStep === 15) {
-        audioEngine.playGong('kempur');
+      if (langkahSaatIni === 15) {
+        mesinAudio.mainkanGong('kempur');
       }
 
-      currentStep = (currentStep + 1) % 16;
+      langkahSaatIni = (langkahSaatIni + 1) % 16;
     }
 
-    function startSequencer() {
-      stopAllAudioPlayback('kotekan');
-      audioEngine.ensureContext();
-      isPlaying = true;
-      currentStep = 0;
-      playDuetBtn.classList.add('is-playing');
-      playDuetBtn.setAttribute('aria-pressed', 'true');
-      playDuetBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" aria-hidden="true">
-          <rect x="6" y="5" width="4" height="14" rx="1"/>
-          <rect x="14" y="5" width="4" height="14" rx="1"/>
-        </svg>
-        <span>Jeda Latihan Kotekan</span>
-      `;
-      if (kotekanStatus) {
-        kotekanStatus.textContent = 'Kotekan sedang berjalan. Rasakan jalinan interlocking antar ketukan!';
+    function mulaiPengurut() {
+      hentikanSemuaAudio('kotekan');
+      mesinAudio.pastikanKonteks();
+      sedangMain = true;
+      langkahSaatIni = 0;
+      tombolMainKotekan.classList.add('is-playing');
+      tombolMainKotekan.setAttribute('aria-pressed', 'true');
+      tombolMainKotekan.innerHTML = `<span>Jeda kotekan</span>`;
+      if (statusKotekan) {
+        statusKotekan.textContent = 'Kotekan sedang berjalan. Dengarkan jalinan nada kedua penabuh.';
       }
-      if (timerId) clearTimeout(timerId);
-      // Mainkan ketukan pertama langsung tanpa delay!
-      scheduleStep();
+      if (idPewaktu) clearTimeout(idPewaktu);
+      jadwalkanLangkah();
     }
 
-    function stopSequencer() {
-      isPlaying = false;
-      if (timerId) clearTimeout(timerId);
-      timerId = null;
-      playDuetBtn.classList.remove('is-playing');
-      playDuetBtn.setAttribute('aria-pressed', 'false');
-      playDuetBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" aria-hidden="true">
-          <polygon points="6 4 20 12 6 20 6 4"/>
-        </svg>
-        <span>Mulai Jalinan Kotekan</span>
-      `;
-      const allCells = matrixGrid.querySelectorAll('.kotekan-cell');
-      allCells.forEach((c) => c.classList.remove('is-current-step'));
-      if (kotekanStatus) {
-        kotekanStatus.textContent = 'Kotekan dijeda. Tekan tombol untuk melanjutkan interaksi.';
+    function hentikanPengurut() {
+      sedangMain = false;
+      if (idPewaktu) clearTimeout(idPewaktu);
+      idPewaktu = null;
+      tombolMainKotekan.classList.remove('is-playing');
+      tombolMainKotekan.setAttribute('aria-pressed', 'false');
+      tombolMainKotekan.innerHTML = `<span>Mulai kotekan</span>`;
+      const semuaSel = kisiMatriks.querySelectorAll('.kotekan-cell');
+      semuaSel.forEach((c) => c.classList.remove('is-current-step'));
+      if (statusKotekan) {
+        statusKotekan.textContent = 'Kotekan dijeda. Tekan tombol untuk melanjutkan.';
       }
     }
 
-    stopKotekanFn = stopSequencer;
+    fungsiHentikanKotekan = hentikanPengurut;
 
-    playDuetBtn.addEventListener('click', () => {
-      if (isPlaying) {
-        stopSequencer();
+    tombolMainKotekan.addEventListener('click', () => {
+      if (sedangMain) {
+        hentikanPengurut();
       } else {
-        startSequencer();
+        mulaiPengurut();
       }
     });
   }
 
-  // Laboratorium akustik: fenomena ombak & pengumbang-pengisep
+  // Bagian 3: Laboratorium akustik ombak
+  function siapkanLabOmbak() {
+    const kanvas = document.getElementById('ombakWaveCanvas');
+    const penggeserFrekuensiDasar = document.getElementById('ombakBaseFreq');
+    const penggeserSelisih = document.getElementById('ombakDeltaFreq');
+    const tampilanFrekuensiDasar = document.getElementById('ombakBaseFreqVal');
+    const tampilanSelisihFrekuensi = document.getElementById('ombakDeltaFreqVal');
+    const tampilanHzPengumbang = document.getElementById('pengumbangHzVal');
+    const tampilanHzPengisep = document.getElementById('pengisepHzVal');
+    const tampilanKecepatanGetar = document.getElementById('ombakBeatRateDisplay');
 
-  function setupOmbakLab() {
-    const canvas = document.getElementById('ombakWaveCanvas');
-    const freqBaseSlider = document.getElementById('ombakBaseFreq');
-    const deltaSlider = document.getElementById('ombakDeltaFreq');
-    const baseFreqDisplay = document.getElementById('ombakBaseFreqVal');
-    const deltaFreqDisplay = document.getElementById('ombakDeltaFreqVal');
-    const pengumbangValDisplay = document.getElementById('pengumbangHzVal');
-    const pengisepValDisplay = document.getElementById('pengisepHzVal');
-    const beatRateDisplay = document.getElementById('ombakBeatRateDisplay');
+    const tombolPlayPengumbang = document.getElementById('btnPlayPengumbang');
+    const tombolPlayPengisep = document.getElementById('btnPlayPengisep');
+    const tombolPlayDuetOmbak = document.getElementById('btnPlayDuetOmbak');
 
-    const btnPlayPengumbang = document.getElementById('btnPlayPengumbang');
-    const btnPlayPengisep = document.getElementById('btnPlayPengisep');
-    const btnPlayDuetOmbak = document.getElementById('btnPlayDuetOmbak');
+    if (!kanvas) return;
 
-    if (!canvas) return;
+    const konteks2d = kanvas.getContext('2d');
+    let frekuensiDasar = 260;
+    let selisih = 6.8;
+    let gelombangAktif = true;
+    let bingkaiAnimasi = null;
+    let fase = 0;
 
-    const ctx2d = canvas.getContext('2d');
-    let baseFreq = 260; // Hz
-    let delta = 6.8; // Hz
-    let isWaveActive = true;
-    let animFrame = null;
-    let phase = 0;
+    let osilatorLab1 = null;
+    let osilatorLab2 = null;
+    let penguatLab1 = null;
+    let penguatLab2 = null;
+    let penguatUtamaLab = null;
+    let bunyiLabAktif = null;
 
-    // Node audio persisten untuk lab ombak
-    let labOsc1 = null;
-    let labOsc2 = null;
-    let labGain1 = null;
-    let labGain2 = null;
-    let labMasterGain = null;
-    let activeLabSound = null; // 'pengumbang', 'pengisep', 'both', null
+    function perbaruiHitungan() {
+      const frekuensiPengumbang = +(frekuensiDasar - selisih / 2).toFixed(1);
+      const frekuensiPengisep = +(frekuensiDasar + selisih / 2).toFixed(1);
 
-    function updateCalculations() {
-      const fPengumbang = +(baseFreq - delta / 2).toFixed(1);
-      const fPengisep = +(baseFreq + delta / 2).toFixed(1);
-
-      if (baseFreqDisplay) baseFreqDisplay.textContent = `${baseFreq} Hz`;
-      if (deltaFreqDisplay) deltaFreqDisplay.textContent = `Δ ${delta} Hz`;
-      if (pengumbangValDisplay) pengumbangValDisplay.textContent = `${fPengumbang} Hz (Wadon / Rendah)`;
-      if (pengisepValDisplay) pengisepValDisplay.textContent = `${fPengisep} Hz (Lanang / Tinggi)`;
-      if (beatRateDisplay) {
-        const rateDesc = delta < 4.5 ? 'Tenang (Semar Pagulingan)' : delta < 7.5 ? 'Dinamis (Gong Kebyar)' : 'Sangat Cepat (Beleganjur)';
-        beatRateDisplay.textContent = `${delta} Getaran / Detik • Karakter: ${rateDesc}`;
+      if (tampilanFrekuensiDasar) tampilanFrekuensiDasar.textContent = `${frekuensiDasar} Hz`;
+      if (tampilanSelisihFrekuensi) tampilanSelisihFrekuensi.textContent = `Δ ${selisih} Hz`;
+      if (tampilanHzPengumbang) tampilanHzPengumbang.textContent = `${frekuensiPengumbang} Hz (rendah)`;
+      if (tampilanHzPengisep) tampilanHzPengisep.textContent = `${frekuensiPengisep} Hz (tinggi)`;
+      if (tampilanKecepatanGetar) {
+        const deskripsiKecepatan = selisih < 4.5 ? 'tenang' : selisih < 7.5 ? 'sedang' : 'cepat';
+        tampilanKecepatanGetar.textContent = `${selisih} getaran per detik (${deskripsiKecepatan})`;
       }
 
-      // Perbarui frekuensi osilator jika sedang berbunyi
-      if (labOsc1 && audioEngine.ctx) {
-        labOsc1.frequency.setTargetAtTime(fPengumbang, audioEngine.ctx.currentTime, 0.05);
+      if (osilatorLab1 && mesinAudio.konteks) {
+        osilatorLab1.frequency.setTargetAtTime(frekuensiPengumbang, mesinAudio.konteks.currentTime, 0.05);
       }
-      if (labOsc2 && audioEngine.ctx) {
-        labOsc2.frequency.setTargetAtTime(fPengisep, audioEngine.ctx.currentTime, 0.05);
+      if (osilatorLab2 && mesinAudio.konteks) {
+        osilatorLab2.frequency.setTargetAtTime(frekuensiPengisep, mesinAudio.konteks.currentTime, 0.05);
       }
     }
 
-    if (freqBaseSlider) {
-      freqBaseSlider.addEventListener('input', (e) => {
-        baseFreq = parseFloat(e.target.value);
-        updateCalculations();
+    if (penggeserFrekuensiDasar) {
+      penggeserFrekuensiDasar.addEventListener('input', (e) => {
+        frekuensiDasar = parseFloat(e.target.value);
+        perbaruiHitungan();
       });
     }
 
-    if (deltaSlider) {
-      deltaSlider.addEventListener('input', (e) => {
-        delta = parseFloat(e.target.value);
-        audioEngine.setOmbakDelta(delta);
-        updateCalculations();
+    if (penggeserSelisih) {
+      penggeserSelisih.addEventListener('input', (e) => {
+        selisih = parseFloat(e.target.value);
+        mesinAudio.aturSelisihOmbak(selisih);
+        perbaruiHitungan();
       });
     }
 
-    // Generator Nada Sintetis Khusus Lab Ombak
-    function ensureLabAudioNodes() {
-      audioEngine.ensureContext();
-      if (!audioEngine.ctx) return;
+    function pastikanNodeAudioLab() {
+      mesinAudio.pastikanKonteks();
+      if (!mesinAudio.konteks) return;
 
-      if (!labMasterGain) {
-        labMasterGain = audioEngine.ctx.createGain();
-        labMasterGain.gain.setValueAtTime(0.55, audioEngine.ctx.currentTime);
-        labMasterGain.connect(audioEngine.busGain);
+      if (!penguatUtamaLab) {
+        penguatUtamaLab = mesinAudio.konteks.createGain();
+        penguatUtamaLab.gain.setValueAtTime(0.55, mesinAudio.konteks.currentTime);
+        penguatUtamaLab.connect(mesinAudio.jalurPenguat);
       }
 
-      if (!labOsc1) {
-        labOsc1 = audioEngine.ctx.createOscillator();
-        labGain1 = audioEngine.ctx.createGain();
-        labOsc1.type = 'sine';
-        labGain1.gain.setValueAtTime(0, audioEngine.ctx.currentTime);
-        labOsc1.connect(labGain1);
-        labGain1.connect(labMasterGain);
-        labOsc1.start();
+      if (!osilatorLab1) {
+        osilatorLab1 = mesinAudio.konteks.createOscillator();
+        penguatLab1 = mesinAudio.konteks.createGain();
+        osilatorLab1.type = 'sine';
+        penguatLab1.gain.setValueAtTime(0, mesinAudio.konteks.currentTime);
+        osilatorLab1.connect(penguatLab1);
+        penguatLab1.connect(penguatUtamaLab);
+        osilatorLab1.start();
       }
 
-      if (!labOsc2) {
-        labOsc2 = audioEngine.ctx.createOscillator();
-        labGain2 = audioEngine.ctx.createGain();
-        labOsc2.type = 'sine';
-        labGain2.gain.setValueAtTime(0, audioEngine.ctx.currentTime);
-        labOsc2.connect(labGain2);
-        labGain2.connect(labMasterGain);
-        labOsc2.start();
+      if (!osilatorLab2) {
+        osilatorLab2 = mesinAudio.konteks.createOscillator();
+        penguatLab2 = mesinAudio.konteks.createGain();
+        osilatorLab2.type = 'sine';
+        penguatLab2.gain.setValueAtTime(0, mesinAudio.konteks.currentTime);
+        osilatorLab2.connect(penguatLab2);
+        penguatLab2.connect(penguatUtamaLab);
+        osilatorLab2.start();
       }
     }
 
-    function stopLabSound() {
-      if (!audioEngine.ctx || !labGain1 || !labGain2) return;
-      const now = audioEngine.ctx.currentTime;
-      labGain1.gain.setTargetAtTime(0, now, 0.06);
-      labGain2.gain.setTargetAtTime(0, now, 0.06);
-      activeLabSound = null;
+    function hentikanBunyiLab() {
+      if (!mesinAudio.konteks || !penguatLab1 || !penguatLab2) return;
+      const waktuSekarang = mesinAudio.konteks.currentTime;
+      penguatLab1.gain.setTargetAtTime(0, waktuSekarang, 0.06);
+      penguatLab2.gain.setTargetAtTime(0, waktuSekarang, 0.06);
+      bunyiLabAktif = null;
 
-      [btnPlayPengumbang, btnPlayPengisep, btnPlayDuetOmbak].forEach((b) => {
+      [tombolPlayPengumbang, tombolPlayPengisep, tombolPlayDuetOmbak].forEach((b) => {
         if (b) b.classList.remove('is-active');
       });
     }
 
-    function playLabSound(mode) {
-      ensureLabAudioNodes();
-      if (!audioEngine.ctx) return;
+    function mainkanBunyiLab(mode) {
+      pastikanNodeAudioLab();
+      if (!mesinAudio.konteks) return;
 
-      if (activeLabSound === mode) {
-        stopLabSound();
+      if (bunyiLabAktif === mode) {
+        hentikanBunyiLab();
         return;
       }
 
-      stopLabSound();
-      stopAllAudioPlayback('ombak');
-      activeLabSound = mode;
-      const now = audioEngine.ctx.currentTime;
-      const fPengumbang = baseFreq - delta / 2;
-      const fPengisep = baseFreq + delta / 2;
+      hentikanBunyiLab();
+      hentikanSemuaAudio('ombak');
+      bunyiLabAktif = mode;
+      const waktuSekarang = mesinAudio.konteks.currentTime;
+      const frekuensiPengumbang = frekuensiDasar - selisih / 2;
+      const frekuensiPengisep = frekuensiDasar + selisih / 2;
 
-      labOsc1.frequency.setValueAtTime(fPengumbang, now);
-      labOsc2.frequency.setValueAtTime(fPengisep, now);
+      osilatorLab1.frequency.setValueAtTime(frekuensiPengumbang, waktuSekarang);
+      osilatorLab2.frequency.setValueAtTime(frekuensiPengisep, waktuSekarang);
 
       if (mode === 'pengumbang') {
-        labGain1.gain.setTargetAtTime(0.7, now, 0.04);
-        labGain2.gain.setTargetAtTime(0, now, 0.04);
-        if (btnPlayPengumbang) btnPlayPengumbang.classList.add('is-active');
+        penguatLab1.gain.setTargetAtTime(0.7, waktuSekarang, 0.04);
+        penguatLab2.gain.setTargetAtTime(0, waktuSekarang, 0.04);
+        if (tombolPlayPengumbang) tombolPlayPengumbang.classList.add('is-active');
       } else if (mode === 'pengisep') {
-        labGain1.gain.setTargetAtTime(0, now, 0.04);
-        labGain2.gain.setTargetAtTime(0.7, now, 0.04);
-        if (btnPlayPengisep) btnPlayPengisep.classList.add('is-active');
+        penguatLab1.gain.setTargetAtTime(0, waktuSekarang, 0.04);
+        penguatLab2.gain.setTargetAtTime(0.7, waktuSekarang, 0.04);
+        if (tombolPlayPengisep) tombolPlayPengisep.classList.add('is-active');
       } else if (mode === 'both') {
-        labGain1.gain.setTargetAtTime(0.5, now, 0.04);
-        labGain2.gain.setTargetAtTime(0.5, now, 0.04);
-        if (btnPlayDuetOmbak) btnPlayDuetOmbak.classList.add('is-active');
+        penguatLab1.gain.setTargetAtTime(0.5, waktuSekarang, 0.04);
+        penguatLab2.gain.setTargetAtTime(0.5, waktuSekarang, 0.04);
+        if (tombolPlayDuetOmbak) tombolPlayDuetOmbak.classList.add('is-active');
       }
     }
 
-    stopOmbakLabFn = stopLabSound;
+    fungsiHentikanLabOmbak = hentikanBunyiLab;
 
-    if (btnPlayPengumbang) {
-      btnPlayPengumbang.addEventListener('click', () => playLabSound('pengumbang'));
+    if (tombolPlayPengumbang) {
+      tombolPlayPengumbang.addEventListener('click', () => mainkanBunyiLab('pengumbang'));
     }
-    if (btnPlayPengisep) {
-      btnPlayPengisep.addEventListener('click', () => playLabSound('pengisep'));
+    if (tombolPlayPengisep) {
+      tombolPlayPengisep.addEventListener('click', () => mainkanBunyiLab('pengisep'));
     }
-    if (btnPlayDuetOmbak) {
-      btnPlayDuetOmbak.addEventListener('click', () => playLabSound('both'));
+    if (tombolPlayDuetOmbak) {
+      tombolPlayDuetOmbak.addEventListener('click', () => mainkanBunyiLab('both'));
     }
 
-    // Penyesuaian Resolusi Retina/HiDPI Layar
-    function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      const displayWidth = Math.round(rect.width || 600);
-      const displayHeight = 220;
+    function sesuaikanUkuranKanvas() {
+      const rasioPikselPerangkat = window.devicePixelRatio || 1;
+      const kotakBatas = kanvas.getBoundingClientRect();
+      const lebarTampilan = Math.round(kotakBatas.width || 600);
+      const tinggiTampilan = 220;
 
-      if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
-        canvas.width = displayWidth * dpr;
-        canvas.height = displayHeight * dpr;
+      if (kanvas.width !== lebarTampilan * rasioPikselPerangkat || kanvas.height !== tinggiTampilan * rasioPikselPerangkat) {
+        kanvas.width = lebarTampilan * rasioPikselPerangkat;
+        kanvas.height = tinggiTampilan * rasioPikselPerangkat;
       }
     }
 
-    window.addEventListener('resize', resizeCanvas, { passive: true });
-    resizeCanvas();
+    window.addEventListener('resize', sesuaikanUkuranKanvas, { passive: true });
+    sesuaikanUkuranKanvas();
 
-    // Gambar Gelombang Real-Time pada Canvas
-    function drawWaveforms() {
-      const dpr = window.devicePixelRatio || 1;
-      const width = canvas.width / dpr;
-      const height = canvas.height / dpr;
+    // Gambar getaran ombak pada kanvas
+    function gambarBentukGelombang() {
+      const rasioPikselPerangkat = window.devicePixelRatio || 1;
+      const lebar = kanvas.width / rasioPikselPerangkat;
+      const tinggi = kanvas.height / rasioPikselPerangkat;
 
-      ctx2d.save();
-      ctx2d.scale(dpr, dpr);
-      ctx2d.clearRect(0, 0, width, height);
+      konteks2d.save();
+      konteks2d.scale(rasioPikselPerangkat, rasioPikselPerangkat);
+      konteks2d.clearRect(0, 0, lebar, tinggi);
 
-      // Garis grid tengah
-      ctx2d.strokeStyle = 'rgba(236, 194, 70, 0.12)';
-      ctx2d.lineWidth = 1;
-      ctx2d.beginPath();
-      ctx2d.moveTo(0, height / 2);
-      ctx2d.lineTo(width, height / 2);
-      ctx2d.stroke();
+      // Garis tengah
+      konteks2d.strokeStyle = 'rgba(201, 162, 39, 0.15)';
+      konteks2d.lineWidth = 1;
+      konteks2d.beginPath();
+      konteks2d.moveTo(0, tinggi / 2);
+      konteks2d.lineTo(lebar, tinggi / 2);
+      konteks2d.stroke();
 
-      const beatFreq = delta;
+      const frekuensiLayangan = selisih;
 
-      // Gambar Gelombang Amplop Ombak (Envelope Beating) di Gold
-      ctx2d.strokeStyle = '#ECC246';
-      ctx2d.lineWidth = 2.4;
-      ctx2d.beginPath();
+      // Gelombang hasil superposisi (warna emas kuratorial #C9A227)
+      konteks2d.strokeStyle = '#C9A227';
+      konteks2d.lineWidth = 2;
+      konteks2d.beginPath();
 
-      for (let x = 0; x < width; x++) {
-        const t = (x / width) * 0.75 + phase;
-        // Rumus superposisi akustik dua frekuensi berdekatan:
-        // y = 2 * cos(pi * delta * t) * sin(2 * pi * f_avg * t)
-        const envelope = Math.cos(Math.PI * beatFreq * t);
-        const carrier = Math.sin(2 * Math.PI * (baseFreq * 0.08) * t);
-        const y = (height / 2) + envelope * carrier * (height * 0.38);
+      for (let x = 0; x < lebar; x++) {
+        const t = (x / lebar) * 0.75 + fase;
+        const amplopGelombang = Math.cos(Math.PI * frekuensiLayangan * t);
+        const gelombangPembawa = Math.sin(2 * Math.PI * (frekuensiDasar * 0.08) * t);
+        const y = (tinggi / 2) + amplopGelombang * gelombangPembawa * (tinggi * 0.38);
 
-        if (x === 0) ctx2d.moveTo(x, y);
-        else ctx2d.lineTo(x, y);
+        if (x === 0) konteks2d.moveTo(x, y);
+        else konteks2d.lineTo(x, y);
       }
-      ctx2d.stroke();
+      konteks2d.stroke();
 
-      // Gambar Garis Batas Amplop Atas & Bawah
-      ctx2d.strokeStyle = 'rgba(236, 194, 70, 0.35)';
-      ctx2d.setLineDash([4, 4]);
-      ctx2d.lineWidth = 1.2;
+      // Garis batas luar gelombang
+      konteks2d.strokeStyle = 'rgba(201, 162, 39, 0.3)';
+      konteks2d.setLineDash([4, 4]);
+      konteks2d.lineWidth = 1;
 
-      ctx2d.beginPath();
-      for (let x = 0; x < width; x++) {
-        const t = (x / width) * 0.75 + phase;
-        const env = Math.abs(Math.cos(Math.PI * beatFreq * t));
-        const yTop = (height / 2) - env * (height * 0.38);
-        if (x === 0) ctx2d.moveTo(x, yTop);
-        else ctx2d.lineTo(x, yTop);
+      konteks2d.beginPath();
+      for (let x = 0; x < lebar; x++) {
+        const t = (x / lebar) * 0.75 + fase;
+        const amplop = Math.abs(Math.cos(Math.PI * frekuensiLayangan * t));
+        const posisiYAtas = (tinggi / 2) - amplop * (tinggi * 0.38);
+        if (x === 0) konteks2d.moveTo(x, posisiYAtas);
+        else konteks2d.lineTo(x, posisiYAtas);
       }
-      ctx2d.stroke();
+      konteks2d.stroke();
 
-      ctx2d.beginPath();
-      for (let x = 0; x < width; x++) {
-        const t = (x / width) * 0.75 + phase;
-        const env = Math.abs(Math.cos(Math.PI * beatFreq * t));
-        const yBot = (height / 2) + env * (height * 0.38);
-        if (x === 0) ctx2d.moveTo(x, yBot);
-        else ctx2d.lineTo(x, yBot);
+      konteks2d.beginPath();
+      for (let x = 0; x < lebar; x++) {
+        const t = (x / lebar) * 0.75 + fase;
+        const amplop = Math.abs(Math.cos(Math.PI * frekuensiLayangan * t));
+        const posisiYBawah = (tinggi / 2) + amplop * (tinggi * 0.38);
+        if (x === 0) konteks2d.moveTo(x, posisiYBawah);
+        else konteks2d.lineTo(x, posisiYBawah);
       }
-      ctx2d.stroke();
-      ctx2d.setLineDash([]);
-      ctx2d.restore();
+      konteks2d.stroke();
+      konteks2d.setLineDash([]);
+      konteks2d.restore();
 
-      phase += 0.0035;
-      const raf = typeof window !== 'undefined' && window.requestAnimationFrame ? window.requestAnimationFrame : ((cb) => setTimeout(cb, 1000 / 60));
-      animFrame = raf(drawWaveforms);
+      fase += 0.0035;
+      const fungsiAnimasiFrame = typeof window !== 'undefined' && window.requestAnimationFrame ? window.requestAnimationFrame : ((cb) => setTimeout(cb, 1000 / 60));
+      bingkaiAnimasi = fungsiAnimasiFrame(gambarBentukGelombang);
     }
 
-    updateCalculations();
-    drawWaveforms();
+    perbaruiHitungan();
+    gambarBentukGelombang();
   }
 
-  // Autoplayer gending klasik Bali
+  // Bagian 4: Pemutar gending otomatis
+  function siapkanPemutarGending() {
+    const tombolMainGending = document.getElementById('playGendingBtn');
+    const pemilihGending = document.getElementById('gendingSelect');
+    const judulGending = document.getElementById('gendingCurrentTitle');
+    const deskripsiGending = document.getElementById('gendingCurrentDesc');
+    const batangKemajuan = document.getElementById('gendingProgressFill');
+    const teksPewaktuGending = document.getElementById('gendingTimerText');
 
-  function setupGendingAutoplayer() {
-    const playGendingBtn = document.getElementById('playGendingBtn');
-    const gendingSelector = document.getElementById('gendingSelect');
-    const gendingTitle = document.getElementById('gendingCurrentTitle');
-    const gendingDesc = document.getElementById('gendingCurrentDesc');
-    const progressBar = document.getElementById('gendingProgressFill');
-    const gendingTimerText = document.getElementById('gendingTimerText');
+    if (!tombolMainGending) return;
 
-    if (!playGendingBtn) return;
-
-    // Komposisi Notasi Ansambel Gamelan Terprogram
-    // Struktur: tempo BPM, array event { time (dalam beat), type ('gangsa', 'kendang', 'ceng', 'gong'), noteIdx / noteType }
-    const REPERTOIRE = {
+    // Tiga contoh komposisi tabuh
+    const REPERTOAR = {
       gilak: {
-        title: 'Tabuh Gilak Sakral (8-Ketukan Matriks)',
-        desc: 'Gending agung dengan tempo tegas berwibawa yang mengiringi tarian Barong, Baris Gede, dan prosesi suci Ida Bhatara.',
+        title: 'Tabuh gilak (8 ketukan)',
+        desc: 'Gending bertempo tegas yang biasa mengiringi tari barong dan baris gede.',
         bpm: 110,
         totalBeats: 32,
         events: [
-          // Gong Ageng pada ketukan 0 dan 16
           { beat: 0, type: 'gong', val: 'ageng' },
           { beat: 16, type: 'gong', val: 'ageng' },
           { beat: 8, type: 'gong', val: 'kempur' },
           { beat: 24, type: 'gong', val: 'kempur' },
 
-          // Kendang berirama khas Gilak
           { beat: 0, type: 'kendang', val: 'dug' },
           { beat: 1, type: 'kendang', val: 'plak' },
           { beat: 2, type: 'kendang', val: 'dug' },
@@ -1504,7 +1446,6 @@
           { beat: 14, type: 'kendang', val: 'dug' },
           { beat: 15.5, type: 'kendang', val: 'plak' },
 
-          // Ceng-ceng kopyak aksen
           { beat: 2, type: 'ceng', val: 'choke' },
           { beat: 4, type: 'ceng', val: 'crash' },
           { beat: 6, type: 'ceng', val: 'choke' },
@@ -1513,7 +1454,6 @@
           { beat: 12, type: 'ceng', val: 'crash' },
           { beat: 14, type: 'ceng', val: 'choke' },
 
-          // Pokok melodi Gangsa (Ding, Dong, Deng, Dung, Dang)
           { beat: 0, type: 'gangsa', idx: 0 },
           { beat: 1, type: 'gangsa', idx: 1 },
           { beat: 2, type: 'gangsa', idx: 2 },
@@ -1531,7 +1471,6 @@
           { beat: 14, type: 'gangsa', idx: 2 },
           { beat: 15, type: 'gangsa', idx: 0 },
 
-          // Pengulangan siklus kedua (variasi oktaf)
           { beat: 16, type: 'gangsa', idx: 5 },
           { beat: 17, type: 'gangsa', idx: 6 },
           { beat: 18, type: 'gangsa', idx: 7 },
@@ -1552,8 +1491,8 @@
       },
 
       kebyar: {
-        title: 'Kebyar Kilat & Angsel Meledak',
-        desc: 'Eksplorasi virtuositas Gong Kebyar: tempo cepat, kotekan rapat, dan aksen serentak yang memompa adrenalin.',
+        title: 'Gong kebyar',
+        desc: 'Komposisi bertempo cepat dengan perubahan ritme dan aksen serentak.',
         bpm: 175,
         totalBeats: 32,
         events: [
@@ -1566,7 +1505,6 @@
           { beat: 2.5, type: 'gangsa', idx: 9 },
           { beat: 3.0, type: 'ceng', val: 'choke' },
           { beat: 4.0, type: 'ceng', val: 'crash' },
-          // Angsel serentak
           { beat: 4.5, type: 'kendang', val: 'plak' },
           { beat: 5.0, type: 'gangsa', idx: 8 },
           { beat: 5.5, type: 'gangsa', idx: 7 },
@@ -1593,8 +1531,8 @@
       },
 
       sekar: {
-        title: 'Sekar Gadung (Lelambatan Suci)',
-        desc: 'Melodi pelog selisir kuno yang mengalun teduh, membawa pendengarnya ke ketenangan batin pura di kaki Gunung Agung.',
+        title: 'Sekar gadung',
+        desc: 'Gending bertempo lambat dengan nada-nada panjang yang tenang.',
         bpm: 78,
         totalBeats: 24,
         events: [
@@ -1616,319 +1554,300 @@
       }
     };
 
-    let isPlayingGending = false;
-    let gendingTimer = null;
-    let currentBeat = 0;
-    let selectedKey = 'gilak';
+    let sedangMainGending = false;
+    let pewaktuGending = null;
+    let ketukanSaatIni = 0;
+    let kunciTerpilih = 'gilak';
 
-    function updateGendingMeta() {
-      const g = REPERTOIRE[selectedKey];
-      if (!g) return;
-      if (gendingTitle) gendingTitle.textContent = g.title;
-      if (gendingDesc) gendingDesc.textContent = g.desc;
+    function perbaruiKeteranganGending() {
+      const dataGending = REPERTOAR[kunciTerpilih];
+      if (!dataGending) return;
+      if (judulGending) judulGending.textContent = dataGending.title;
+      if (deskripsiGending) deskripsiGending.textContent = dataGending.desc;
     }
 
-    if (gendingSelector) {
-      gendingSelector.addEventListener('change', (e) => {
-        stopGending();
-        selectedKey = e.target.value;
-        updateGendingMeta();
+    if (pemilihGending) {
+      pemilihGending.addEventListener('change', (e) => {
+        hentikanGending();
+        kunciTerpilih = e.target.value;
+        perbaruiKeteranganGending();
       });
     }
 
-    function onGendingTick() {
-      const g = REPERTOIRE[selectedKey];
-      if (!g) return;
+    function saatKetukanGending() {
+      const dataGending = REPERTOAR[kunciTerpilih];
+      if (!dataGending) return;
 
-      // Filter event yang jatuh pada ketukan saat ini (dengan toleransi 0.25 beat)
-      const matchingEvents = g.events.filter((ev) => Math.abs(ev.beat - currentBeat) < 0.25);
+      const kejadianCocok = dataGending.events.filter((ev) => Math.abs(ev.beat - ketukanSaatIni) < 0.25);
 
-      matchingEvents.forEach((ev) => {
-        if (ev.type === 'gangsa' && PELOG_SELISIR_NOTES[ev.idx]) {
-          audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[ev.idx], 0.85);
-          // Highlight bilah jika terlihat
-          const keyElem = document.querySelector(`[data-note-id="${PELOG_SELISIR_NOTES[ev.idx].id}"]`);
-          if (keyElem) {
-            keyElem.classList.add('is-struck');
-            setTimeout(() => keyElem.classList.remove('is-struck'), 160);
+      kejadianCocok.forEach((ev) => {
+        if (ev.type === 'gangsa' && NADA_PELOG_SELISIR[ev.idx]) {
+          mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[ev.idx], 0.85);
+          const elemenBilah = document.querySelector(`[data-note-id="${NADA_PELOG_SELISIR[ev.idx].id}"]`);
+          if (elemenBilah) {
+            elemenBilah.classList.add('is-struck');
+            setTimeout(() => elemenBilah.classList.remove('is-struck'), 160);
           }
         } else if (ev.type === 'kendang') {
-          audioEngine.playKendang(ev.val);
+          mesinAudio.mainkanKendang(ev.val);
         } else if (ev.type === 'ceng') {
-          audioEngine.playCengCeng(ev.val);
+          mesinAudio.mainkanCengCeng(ev.val);
         } else if (ev.type === 'gong') {
-          audioEngine.playGong(ev.val);
+          mesinAudio.mainkanGong(ev.val);
         }
       });
 
-      // Update progress bar
-      if (progressBar) {
-        const pct = (currentBeat / g.totalBeats) * 100;
-        progressBar.style.width = `${pct}%`;
+      if (batangKemajuan) {
+        const persentase = (ketukanSaatIni / dataGending.totalBeats) * 100;
+        batangKemajuan.style.width = `${persentase}%`;
       }
-      if (gendingTimerText) {
-        gendingTimerText.textContent = `Ketukan ${Math.floor(currentBeat) + 1} / ${g.totalBeats}`;
+      if (teksPewaktuGending) {
+        teksPewaktuGending.textContent = `Ketukan ${Math.floor(ketukanSaatIni) + 1} dari ${dataGending.totalBeats}`;
       }
 
-      currentBeat = Math.round((currentBeat + 0.5) * 10) / 10;
-      if (currentBeat >= g.totalBeats) {
-        currentBeat = 0; // Looping siklus gongan
+      ketukanSaatIni = Math.round((ketukanSaatIni + 0.5) * 10) / 10;
+      if (ketukanSaatIni >= dataGending.totalBeats) {
+        ketukanSaatIni = 0;
       }
     }
 
-    function scheduleGendingTick() {
-      if (!isPlayingGending) return;
-      onGendingTick();
-      const g = REPERTOIRE[selectedKey];
-      const intervalMs = (60000 / g.bpm) / 2; // Tick per setengah ketukan
-      gendingTimer = setTimeout(scheduleGendingTick, intervalMs);
+    function jadwalkanKetukanGending() {
+      if (!sedangMainGending) return;
+      saatKetukanGending();
+      const dataGending = REPERTOAR[kunciTerpilih];
+      const intervalMs = (60000 / dataGending.bpm) / 2;
+      pewaktuGending = setTimeout(jadwalkanKetukanGending, intervalMs);
     }
 
-    function startGending() {
-      stopAllAudioPlayback('gending');
-      audioEngine.ensureContext();
-      isPlayingGending = true;
-      currentBeat = 0;
-      playGendingBtn.classList.add('is-playing');
-      playGendingBtn.setAttribute('aria-pressed', 'true');
-      playGendingBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" aria-hidden="true">
-          <rect x="6" y="5" width="4" height="14" rx="1"/>
-          <rect x="14" y="5" width="4" height="14" rx="1"/>
-        </svg>
-        <span>Jeda Gending</span>
-      `;
+    function mulaiGending() {
+      hentikanSemuaAudio('gending');
+      mesinAudio.pastikanKonteks();
+      sedangMainGending = true;
+      ketukanSaatIni = 0;
+      tombolMainGending.classList.add('is-playing');
+      tombolMainGending.setAttribute('aria-pressed', 'true');
+      tombolMainGending.innerHTML = `<span>Jeda gending</span>`;
 
-      if (gendingTimer) clearTimeout(gendingTimer);
-      // Mainkan ketukan pertama langsung tanpa delay!
-      scheduleGendingTick();
+      if (pewaktuGending) clearTimeout(pewaktuGending);
+      jadwalkanKetukanGending();
     }
 
-    function stopGending() {
-      isPlayingGending = false;
-      if (gendingTimer) clearTimeout(gendingTimer);
-      gendingTimer = null;
-      playGendingBtn.classList.remove('is-playing');
-      playGendingBtn.setAttribute('aria-pressed', 'false');
-      playGendingBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon" aria-hidden="true">
-          <polygon points="6 4 20 12 6 20 6 4"/>
-        </svg>
-        <span>Dengarkan Sekaha Penuh</span>
-      `;
-      if (progressBar) progressBar.style.width = '0%';
+    function hentikanGending() {
+      sedangMainGending = false;
+      if (pewaktuGending) clearTimeout(pewaktuGending);
+      pewaktuGending = null;
+      tombolMainGending.classList.remove('is-playing');
+      tombolMainGending.setAttribute('aria-pressed', 'false');
+      tombolMainGending.innerHTML = `<span>Putar gending</span>`;
+      if (batangKemajuan) batangKemajuan.style.width = '0%';
     }
 
-    stopGendingFn = stopGending;
+    fungsiHentikanGending = hentikanGending;
 
-    playGendingBtn.addEventListener('click', () => {
-      if (isPlayingGending) {
-        stopGending();
+    tombolMainGending.addEventListener('click', () => {
+      if (sedangMainGending) {
+        hentikanGending();
       } else {
-        startGending();
+        mulaiGending();
       }
     });
 
-    updateGendingMeta();
+    perbaruiKeteranganGending();
   }
 
-  // Denah spatial sekaha (Spatial Sekaha Explorer)
+  // Bagian 5: Denah sekaha di panggung
+  function siapkanPenjelajahDenah() {
+    const titikPanggung = document.querySelectorAll('.stage-spot');
+    const kartuInformasi = document.getElementById('spatialDetailCard');
+    const tombolDengarUji = document.getElementById('spatialAuditionBtn');
 
-  function setupSpatialExplorer() {
-    const spots = document.querySelectorAll('.stage-spot');
-    const infoCard = document.getElementById('spatialDetailCard');
-    const auditionBtn = document.getElementById('spatialAuditionBtn');
+    if (!titikPanggung.length || !kartuInformasi) return;
 
-    if (!spots.length || !infoCard) return;
-
-    const ROLES_DATA = {
+    const DATA_PERAN = {
       kendang: {
-        title: 'Kendang Bali (Lanang & Wadon)',
-        kicker: 'Konduktor Ritmis & Pengendali Dinamika Gending',
-        desc: 'Kendang adalah "jantung" gamelan Bali. Dua penabuh kendang (Kendang Cedugan atau Gupekan) memimpin seluruh pergantian tempo, aksen angsel, dan dinamika sekaha tanpa bantuan partitur.',
+        title: 'Kendang',
+        kicker: 'Pemimpin tempo dan dinamika tabuh',
+        desc: 'Sepasang kendang (lanang dan wadon) memimpin pergantian tempo dan aksen pukulan seluruh kelompok tanpa partitur.',
         aksara: 'ᬓᭂᬦ᭄ᬤᬂ',
-        audioAction: () => audioEngine.playKendang('plak')
+        audioAction: () => mesinAudio.mainkanKendang('plak')
       },
       ugal: {
-        title: 'Ugal (Pemimpin Melodi Gangsa)',
-        kicker: 'Pemberi Komando Gending & Penjembatan Irama',
-        desc: 'Ugal memiliki bilah perunggu yang lebih tebal dan rendah dari Pemade. Penabuh ugal memberi tanda melodi awal (lelambatan), mengatur tempo pokok, dan memberi aba-aba peralihan nada kepada penabuh gangsa lainnya.',
+        title: 'Ugal',
+        kicker: 'Pemandu melodi pokok gangsa',
+        desc: 'Bilah ugal lebih besar dari pemade. Penabuh ugal memulai melodi awal dan memberi aba-aba peralihan nada.',
         aksara: 'ᬳᬸᬕᬮ᭄',
-        audioAction: () => audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[0])
+        audioAction: () => mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[0])
       },
       pemade: {
-        title: 'Gangsa Pemade & Kantil',
-        kicker: 'Perajut Kotekan Berkelap-Kelip Kilat',
-        desc: 'Pemade dan Kantil dimainkan berpasangan (Polos & Sangsih) oleh 4–8 penabuh. Menggunakan teknik matedet (redam jari kiri) dengan kecepatan tinggi untuk merajut jalinan melodi yang memukau.',
+        title: 'Gangsa pemade dan kantil',
+        kicker: 'Pemain jalinan kotekan',
+        desc: 'Dimainkan berpasangan untuk merajut melodi cepat dengan teknik meredam bilah secara bergantian.',
         aksara: 'ᬧᭂᬫᬤᬾ',
-        audioAction: () => audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[7])
+        audioAction: () => mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[7])
       },
       reyong: {
-        title: 'Reyong Bali (12 Pot Pencon)',
-        kicker: 'Akrobatik Musikal 4 Penabuh Berderet',
-        desc: 'Instrumen horizontal sepanjang 3 meter dengan 12 pot perunggu berpencu. Dimainkan oleh 4 orang penabuh sekaligus yang saling silang tangan menggunakan pola norot yang rapat dan lincah.',
+        title: 'Reyong',
+        kicker: 'Dua belas pencon untuk empat penabuh',
+        desc: 'Deretan pencon mendatar yang dimainkan empat orang sekaligus secara bersilangan mengikuti pola tertentu.',
         aksara: 'ᬭᬾᬬᭀᬂ',
-        audioAction: () => audioEngine.playReyongNote(REYONG_NOTES[4])
+        audioAction: () => mesinAudio.mainkanNadaReyong(NADA_REYONG[4])
       },
       trompong: {
-        title: 'Trompong (Solois Klasik Istana)',
-        kicker: 'Raja Melodi Gending Lelambatan & Tari Legong',
-        desc: 'Deretan 10 pot pencon yang dimainkan oleh satu orang solois dengan dua panggul panjang meliuk. Memberikan hiasan bunga melodi (bunga gending) yang anggun dan melankolis.',
+        title: 'Trompong',
+        kicker: 'Pembawa ornamen melodi',
+        desc: 'Deretan sepuluh pencon yang dimainkan satu penabuh dengan dua pemukul panjang untuk memperkaya alunan lagu.',
         aksara: 'ᬢ᭄ᬭᭀᬫ᭄ᬧᭀᬂ',
-        audioAction: () => audioEngine.playReyongNote(REYONG_NOTES[2])
+        audioAction: () => mesinAudio.mainkanNadaReyong(NADA_REYONG[2])
       },
       calung: {
-        title: 'Calung (Jublag) & Jegogan',
-        kicker: 'Pondasi Melodi Bass Rendah & Selehan Nada',
-        desc: 'Metalfon berbilah besar dengan resonator bumbung bambu dalam. Memainkan melodi balungan/pokok dengan nada-nada seleh yang teratur dan khidmat sebagai fondasi kotekan.',
+        title: 'Calung dan jegogan',
+        kicker: 'Fondasi nada rendah',
+        desc: 'Bilah-bilah besar dengan bumbung bambu panjang yang menyuarakan melodi pokok pada ketukan tertentu.',
         aksara: 'ᬚᭂᬕᭀᬕᬦ᭄',
-        audioAction: () => audioEngine.playGangsaNote(PELOG_SELISIR_NOTES[0], 0.95)
+        audioAction: () => mesinAudio.mainkanNadaGangsa(NADA_PELOG_SELISIR[0], 0.95)
       },
       gong: {
-        title: 'Gong Ageng, Kempur & Bende',
-        kicker: 'Penguasa Waktu & Siklus Agung Gongan',
-        desc: 'Gong Ageng menggantung di belakang sebagai instrumen paling sakral. Bunyinya menandai akhir dan awal siklus gongan (colotomic cycle), dipercaya sebagai simbol napas semesta Dewa Siwa.',
+        title: 'Gong ageng dan kempur',
+        kicker: 'Penanda awal dan akhir putaran lagu',
+        desc: 'Gong ageng digantung di baris belakang. Suaranya menandai akhir satu siklus melodi panjang.',
         aksara: 'ᬕᭀᬂ',
-        audioAction: () => audioEngine.playGong('ageng')
+        audioAction: () => mesinAudio.mainkanGong('ageng')
       },
       cengceng: {
-        title: 'Ceng-ceng Kopyak',
-        kicker: 'Pemicu Aksen Sinkopasi Ledakan Kebyar',
-        desc: 'Beberapa pasang simbal perunggu kecil bertumpuk di atas ukiran punggung kura-kura Bedawang Nala. Dimainkan dengan hentakan keras dan tajam untuk mengiringi aksen angsel kendang.',
+        title: 'Ceng-ceng kopyak',
+        kicker: 'Aksen ritmis cepat',
+        desc: 'Beberapa simbal kecil bertangkai yang beradu cepat mengikuti aba-aba dari kendang.',
         aksara: 'ᬘᬾᬂᬘᬾᬂ',
-        audioAction: () => audioEngine.playCengCeng('crash')
+        audioAction: () => mesinAudio.mainkanCengCeng('crash')
       }
     };
 
-    let activeRoleKey = 'kendang';
+    let kunciPeranAktif = 'kendang';
 
-    function setSpot(roleKey) {
-      const data = ROLES_DATA[roleKey];
-      if (!data) return;
+    function aturTitik(kunciPeran) {
+      const dataPeran = DATA_PERAN[kunciPeran];
+      if (!dataPeran) return;
 
-      activeRoleKey = roleKey;
-      spots.forEach((s) => {
-        const isMatch = s.dataset.role === roleKey;
-        s.classList.toggle('is-selected', isMatch);
-        s.setAttribute('aria-pressed', String(isMatch));
+      kunciPeranAktif = kunciPeran;
+      titikPanggung.forEach((titik) => {
+        const cocok = titik.dataset.role === kunciPeran;
+        titik.classList.toggle('is-selected', cocok);
+        titik.setAttribute('aria-pressed', String(cocok));
       });
 
-      const titleEl = infoCard.querySelector('.spatial-title');
-      const kickerEl = infoCard.querySelector('.spatial-kicker');
-      const descEl = infoCard.querySelector('.spatial-desc');
-      const aksaraEl = infoCard.querySelector('.spatial-aksara');
+      const elemenJudul = kartuInformasi.querySelector('.spatial-title');
+      const elemenKicker = kartuInformasi.querySelector('.spatial-kicker');
+      const elemenDesc = kartuInformasi.querySelector('.spatial-desc');
+      const elemenAksara = kartuInformasi.querySelector('.spatial-aksara');
 
-      if (titleEl) titleEl.textContent = data.title;
-      if (kickerEl) kickerEl.textContent = data.kicker;
-      if (descEl) descEl.textContent = data.desc;
-      if (aksaraEl) aksaraEl.textContent = data.aksara;
+      if (elemenJudul) elemenJudul.textContent = dataPeran.title;
+      if (elemenKicker) elemenKicker.textContent = dataPeran.kicker;
+      if (elemenDesc) elemenDesc.textContent = dataPeran.desc;
+      if (elemenAksara) elemenAksara.textContent = dataPeran.aksara;
     }
 
-    spots.forEach((spot) => {
-      spot.addEventListener('click', () => {
-        setSpot(spot.dataset.role);
-        // Bunyikan langsung suara sampel instrumen
-        const data = ROLES_DATA[spot.dataset.role];
-        if (data && typeof data.audioAction === 'function') {
-          data.audioAction();
+    titikPanggung.forEach((titik) => {
+      titik.addEventListener('click', () => {
+        aturTitik(titik.dataset.role);
+        const dataPeran = DATA_PERAN[titik.dataset.role];
+        if (dataPeran && typeof dataPeran.audioAction === 'function') {
+          dataPeran.audioAction();
         }
       });
     });
 
-    if (auditionBtn) {
-      auditionBtn.addEventListener('click', () => {
-        const data = ROLES_DATA[activeRoleKey];
-        if (data && typeof data.audioAction === 'function') {
-          data.audioAction();
+    if (tombolDengarUji) {
+      tombolDengarUji.addEventListener('click', () => {
+        const dataPeran = DATA_PERAN[kunciPeranAktif];
+        if (dataPeran && typeof dataPeran.audioAction === 'function') {
+          dataPeran.audioAction();
         }
       });
     }
 
-    setSpot('kendang');
+    aturTitik('kendang');
   }
 
-  // Filter tiga era gamelan Bali
+  // Bagian 6: Penyaring tiga zaman gamelan
+  function siapkanPenyaringEra() {
+    const tombolPenyaring = document.querySelectorAll('.era-chip');
+    const kartuEra = document.querySelectorAll('.era-card');
 
-  function setupEraFilter() {
-    const filterBtns = document.querySelectorAll('.era-chip');
-    const eraCards = document.querySelectorAll('.era-card');
+    if (!tombolPenyaring.length || !kartuEra.length) return;
 
-    if (!filterBtns.length || !eraCards.length) return;
-
-    filterBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach((b) => {
-          const isAct = b === btn;
-          b.classList.toggle('is-active', isAct);
-          b.setAttribute('aria-pressed', String(isAct));
+    tombolPenyaring.forEach((tombol) => {
+      tombol.addEventListener('click', () => {
+        tombolPenyaring.forEach((b) => {
+          const apakahAktif = b === tombol;
+          b.classList.toggle('is-active', apakahAktif);
+          b.setAttribute('aria-pressed', String(apakahAktif));
         });
 
-        const eraKey = btn.dataset.era;
-        eraCards.forEach((card) => {
-          const match = eraKey === 'semua' || card.dataset.era === eraKey;
-          card.style.display = match ? '' : 'none';
-          card.hidden = !match;
+        const kunciEra = tombol.dataset.era;
+        kartuEra.forEach((kartu) => {
+          const cocok = kunciEra === 'semua' || kartu.dataset.era === kunciEra;
+          kartu.style.display = cocok ? '' : 'none';
+          kartu.hidden = !cocok;
         });
       });
     });
   }
 
-  // Pencarian glosarium karawitan Bali
+  // Bagian 7: Pencarian glosarium karawitan
+  function siapkanGlosarium() {
+    const masukanPencarian = document.getElementById('glosariumSearch');
+    const daftarIstilah = document.querySelectorAll('.glosarium-item');
+    const pesanKosong = document.getElementById('glosariumEmpty');
 
-  function setupGlosarium() {
-    const searchInput = document.getElementById('glosariumSearch');
-    const items = document.querySelectorAll('.glosarium-item');
-    const emptyState = document.getElementById('glosariumEmpty');
+    if (!masukanPencarian || !daftarIstilah.length) return;
 
-    if (!searchInput || !items.length) return;
+    masukanPencarian.addEventListener('input', (e) => {
+      const kataKunci = e.target.value.toLowerCase().trim();
+      let jumlahDitemukan = 0;
 
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim();
-      let found = 0;
+      daftarIstilah.forEach((butirIstilah) => {
+        const istilah = (butirIstilah.dataset.term || '').toLowerCase();
+        const teks = butirIstilah.textContent.toLowerCase();
+        const sesuai = !kataKunci || istilah.includes(kataKunci) || teks.includes(kataKunci);
 
-      items.forEach((item) => {
-        const term = (item.dataset.term || '').toLowerCase();
-        const text = item.textContent.toLowerCase();
-        const matches = !query || term.includes(query) || text.includes(query);
-
-        item.style.display = matches ? '' : 'none';
-        if (matches) found++;
+        butirIstilah.style.display = sesuai ? '' : 'none';
+        if (sesuai) jumlahDitemukan++;
       });
 
-      if (emptyState) emptyState.hidden = found > 0;
+      if (pesanKosong) pesanKosong.hidden = jumlahDitemukan > 0;
     });
   }
 
-  // Inisialisasi
-  function initGamelan() {
-    setupBaleTabuh();
-    setupKotekanStudio();
-    setupOmbakLab();
-    setupGendingAutoplayer();
-    setupSpatialExplorer();
-    setupEraFilter();
-    setupGlosarium();
+  // Inisialisasi utama saat halaman dimuat
+  function inisialisasiGamelan() {
+    siapkanBaleTabuh();
+    siapkanStudioKotekan();
+    siapkanLabOmbak();
+    siapkanPemutarGending();
+    siapkanPenjelajahDenah();
+    siapkanPenyaringEra();
+    siapkanGlosarium();
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        stopAllAudioPlayback();
+        hentikanSemuaAudio();
       }
     });
 
-    const unlockAudio = () => {
-      audioEngine.ensureContext();
-      document.removeEventListener('pointerdown', unlockAudio);
-      document.removeEventListener('keydown', unlockAudio);
+    const bukaKunciAudio = () => {
+      mesinAudio.pastikanKonteks();
+      document.removeEventListener('pointerdown', bukaKunciAudio);
+      document.removeEventListener('keydown', bukaKunciAudio);
     };
-    document.addEventListener('pointerdown', unlockAudio, { once: true });
-    document.addEventListener('keydown', unlockAudio, { once: true });
+    document.addEventListener('pointerdown', bukaKunciAudio, { once: true });
+    document.addEventListener('keydown', bukaKunciAudio, { once: true });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGamelan);
+    document.addEventListener('DOMContentLoaded', inisialisasiGamelan);
   } else {
-    initGamelan();
+    inisialisasiGamelan();
   }
 
-  window.GamelanAudioEngine = audioEngine;
+  window.GamelanAudioEngine = mesinAudio;
 })();
